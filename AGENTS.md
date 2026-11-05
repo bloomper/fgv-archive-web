@@ -86,9 +86,11 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
 
 ## Look
 
-Spexarkivet's own mark (stacked sheets with a page of music) and wordmark are `Logo`, `LogoText` and `LogoHome` in
-`src/components/`; `src/app/icon.svg`, `favicon.ico` and `public/icon-*.png` are made from the same drawing. The
-colours (ink and bordeaux on paper, light and dark) are in `src/app/globals.css`, with pdf.js's text layer rules.
+The look is FGV's, the same as Spexregister's, Nyuppsättning's, Spexify's and Spexflix's: `Logo`, `LogoText` and
+`LogoHome` in `src/components/`, `src/app/favicon.ico`, and the colours in `src/app/globals.css`. Don't give the
+application a logo or colours of its own; its name, Spexarkivet, appears as text (the header's title, the share
+pages). `src/app/icon.svg` (the FGV logo) is only for the installable app's manifest. `globals.css` also holds pdf.js's
+text layer rules.
 
 ## Consent and visitor statistics
 

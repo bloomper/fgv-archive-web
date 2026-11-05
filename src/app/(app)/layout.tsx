@@ -28,12 +28,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <header className="px-4 py-2">
           <div className="flex w-full flex-nowrap items-center justify-between gap-3">
             <div className="flex min-w-0 items-center justify-start gap-3">
-              <a href="/" className="flex items-center gap-3 flex-nowrap">
+              <a
+                href="https://www.fgv.nu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 flex-nowrap"
+              >
                 <div className="flex aspect-square size-10 items-center justify-center rounded-lg">
                   <Logo />
                 </div>
                 <div className="min-w-0 overflow-hidden">
-                  <LogoText className="h-8 w-auto text-foreground" />
+                  <LogoText className="h-10 w-auto text-foreground" />
                 </div>
               </a>
             </div>

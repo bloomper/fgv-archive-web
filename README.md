@@ -21,8 +21,7 @@ logging in. It talks to [Spexarkivet Server][1] over GraphQL and plain HTTP. The
 - **PDF reading:** [pdf.js](https://mozilla.github.io/pdf.js/) (`pdfjs-dist`), loading pages by byte ranges
 - **Uploads:** [tus-js-client](https://github.com/tus/tus-js-client), resumable, in chunks of at most 50 MB
 
-Spexarkivet has a mark and colours of its own (ink and bordeaux on paper), in the same layout as FGV's other
-applications.
+The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyuppsättning, Spexify and Spexflix.
 
 ## Getting Started
 

@@ -26,7 +26,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { LogoText } from "@/components/logo-text";
 import { Role } from "@/types/auth";
@@ -133,8 +132,10 @@ export function AppSidebar({ roles, accountUrl, ...props }: AppSidebarProps) {
             <SidebarMenuButton
               size="lg"
               render={
-                <Link
-                  href="/"
+                <a
+                  href="https://www.fgv.nu"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-3 flex-nowrap bg-transparent! hover:bg-transparent! active:bg-transparent! focus:bg-transparent!"
                 />
               }
@@ -143,8 +144,8 @@ export function AppSidebar({ roles, accountUrl, ...props }: AppSidebarProps) {
                 className="flex aspect-square size-10 shrink-0 items-center justify-center rounded-lg group-data-[collapsible=icon]:size-8">
                 <Logo />
               </div>
-              <div className="min-w-0 flex-1 overflow-hidden pl-2">
-                <LogoText className="h-7 w-auto text-foreground" />
+              <div className="min-w-0 flex-1 overflow-hidden pl-4">
+                <LogoText className="h-10 w-auto text-foreground" />
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
