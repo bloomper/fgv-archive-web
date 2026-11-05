@@ -13,7 +13,7 @@ export default async function InstrumentsPage() {
       <div className="max-w-4xl space-y-6 p-4 sm:p-6">
         <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("text")}</p>
-        <InstrumentsEditor instruments={instruments} />
+        <InstrumentsEditor instruments={instruments.map(instrument => ({ ...instrument, useCount: instrument.useCount ?? 0 }))} />
       </div>
     );
   });

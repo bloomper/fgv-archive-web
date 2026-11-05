@@ -126,8 +126,9 @@ export type NumberInput = {
 };
 
 /**
- * Narrows parts to some instruments and transpositions: a file matches when it carries any of the instruments and is
- * written in any of the pitches. An empty list does not narrow.
+ * Narrows parts to some instruments and transpositions: a file matches when it is a part (role Part), carries any of
+ * the instruments and is written in any of the pitches; scores and sources are never parts, whatever they carry. An empty
+ * list does not narrow.
  */
 export type PartFilter = {
   instrumentIds?: Array<string | number> | null | undefined;
@@ -455,12 +456,12 @@ export type SearchQuery = { search: { spex: Array<{ id: string, title: string | 
 export type InstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InstrumentsQuery = { instruments: Array<{ abbreviations: Array<string>, useCount: number, id: string, nameSv: string, nameEn: string, group: InstrumentGroup, position: number, defaultTransposition: { pitch: Pitch, octave: number } }> };
+export type InstrumentsQuery = { instruments: Array<{ abbreviations: Array<string>, useCount: number | null, id: string, nameSv: string, nameEn: string, group: InstrumentGroup, position: number, defaultTransposition: { pitch: Pitch, octave: number } }> };
 
 export type FileRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FileRolesQuery = { fileRoles: Array<{ id: string, nameSv: string, nameEn: string, position: number, fileCount: number }> };
+export type FileRolesQuery = { fileRoles: Array<{ id: string, nameSv: string, nameEn: string, position: number, fileCount: number | null }> };
 
 export type MissingQueryVariables = Exact<{
   categoryId?: string | number | null | undefined;
