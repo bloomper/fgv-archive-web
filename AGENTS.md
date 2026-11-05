@@ -64,6 +64,8 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
   arrow keys or a page-turner pedal) and keeps `?page=` in the address. Shortcuts: arrows, PageUp/PageDown, space,
   Home/End, `+`/`-`/`0`, `f`, `t`, `p`.
 - **Restricted versions** list their files with a lock for users; `AccessRequest` asks the editors with a reason.
+  Editors see the requests at `/manage/access-requests` (open first; `?show=handled|all`) and mark them handled, or
+  open again (`accessRequestHandle`), after answering, e.g. with a share link.
   `/versions/[id]` (linked from the access request emails) redirects to the version in its parent's page; logging in
   from there comes back to it (`/api/auth/login?returnTo=`).
 - **Numbers** are the archive's own until Spexipedia (spec 4.4): `/spex/[id]/numbers` pastes, adds, edits, reorders
@@ -72,11 +74,16 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
   asks `fileGuess` for each dropped file, uploads it at once, and lets the editor correct the role, instruments (ordered,
   `InstrumentsPicker`), desk and transposition before `fileAdd`; a new part's transposition follows its first
   instrument's default until the editor picks one.
-- **Share links** are shown once, right after they are made (`ShareLinkButton`), from a version, chosen files, or a
-  spex' instruments and transpositions (`/spex/[id]/parts`). `/share/[token]` and `/share/[token]/files/[id]` live
+- **A spex' parts** (`/spex/[id]/parts`) list, per arrangement, `Arrangement.partsVersion(usedIn: <spex>)`: the version
+  the zip takes, chosen by the server with the zip's own rule. Don't choose it in the web.
+- **Share links** are shown once, right after they are made (`ShareLinkButton`), from a version, the spex page (each
+  manuscript's and arrangement's recommended published version), chosen files, or a spex' instruments and
+  transpositions (`/spex/[id]/parts`); editors rename, extend and revoke them under `/manage/share-links`. `/share/[token]` and `/share/[token]/files/[id]` live
   outside `(app)`: no login, no sidebar or switcher, no Umami (the tracker is only rendered by the `(app)` layout, and
   `/stats/api/send` drops anything naming `/share/`), `noindex` and no referrer. They read `sharedView` without the
-  visitor's session (`src/lib/share/share.server.ts`) and their files through `/api/share/[token]/[...path]`, which
+  visitor's session (`src/lib/share/share.server.ts`), with the page's part filter (`files(parts)`; `allFiles` for the
+  filter's choices); every file it lists has `canOpen: true`, and `sharedView.spex`, `instruments` and `transpositions`
+  say when a link was made for instruments, which gets the zip in the order of the show, and their files through `/api/share/[token]/[...path]`, which
   passes only the share endpoints on, anonymously; expired and revoked links name who made them.
 - **Dialogs**: never `window.confirm`, `window.prompt` or `window.alert`. Ask with `useDialogs()` (`confirm`, `prompt`,
   `choose`). The e2e fixture `noNativeDialogs` fails any test that opens a native dialog.

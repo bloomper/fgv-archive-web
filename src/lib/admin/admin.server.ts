@@ -54,8 +54,8 @@ const ShareLinksQuery = graphql(`
     }
 `);
 const AccessRequestsQuery = graphql(`
-    query AccessRequests {
-        accessRequests { id userName userEmail reason createdAt files { id title versionId } }
+    query AccessRequests($handled: Boolean) {
+        accessRequests(handled: $handled) { id userName userEmail reason createdAt handledAt handledByName files { id title versionId } }
     }
 `);
 const MaintenanceJobsQuery = graphql(`
@@ -84,7 +84,7 @@ export const getAuditActors = async () => (await runQuery(AuditActorsQuery, {}))
 export const getSettings = async () => (await runQuery(SettingsQuery, {}))?.settings;
 export const getStorage = async () => (await runQuery(StorageQuery, {}))?.storage;
 export const getShareLinks = async (all: boolean) => (await runQuery(ShareLinksQuery, { all }))?.shareLinks ?? [];
-export const getAccessRequests = async () => (await runQuery(AccessRequestsQuery, {}))?.accessRequests ?? [];
+export const getAccessRequests = async (handled: boolean | null) => (await runQuery(AccessRequestsQuery, { handled }))?.accessRequests ?? [];
 export const getMaintenanceJobs = async () => (await runQuery(MaintenanceJobsQuery, {}))?.maintenanceJobs ?? [];
 export const trashEmpty = () => runMutation(TrashEmptyMutation, {});
 export const settingsUpdate = (input: SettingsInput) => runMutation(SettingsUpdateMutation, { input });

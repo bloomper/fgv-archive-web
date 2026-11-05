@@ -182,6 +182,11 @@ function resetState() {
         createdByName: "Erik Redaktör", createdAt: "2026-01-01T10:00:00Z", expiresAt: "2027-01-01T10:00:00Z", revokedAt: "2026-02-01T10:00:00Z",
         revokedByName: "Erik Redaktör", versionIds: [], fileIds: [uuidOf(631)], spexId: null, instrumentIds: [], transpositions: [], downloads: 0,
       },
+      {
+        id: uuidOf(704), token: "exempel-instrumentlank-trumpet-000000000001", name: "Ali Baba, trumpeter", createdById: "p-editor",
+        createdByName: "Erik Redaktör", createdAt: "2026-10-02T10:00:00Z", expiresAt: "2027-10-01T10:00:00Z", revokedAt: null,
+        revokedByName: null, versionIds: [], fileIds: [], spexId: ALI_BABA.id, instrumentIds: [TRUMPET], transpositions: [], downloads: 0,
+      },
     ],
     accessRequests: [],
     settings: {
@@ -339,9 +344,18 @@ function spexPage(persona, spex, parts) {
     arrangements: numbers.filter(number => number.arrangement).map(number => {
       const arrangement = arrangementView(persona, state.arrangements.find(a => a.id === number.arrangement.id), parts);
 
-      return { ...arrangement, versions: arrangement.versions.filter(v => !parts || v.files.length > 0) };
+      return { ...arrangement, versions: arrangement.versions.filter(v => !parts || v.files.length > 0), partsVersion: partsVersion(persona, arrangement, spex.id) };
     }).filter(a => !parts || a.versions.length > 0),
   };
+}
+
+// As the server's zip: of the versions the user may open, the one used in the spex, else the recommended one, else the newest
+function partsVersion(persona, arrangement, spexId) {
+  const openable = arrangement.versions.filter(v => v.canOpen && !v.trashed)
+    .sort((a, b) => Number(b.usedInSpexId === spexId) - Number(a.usedInSpexId === spexId)
+      || Number(b.recommended) - Number(a.recommended) || b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id));
+
+  return openable[0] ?? null;
 }
 
 function shareStatus(link) {
@@ -367,13 +381,19 @@ function sharedFilesOf(link) {
   return state.files.filter(f => ids.has(f.id));
 }
 
-function sharedView(link) {
+function sharedView(link, parts) {
   const status = shareStatus(link);
-  const files = status === "VALID" ? sharedFilesOf(link) : [];
+  const valid = status === "VALID";
+  const files = valid ? sharedFilesOf(link) : [];
   const versionIds = [...new Set(files.map(f => f.versionId))];
+  // As the server: every file a link opens has canOpen true
+  const view = (f, v) => ({ ...fileView(null, f, v), canOpen: true, downloadCount: null });
 
   return {
     name: link.name, status, createdByName: link.createdByName, expiresAt: link.expiresAt,
+    spex: valid && link.spexId ? brief(spexById(link.spexId)) : null,
+    instruments: valid ? link.instrumentIds.map(instrumentById) : [],
+    transpositions: valid ? link.transpositions : [],
     versions: versionIds.map(id => state.versions.find(v => v.id === id)).map(v => {
       const parent = parentOf(v);
       const number = v.kind === "ARRANGEMENT" ? numberById(parent.numberId) : null;
@@ -385,7 +405,8 @@ function sharedView(link) {
         composer: number?.composer ?? null, authors: parent.authors ?? null, arranger: v.arranger, key: v.key, modulations: v.modulations,
         tempo: v.tempo, duration: v.duration, date: v.date, notes: v.notes,
         instrumentation: v.instrumentation.map(entry => ({ count: entry.count, instrument: instrumentById(entry.instrumentId) })),
-        files: files.filter(f => f.versionId === v.id).map(f => ({ ...fileView(null, f, v), canOpen: true, downloadCount: null })),
+        files: files.filter(f => f.versionId === v.id && (!parts || matchesParts(f, parts))).map(f => view(f, v)),
+        allFiles: files.filter(f => f.versionId === v.id).map(f => view(f, v)),
       };
     }),
   };
@@ -730,6 +751,11 @@ const resolvers = {
     Object.assign(state.shareLinks.find(link => link.id === id), { revokedAt: new Date().toISOString(), revokedByName: persona.name });
     return { shareLinkRevoke: { id } };
   },
+  ShareLinkRename: (persona, { id, name }) => {
+    requireEditor(persona);
+    state.shareLinks.find(link => link.id === id).name = name;
+    return { shareLinkRename: { id, name } };
+  },
   ShareLinkExtend: (persona, { id, months }) => {
     requireEditor(persona);
     state.shareLinks.find(link => link.id === id).expiresAt = new Date(Date.now() + months * 30 * 86400_000).toISOString();
@@ -740,12 +766,30 @@ const resolvers = {
     return { shareLinks: state.shareLinks.filter(link => (all && isAdmin(persona)) || link.createdById === persona.sub).map(shareLinkView) };
   },
   AccessRequestCreate: (persona, { input }) => {
-    state.accessRequests.unshift({ id: newId(), userName: persona.name, userEmail: persona.email, reason: input.reason, createdAt: new Date().toISOString(), fileIds: input.fileIds });
+    state.accessRequests.unshift({
+      id: newId(), userName: persona.name, userEmail: persona.email, reason: input.reason, createdAt: new Date().toISOString(),
+      fileIds: input.fileIds, handledAt: null, handledByName: null,
+    });
     return { accessRequestCreate: null };
   },
-  AccessRequests: persona => {
+  AccessRequests: (persona, { handled }) => {
     requireEditor(persona);
-    return { accessRequests: state.accessRequests.map(request => ({ ...request, files: request.fileIds.map(id => state.files.find(f => f.id === id)) })) };
+    return {
+      accessRequests: state.accessRequests
+        .filter(request => handled === null || handled === undefined || handled === Boolean(request.handledAt))
+        .map(request => ({ ...request, files: request.fileIds.map(id => state.files.find(f => f.id === id)) })),
+    };
+  },
+  AccessRequestHandle: (persona, { id, handled }) => {
+    requireEditor(persona);
+
+    const request = state.accessRequests.find(candidate => candidate.id === id);
+
+    Object.assign(request, handled === false
+      ? { handledAt: null, handledByName: null }
+      : { handledAt: new Date().toISOString(), handledByName: persona.name });
+    audit(persona, "UPDATE", "ACCESS_REQUEST", id, `Hanterade åtkomstförfrågan från ${request.userName}`);
+    return { accessRequestHandle: { id, handledAt: request.handledAt } };
   },
   Trash: persona => {
     requireEditor(persona);
@@ -809,10 +853,10 @@ const resolvers = {
 
 // Answered without a login: what a share link opens
 const anonymous = {
-  SharedView: (_, { token }) => {
+  SharedView: (_, { token, parts }) => {
     const link = state.shareLinks.find(candidate => candidate.token === token);
 
-    return { sharedView: link ? sharedView(link) : null };
+    return { sharedView: link ? sharedView(link, parts && ((parts.instrumentIds ?? []).length || (parts.transpositions ?? []).length) ? parts : null) : null };
   },
 };
 

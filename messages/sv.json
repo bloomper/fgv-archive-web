@@ -505,7 +505,11 @@
     "revokeOf": "Återkalla {name}",
     "revokeTitle": "Återkalla {name}?",
     "revokeText": "Länken slutar fungera direkt.",
-    "revoked": "Återkallad"
+    "revoked": "Återkallad",
+    "rename": "Byt namn",
+    "renameOf": "Byt namn på {name}",
+    "renameTitle": "Byt namn på {name}",
+    "renamed": "Namnet är ändrat"
   },
   "SharePage": {
     "sharedBy": "Delat av {name}, giltigt till {date}",
@@ -536,7 +540,8 @@
         "text": "Kontrollera att du fått med hela adressen.",
         "textBy": "Kontrollera att du fått med hela adressen."
       }
-    }
+    },
+    "madeFor": "Stämmor för {what} i {spex}, i föreställningens ordning"
   },
   "Reader": {
     "toolbar": "Läsarens verktyg",
@@ -607,9 +612,22 @@
   },
   "AccessRequests": {
     "title": "Åtkomstförfrågningar",
-    "text": "Användare som bett om att få öppna begränsade filer. Ge åtkomst med en delningslänk.",
+    "text": "Användare som bett om att få öppna begränsade filer. Ge åtkomst med en delningslänk och markera förfrågan som hanterad.",
     "none": "Inga förfrågningar.",
-    "version": "version"
+    "version": "version",
+    "open": "Öppna",
+    "handled": "Hanterade",
+    "all": "Alla",
+    "filter": "Visa förfrågningar",
+    "handle": "Markera som hanterad",
+    "reopen": "Öppna igen",
+    "handleOf": "Markera förfrågan från {name} som hanterad",
+    "reopenOf": "Öppna förfrågan från {name} igen",
+    "handledBy": "Hanterad {date} av {name}",
+    "handledDone": "Markerad som hanterad",
+    "reopened": "Öppnad igen",
+    "noneOpen": "Inga öppna förfrågningar.",
+    "noneHandled": "Inga hanterade förfrågningar."
   },
   "Trash": {
     "title": "Papperskorgen",
@@ -799,7 +817,8 @@
       "INSTRUMENT": "Instrument",
       "FILE_ROLE": "Filroll",
       "SETTINGS": "Inställningar",
-      "TRASH": "Papperskorg"
+      "TRASH": "Papperskorg",
+      "ACCESS_REQUEST": "Åtkomstförfrågan"
     }
   }
 }

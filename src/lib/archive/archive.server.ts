@@ -65,7 +65,7 @@ const SpexArrangementsQuery = graphql(`
             arrangements(parts: $parts) {
                 id
                 number { id position title }
-                versions(parts: $parts) { id label recommended canOpen usedInSpexId files(parts: $parts) { ...FileFields } }
+                partsVersion(usedIn: $id) { id label files(parts: $parts) { ...FileFields } }
             }
         }
         instruments { ...InstrumentBrief }

@@ -35,7 +35,7 @@ test.describe("Administration", () => {
   test("an admin sees everyone's share links and the trash", async ({ page, loginAs }) => {
     await loginAs("admin");
     await page.goto("/admin/share-links");
-    await expect(page.getByTestId("share-link")).toHaveCount(3);
+    await expect(page.getByTestId("share-link")).toHaveCount(4);
     await expect(page.getByTestId("share-link").filter({ hasText: "Gammal länk" })).toContainText("Utgången");
     await page.goto("/manage/trash");
     await expect(page.getByText("Papperskorgen är tom.")).toBeVisible();

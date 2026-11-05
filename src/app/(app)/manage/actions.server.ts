@@ -363,6 +363,31 @@ export async function extendShareLinkAction(id: string, months: number) {
   });
 }
 
+export async function renameShareLinkAction(id: string, name: string) {
+  requireId(id);
+
+  const trimmed = name.trim();
+
+  if (!trimmed || trimmed.length > 200) {
+    throw new Error("Invalid name");
+  }
+  return editor(async () => {
+    await editing.shareLinkRename(id, trimmed);
+    return null;
+  });
+}
+
+/**
+ * Marks an access request handled, or open again.
+ */
+export async function handleAccessRequestAction(id: string, handled: boolean) {
+  requireId(id);
+  return editor(async () => {
+    await editing.accessRequestHandle(id, handled);
+    return null;
+  });
+}
+
 export async function revokeShareLinkAction(id: string) {
   requireId(id);
   return editor(async () => {

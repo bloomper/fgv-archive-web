@@ -115,6 +115,34 @@ test.describe("Editing", () => {
     await expect(page.getByTestId("share-link").filter({ hasText: "Ali Baba 2028, band" })).toContainText("Återkallad");
   });
 
+  test("an editor renames a share link", async ({ page, loginAs }) => {
+    await loginAs("editor");
+    await page.goto("/manage/share-links");
+    await page.getByRole("button", { name: "Byt namn på Ali Baba 2028, band" }).click();
+    await answerDialog(page, "Byt namn", "Ali Baba 2028, hela bandet");
+    await expect(page.getByTestId("share-link").filter({ hasText: "Ali Baba 2028, hela bandet" })).toBeVisible();
+  });
+
+  test("an editor marks an access request handled", async ({ page, loginAs }) => {
+    await loginAs("user");
+    await page.goto(`/arrangements/${uuidOf(412)}`);
+    await page.getByRole("button", { name: "Be om åtkomst" }).click();
+    await page.getByRole("dialog").getByLabel("Varför behöver du dem?").fill("Vi sätter upp spexet 2028.");
+    await page.getByRole("dialog").getByRole("button", { name: "Skicka" }).click();
+    await expect(page.getByText("Förfrågan är skickad till redaktörerna")).toBeVisible();
+
+    await loginAs("editor");
+    await page.goto("/manage/access-requests");
+    const request = page.getByTestId("access-request").filter({ hasText: "Vi sätter upp spexet 2028." });
+    await request.getByRole("button", { name: "Markera förfrågan från Ulla Användare som hanterad" }).click();
+    await expect(page.getByText("Inga öppna förfrågningar.")).toBeVisible();
+
+    await page.getByRole("link", { name: "Hanterade" }).click();
+    await expect(request).toContainText("av Erik Redaktör");
+    await request.getByRole("button", { name: "Öppna förfrågan från Ulla Användare igen" }).click();
+    await expect(page.getByText("Inga hanterade förfrågningar.")).toBeVisible();
+  });
+
   test("an editor pastes numbers and deletes one", async ({ page, loginAs, mock }) => {
     await loginAs("editor");
     await page.goto(`/spex/${uuidOf(11)}/numbers`);

@@ -505,7 +505,11 @@
     "revokeOf": "Revoke {name}",
     "revokeTitle": "Revoke {name}?",
     "revokeText": "The link stops working at once.",
-    "revoked": "Revoked"
+    "revoked": "Revoked",
+    "rename": "Rename",
+    "renameOf": "Rename {name}",
+    "renameTitle": "Rename {name}",
+    "renamed": "The name is changed"
   },
   "SharePage": {
     "sharedBy": "Shared by {name}, valid until {date}",
@@ -536,7 +540,8 @@
         "text": "Check that you have the whole address.",
         "textBy": "Check that you have the whole address."
       }
-    }
+    },
+    "madeFor": "Parts for {what} in {spex}, in the order of the show"
   },
   "Reader": {
     "toolbar": "Reader tools",
@@ -607,9 +612,22 @@
   },
   "AccessRequests": {
     "title": "Access requests",
-    "text": "Users who asked to open restricted files. Give access with a share link.",
+    "text": "Users who asked to open restricted files. Give access with a share link and mark the request handled.",
     "none": "No requests.",
-    "version": "version"
+    "version": "version",
+    "open": "Open",
+    "handled": "Handled",
+    "all": "All",
+    "filter": "Show requests",
+    "handle": "Mark handled",
+    "reopen": "Open again",
+    "handleOf": "Mark the request from {name} handled",
+    "reopenOf": "Open the request from {name} again",
+    "handledBy": "Handled {date} by {name}",
+    "handledDone": "Marked handled",
+    "reopened": "Opened again",
+    "noneOpen": "No open requests.",
+    "noneHandled": "No handled requests."
   },
   "Trash": {
     "title": "Trash",
@@ -799,7 +817,8 @@
       "INSTRUMENT": "Instrument",
       "FILE_ROLE": "File role",
       "SETTINGS": "Settings",
-      "TRASH": "Trash"
+      "TRASH": "Trash",
+      "ACCESS_REQUEST": "Access request"
     }
   }
 }

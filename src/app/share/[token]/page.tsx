@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { FileList, PartsByInstrument } from "@/components/archive/file-list";
@@ -6,11 +6,10 @@ import { VersionFacts } from "@/components/archive/version-meta";
 import { PartFilterControls } from "@/components/archive/part-filter.client";
 import { getSharedView } from "@/lib/share/share.server";
 import { formatDate } from "@/utils/format";
-import { isEmptyFilter, partFilterFromParams, partFilterToApiQuery } from "@/utils/filters";
+import { isEmptyFilter, partFilterFromParams, partFilterToApiQuery, toGraphqlFilter } from "@/utils/filters";
 import { sharePartsZipHref, spexName, versionPartsZipHref, versionZipHref } from "@/utils/links";
-import { type Pitch, PITCHES } from "@/utils/music";
+import { localName, noteName, PITCHES } from "@/utils/music";
 import { SharedGone } from "./gone";
-import { sharedFiles } from "./shared";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -24,7 +23,8 @@ export default async function SharePage({ params, searchParams }: {
   searchParams: Promise<Search>;
 }) {
   const { token } = await params;
-  const view = await getSharedView(token);
+  const filter = partFilterFromParams(await searchParams);
+  const view = await getSharedView(token, toGraphqlFilter(filter));
 
   if (!view) {
     return <SharedGone status="UNKNOWN" />;
@@ -34,19 +34,15 @@ export default async function SharePage({ params, searchParams }: {
   }
 
   const t = await getTranslations("SharePage");
-  const filter = partFilterFromParams(await searchParams);
+  const locale = await getLocale();
   const filtered = !isEmptyFilter(filter);
   const place = { share: token };
-  const all = sharedFiles(view);
-  const parts = all.filter(file => file.instruments.length > 0);
+  // The choices come from every shared part, whatever the filter; the server narrows each version's files
+  const parts = view.versions.flatMap(version => version.allFiles).filter(file => file.instruments.length > 0);
   const instruments = [...new Map(parts.flatMap(file => file.instruments).map(instrument => [instrument.id, instrument])).values()];
   const pitches = PITCHES.filter(pitch => parts.some(file => file.transposition?.pitch === pitch));
-  const matches = (file: { instruments: { id: string }[]; transposition?: { pitch: Pitch } | null }) =>
-    (filter.instrumentIds.length === 0 || file.instruments.some(instrument => filter.instrumentIds.includes(instrument.id)))
-    && (filter.transpositions.length === 0 || (file.transposition && filter.transpositions.includes(file.transposition.pitch)));
-  const arrangements = view.versions.filter(version => version.kind === "ARRANGEMENT");
-  // A link made for instruments shares only parts, across a spex' arrangements; those get one zip in the order of the show
-  const onlyParts = arrangements.length > 1 && arrangements.every(version => version.files.every(file => file.instruments.length > 0));
+  // A link made for instruments opens its spex' parts, also as one zip in the order of the show
+  const forInstruments = view.spex !== null && view.spex !== undefined;
   const query = partFilterToApiQuery(filter);
   const spexNames = [...new Set(view.versions.map(version => spexName(version.spex)).filter(Boolean))];
   const versions = [...view.versions].sort((a, b) =>
@@ -60,22 +56,30 @@ export default async function SharePage({ params, searchParams }: {
         <p className="text-sm text-muted-foreground">
           {t("sharedBy", { name: view.createdByName ?? "–", date: formatDate(view.expiresAt) ?? "" })}
         </p>
+        {view.spex && (
+          <p className="text-sm" data-testid="made-for">
+            {t("madeFor", {
+              what: [...view.instruments.map(instrument => localName(instrument, locale)),
+                ...view.transpositions.map(pitch => noteName(pitch, locale))].join(", "),
+              spex: spexName(view.spex),
+            })}
+          </p>
+        )}
       </header>
 
       {parts.length > 0 && (
         <PartFilterControls instruments={instruments} pitches={pitches} />
       )}
-      {onlyParts && (
+      {forInstruments && (
         <a href={sharePartsZipHref(token, query)} download className={buttonVariants()}>
           <Download /> {filtered ? t("downloadFilteredShow") : t("downloadAllShow")}
         </a>
       )}
 
       {versions.map(version => {
-        const files = version.files.map(file => ({ ...file, canOpen: true }));
-        const versionParts = files.filter(file => file.instruments.length > 0);
-        const shownParts = versionParts.filter(matches);
-        const others = files.filter(file => file.instruments.length === 0);
+        const versionParts = version.allFiles.filter(file => file.instruments.length > 0);
+        const shownParts = version.files.filter(file => file.instruments.length > 0);
+        const others = version.files.filter(file => file.instruments.length === 0);
 
         return (
           <section key={version.id} className="space-y-3 rounded-lg border p-4" aria-labelledby={`shared-${version.id}`}

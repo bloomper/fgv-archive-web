@@ -54,6 +54,8 @@ const NumbersReorder = graphql(`mutation NumbersReorder($spexId: ID!, $ids: [ID!
 const NumberMerge = graphql(`mutation NumberMerge($id: ID!, $intoId: ID!) { numberMerge(id: $id, intoId: $intoId) { id } }`);
 const ShareLinkCreate = graphql(`mutation ShareLinkCreate($input: ShareLinkInput!) { shareLinkCreate(input: $input) { token shareLink { id name expiresAt } } }`);
 const ShareLinkExtend = graphql(`mutation ShareLinkExtend($id: ID!, $months: Int!) { shareLinkExtend(id: $id, months: $months) { id expiresAt } }`);
+const ShareLinkRename = graphql(`mutation ShareLinkRename($id: ID!, $name: String!) { shareLinkRename(id: $id, name: $name) { id name } }`);
+const AccessRequestHandle = graphql(`mutation AccessRequestHandle($id: ID!, $handled: Boolean) { accessRequestHandle(id: $id, handled: $handled) { id handledAt } }`);
 const ShareLinkRevoke = graphql(`mutation ShareLinkRevoke($id: ID!) { shareLinkRevoke(id: $id) { id } }`);
 const AccessRequestCreate = graphql(`mutation AccessRequestCreate($input: AccessRequestInput!) { accessRequestCreate(input: $input) }`);
 
@@ -89,5 +91,7 @@ export const numbersReorder = (spexId: string, ids: string[]) => runMutation(Num
 export const numberMerge = (id: string, intoId: string) => runMutation(NumberMerge, { id, intoId });
 export const shareLinkCreate = async (input: ShareLinkInput) => (await runMutation(ShareLinkCreate, { input }))?.shareLinkCreate;
 export const shareLinkExtend = (id: string, months: number) => runMutation(ShareLinkExtend, { id, months });
+export const shareLinkRename = (id: string, name: string) => runMutation(ShareLinkRename, { id, name });
+export const accessRequestHandle = (id: string, handled: boolean) => runMutation(AccessRequestHandle, { id, handled });
 export const shareLinkRevoke = (id: string) => runMutation(ShareLinkRevoke, { id });
 export const accessRequestCreate = (input: AccessRequestInput) => runMutation(AccessRequestCreate, { input });

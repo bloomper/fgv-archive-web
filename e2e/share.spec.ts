@@ -4,6 +4,7 @@ import { expect, test } from "./fixtures";
 const VALID = "exempel-giltig-delningslank-0000000000000001";
 const EXPIRED = "exempel-utgangen-delningslank-00000000000001";
 const REVOKED = "exempel-aterkallad-delningslank-000000000001";
+const INSTRUMENTS = "exempel-instrumentlank-trumpet-000000000001";
 
 test.describe("Share links, without logging in", () => {
   test("a valid link shows what it shares and nothing else of the archive", async ({ page, mock }) => {
@@ -20,6 +21,9 @@ test.describe("Share links, without logging in", () => {
     await expect(duett.getByRole("link", { name: "Ladda ner Kärleksduetten trumpet" }))
       .toHaveAttribute("href", `/api/share/${VALID}/files/${uuidOf(632)}?download=true`);
     await expect(duett.getByText("Låst")).toHaveCount(0);
+    // Not made for instruments: no zip across a spex
+    await expect(page.getByTestId("made-for")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Alla stämmor i föreställningsordning" })).toHaveCount(0);
 
     // Parts narrowed to an instrument, as a zip through the link
     await page.getByTestId("part-filter").getByRole("button", { name: "Trumpet" }).click();
@@ -31,6 +35,18 @@ test.describe("Share links, without logging in", () => {
     expect(download.status()).toBe(200);
     expect(download.headers()["content-disposition"]).toContain("attachment");
     expect((await mock.state()).zips).toContain(`/api/share/<token>/files/${uuidOf(632)}?download=true`);
+  });
+
+  test("a link made for instruments says so and offers its parts in show order", async ({ page }) => {
+    await page.goto(`/share/${INSTRUMENTS}`);
+
+    await expect(page.getByTestId("made-for")).toHaveText("Stämmor för Trumpet i Ali Baba 1985, i föreställningens ordning");
+    await expect(page.getByRole("link", { name: "Alla stämmor i föreställningsordning" }))
+      .toHaveAttribute("href", `/api/share/${INSTRUMENTS}/parts/zip`);
+    await page.getByTestId("part-filter").getByRole("button", { name: "Stämd i C", exact: true }).click();
+    await expect(page.getByRole("link", { name: "Valda stämmor i föreställningsordning" }))
+      .toHaveAttribute("href", `/api/share/${INSTRUMENTS}/parts/zip?transpositions=C`);
+    await expect(page.getByTestId("shared-version").getByTestId("file-row")).toHaveCount(1);
   });
 
   test("a shared PDF opens in the reader", async ({ page }) => {

@@ -4,13 +4,13 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Ban, CalendarPlus } from "lucide-react";
+import { Ban, CalendarPlus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDialogs } from "@/components/dialogs.client";
-import { extendShareLinkAction, revokeShareLinkAction } from "@/app/(app)/manage/actions.server";
+import { extendShareLinkAction, renameShareLinkAction, revokeShareLinkAction } from "@/app/(app)/manage/actions.server";
 
 /**
- * Extends a share link to a number of months from now, or revokes it.
+ * Renames a share link, extends it to a number of months from now, or revokes it.
  */
 export function ShareLinkActions({ id, name, revoked, maxMonths }: { id: string; name: string; revoked: boolean; maxMonths: number }) {
   const t = useTranslations("ShareLinks");
@@ -23,6 +23,26 @@ export function ShareLinkActions({ id, name, revoked, maxMonths }: { id: string;
   }
   return (
     <span className="flex flex-wrap gap-1">
+      <Button size="xs" variant="outline" disabled={pending} aria-label={t("renameOf", { name })} onClick={async () => {
+        const next = await dialogs.prompt({
+          title: t("renameTitle", { name }), label: t("name"), defaultValue: name, confirmLabel: t("rename"), maxLength: 200,
+        });
+
+        if (next && next !== name) {
+          startTransition(async () => {
+            const result = await renameShareLinkAction(id, next);
+
+            if (result.ok) {
+              toast.success(t("renamed"));
+              router.refresh();
+            } else {
+              toast.error(result.message);
+            }
+          });
+        }
+      }}>
+        <Pencil /> {t("rename")}
+      </Button>
       <Button size="xs" variant="outline" disabled={pending} aria-label={t("extendOf", { name })} onClick={async () => {
         const months = await dialogs.prompt({
           title: t("extendTitle", { name }), label: t("extendLabel", { max: maxMonths }), defaultValue: "12",

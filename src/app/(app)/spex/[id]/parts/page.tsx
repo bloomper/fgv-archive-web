@@ -44,14 +44,8 @@ export default async function SpexPartsPage({ params, searchParams }: {
     const locale = await getLocale();
     const instruments = data.instruments;
     const chosen = instruments.filter(instrument => filter.instrumentIds.includes(instrument.id));
-    // The version the zip takes: the one used in the spex, else the recommended one, else the newest the user may open
-    const rows = spex.arrangements.map(arrangement => {
-      const openable = arrangement.versions.filter(version => version.canOpen);
-      const version = openable.find(candidate => candidate.usedInSpexId === spex.id)
-        ?? openable.find(candidate => candidate.recommended) ?? openable[0];
-
-      return { arrangement, version };
-    });
+    // The version the zip takes from each arrangement, as the server chooses it (Arrangement.partsVersion)
+    const rows = spex.arrangements.map(arrangement => ({ arrangement, version: arrangement.partsVersion }));
     const count = rows.reduce((sum, row) => sum + (row.version?.files.length ?? 0), 0);
     const describe = [...chosen.map(instrument => localName(instrument, locale)),
       ...filter.transpositions.map(pitch => noteName(pitch, locale))].join(", ");

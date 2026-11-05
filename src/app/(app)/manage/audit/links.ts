@@ -1,6 +1,6 @@
 /** The kinds of record Spexarkivet's change log has. */
 export const ENTITY_TYPES = ["MANUSCRIPT", "ARRANGEMENT", "VERSION", "FILE", "NUMBER", "SHARE_LINK", "INSTRUMENT",
-  "FILE_ROLE", "SETTINGS", "TRASH"] as const;
+  "FILE_ROLE", "SETTINGS", "TRASH", "ACCESS_REQUEST"] as const;
 
 /**
  * Where a record in the change log can be seen. Files and numbers are shown on their version's and spex' pages, which
@@ -24,6 +24,8 @@ export function auditLink(entityType: string, entityId: string): string | null {
       return "/admin/file-roles";
     case "SETTINGS":
       return "/admin/settings";
+    case "ACCESS_REQUEST":
+      return "/manage/access-requests?show=all";
     default:
       return null;
   }
