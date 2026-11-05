@@ -175,7 +175,7 @@ export function InstrumentsPicker({ instruments, value, onChange, id }: {
           })}
         </ul>
       )}
-      <NativeSelect id={id} aria-label={t("add")} value="" onChange={event => {
+      <NativeSelect id={id} aria-label={value.length ? t("addMore") : t("add")} value="" onChange={event => {
         if (event.target.value) {
           onChange([...value, event.target.value]);
         }

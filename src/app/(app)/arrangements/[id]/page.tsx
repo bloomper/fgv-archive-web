@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Download, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { FileList, PartsByInstrument } from "@/components/archive/file-list";
 import { instrumentationText, VersionBadges, VersionFacts } from "@/components/archive/version-meta";
 import { AccessRequest } from "@/components/archive/access-request.client";
@@ -130,30 +130,27 @@ export default async function ArrangementPage({ params, searchParams }: {
                   {version.label} <VersionBadges version={version} />
                 </h2>
                 {editor && (
-                  <Button size="sm" variant="outline" nativeButton={false} render={<Link href={versionEditHref(version.id)} />}>
-                    <Pencil /> {t("edit")}
-                  </Button>
+                  <Link href={versionEditHref(version.id)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+          <Pencil /> {t("edit")}
+         </Link>
                 )}
               </div>
               <VersionFacts version={version} />
               {!version.canOpen && <AccessRequest files={version.files.map(({ id, title }) => ({ id, title }))} />}
               {version.canOpen && version.allFiles.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="outline" nativeButton={false}
-                          render={<a href={versionZipHref(version.id)} download data-umami-event="version-download" />}>
-                    <Download /> {t("downloadVersion")}
-                  </Button>
+                  <a href={versionZipHref(version.id)} download data-umami-event="version-download" className={buttonVariants({ variant: "outline", size: "sm" })}>
+          <Download /> {t("downloadVersion")}
+         </a>
                   {partCount > 0 && (
-                    <Button size="sm" variant="outline" nativeButton={false}
-                            render={<a href={versionPartsZipHref(version.id, "")} download data-umami-event="parts-download" />}>
-                      <Download /> {t("downloadAllParts", { count: partCount })}
-                    </Button>
+                    <a href={versionPartsZipHref(version.id, "")} download data-umami-event="parts-download" className={buttonVariants({ variant: "outline", size: "sm" })}>
+           <Download /> {t("downloadAllParts", { count: partCount })}
+          </a>
                   )}
                   {filtered && parts.length > 0 && (
-                    <Button size="sm" nativeButton={false}
-                            render={<a href={versionPartsZipHref(version.id, query)} download data-umami-event="filtered-parts-download" />}>
-                      <Download /> {t("downloadFiltered", { count: parts.length })}
-                    </Button>
+                    <a href={versionPartsZipHref(version.id, query)} download data-umami-event="filtered-parts-download" className={buttonVariants({ size: "sm" })}>
+           <Download /> {t("downloadFiltered", { count: parts.length })}
+          </a>
                   )}
                 </div>
               )}

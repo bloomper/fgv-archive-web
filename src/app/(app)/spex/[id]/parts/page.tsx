@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { FileRow } from "@/components/archive/file-list";
 import { PartFilterControls } from "@/components/archive/part-filter.client";
 import { ShareLinkButton } from "@/components/archive/share-link-dialog.client";
@@ -67,11 +67,12 @@ export default async function SpexPartsPage({ params, searchParams }: {
         <PartFilterControls instruments={instruments} />
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button nativeButton={false} disabled={count === 0}
-                  render={<a href={spexPartsZipHref(spex.id, partFilterToApiQuery(filter))} download
-                             data-umami-event="spex-parts-download" />}>
-            <Download /> {isEmptyFilter(filter) ? t("downloadAll") : t("download", { what: describe })}
-          </Button>
+          {count > 0 && (
+            <a href={spexPartsZipHref(spex.id, partFilterToApiQuery(filter))} download data-umami-event="spex-parts-download"
+               className={buttonVariants()}>
+              <Download /> {isEmptyFilter(filter) ? t("downloadAll") : t("download", { what: describe })}
+            </a>
+          )}
           <span className="text-sm text-muted-foreground" aria-live="polite">{t("count", { count })}</span>
           {isEditor(authz.roles) && (
             <ShareLinkButton input={{ spexId: spex.id, instrumentIds: filter.instrumentIds, transpositions: filter.transpositions }}

@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 /**
  * Logs in and comes back to the page the user opened, e.g. a version linked from an email.
@@ -14,5 +14,5 @@ export function LoginButton() {
   const here = params.size ? `${pathname}?${params}` : pathname;
   const href = here && here !== "/" ? `/api/auth/login?returnTo=${encodeURIComponent(here)}` : "/api/auth/login";
 
-  return <Button nativeButton={false} render={<a href={href} />}>{t("login")}</Button>;
+  return <a href={href} className={buttonVariants()}>{t("login")}</a>;
 }

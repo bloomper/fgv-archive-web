@@ -20,7 +20,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/utils/utils";
 import { openPdf, renderPage } from "./pdf.client";
@@ -157,7 +157,7 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
     return Math.max(0.1, (view === "page" ? byPage : Math.min(byWidth, 1.6)) * zoom);
   }, [base, area, view, zoom]);
 
-  const goTo = useCallback((target: number, smooth = true) => {
+  const goTo = useCallback((target: number) => {
     if (numPages === 0) {
       return;
     }
@@ -167,7 +167,7 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
     setPage(next);
     setPageInput(String(next));
     if (view === "scroll") {
-      pageRefs.current.get(next)?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+      pageRefs.current.get(next)?.scrollIntoView({ block: "start" });
     }
   }, [numPages, view]);
 
@@ -193,7 +193,7 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
     }
   }, [pdf, view, area.width, page]);
 
-  // In the scroll view, the current page is the one most in sight
+  // In the scroll view, the current page is the one under a line a third down the viewport
   useEffect(() => {
     const root = viewportRef.current;
 
@@ -201,23 +201,29 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
       return;
     }
 
-    const ratios = new Map<number, number>();
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) {
-        ratios.set(Number((entry.target as HTMLElement).dataset.page), entry.intersectionRatio);
-      }
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const line = root.getBoundingClientRect().top + root.clientHeight / 3;
+        let current = 1;
 
-      const best = [...ratios.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0];
+        pageRefs.current.forEach((element, number) => {
+          if (element.getBoundingClientRect().top <= line && number > current) {
+            current = number;
+          }
+        });
+        setPage(current);
+        setPageInput(String(current));
+      });
+    };
 
-      if (best && best[1] > 0) {
-        setPage(best[0]);
-        setPageInput(String(best[0]));
-      }
-    }, { root, threshold: [0, 0.25, 0.5, 0.75, 1] });
-
-    pageRefs.current.forEach(element => observer.observe(element));
-    return () => observer.disconnect();
-  }, [pdf, view, scale]);
+    root.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      root.removeEventListener("scroll", onScroll);
+    };
+  }, [pdf, view]);
 
   const toggleFullscreen = useCallback(() => {
     if (document.fullscreenElement) {
@@ -293,10 +299,9 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
       <div role="toolbar" aria-label={t("toolbar")}
            className="flex flex-wrap items-center gap-1 border-b bg-background px-2 py-1.5 sm:gap-2 sm:px-3">
         {!fullscreen && (
-          <Button variant="ghost" size="sm" nativeButton={false} render={<Link href={backHref} />}
-                  aria-label={backLabel} title={backLabel}>
-            <ArrowLeft />
-          </Button>
+          <Link href={backHref} aria-label={backLabel} title={backLabel} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+      <ArrowLeft />
+     </Link>
         )}
         <div className="mr-auto min-w-0 flex-1 basis-40">
           <h1 className="truncate text-sm font-semibold sm:text-base">{title}</h1>
@@ -351,11 +356,9 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
           {fullscreen ? <Minimize /> : <Maximize />}
         </Button>
         {downloadHref && (
-          <Button variant="ghost" size="icon-sm" nativeButton={false}
-                  render={<a href={downloadHref} download data-umami-event="file-download" />}
-                  aria-label={t("download")} title={t("download")}>
-            <Download />
-          </Button>
+          <a href={downloadHref} download data-umami-event="file-download" aria-label={t("download")} title={t("download")} className={buttonVariants({ variant: "ghost", size: "icon-sm" })}>
+      <Download />
+     </a>
         )}
       </div>
 
@@ -366,7 +369,7 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
             <ol className="space-y-2">
               {pages.map(number => (
                 <li key={number}>
-                  <button type="button" onClick={() => goTo(number, false)}
+                  <button type="button" onClick={() => goTo(number)}
                           aria-current={number === page ? "page" : undefined}
                           aria-label={t("goToPage", { page: number })}
                           className={cn("block w-full rounded-md border-2 p-1 text-center text-xs",
@@ -387,9 +390,9 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
               <div className="space-y-3">
                 <p role="alert" className="font-medium">{t("error")}</p>
                 {downloadHref && (
-                  <Button variant="outline" nativeButton={false} render={<a href={downloadHref} download />}>
-                    <Download /> {t("download")}
-                  </Button>
+                  <a href={downloadHref} download className={buttonVariants({ variant: "outline" })}>
+          <Download /> {t("download")}
+         </a>
                 )}
               </div>
             </div>

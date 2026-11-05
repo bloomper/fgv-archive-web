@@ -60,7 +60,7 @@ export default async function HomePage() {
 
         <HomeSection id="recent" title={t("recent")} more={{ href: "/spex?material=1", label: t("allSpex") }}>
           {home && home.recentVersions.length > 0 ? (
-            <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {home.recentVersions.map(version => {
                 const manuscript = version.manuscript;
                 const number = version.arrangement?.number;
@@ -69,12 +69,12 @@ export default async function HomePage() {
                 const keys = formatKeys(version.key, version.modulations, locale);
 
                 return (
-                  <li key={version.id}>
+                  <li key={version.id} className="min-w-0">
                     <Link href={href} className="flex h-full gap-3 rounded-lg border bg-card p-3 hover:bg-accent">
                       {manuscript
                         ? <ScrollText className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
                         : <FileMusic className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />}
-                      <span className="min-w-0 space-y-0.5">
+                      <span className="block min-w-0 flex-1 space-y-0.5">
                         <span className="block truncate font-medium">{manuscript?.title ?? number?.title}</span>
                         <span className="block truncate text-sm text-muted-foreground">
                           {[manuscript ? t("manuscript") : t("arrangement"), spexName(spex), version.label].filter(Boolean).join(" · ")}

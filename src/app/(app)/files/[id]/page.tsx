@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { FileList } from "@/components/archive/file-list";
 import { AccessRequest } from "@/components/archive/access-request.client";
 import { PdfReader } from "@/components/reader/pdf-reader.client";
@@ -52,9 +52,9 @@ export default async function FilePage({ params, searchParams }: {
         {file.canOpen ? (
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">{t("notReadable")}</p>
-            <Button nativeButton={false} render={<a href={fileDownloadHref(file.id)} download data-umami-event="file-download" />}>
-              <Download /> {t("download")}
-            </Button>
+            <a href={fileDownloadHref(file.id)} download data-umami-event="file-download" className={buttonVariants()}>
+       <Download /> {t("download")}
+      </a>
           </div>
         ) : <AccessRequest files={[{ id: file.id, title: file.title }]} />}
       </div>

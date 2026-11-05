@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Download, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { FileList } from "@/components/archive/file-list";
 import { VersionBadges, VersionFacts } from "@/components/archive/version-meta";
 import { AccessRequest } from "@/components/archive/access-request.client";
@@ -60,15 +60,14 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
               </h2>
               <div className="flex flex-wrap gap-2">
                 {version.canOpen && version.files.length > 0 && (
-                  <Button size="sm" variant="outline" nativeButton={false}
-                          render={<a href={versionZipHref(version.id)} download data-umami-event="version-download" />}>
-                    <Download /> {t("downloadVersion")}
-                  </Button>
+                  <a href={versionZipHref(version.id)} download data-umami-event="version-download" className={buttonVariants({ variant: "outline", size: "sm" })}>
+          <Download /> {t("downloadVersion")}
+         </a>
                 )}
                 {editor && (
-                  <Button size="sm" variant="outline" nativeButton={false} render={<Link href={versionEditHref(version.id)} />}>
-                    <Pencil /> {t("edit")}
-                  </Button>
+                  <Link href={versionEditHref(version.id)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+          <Pencil /> {t("edit")}
+         </Link>
                 )}
               </div>
             </div>

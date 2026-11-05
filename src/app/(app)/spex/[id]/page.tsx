@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Download, FilePlus, ListOrdered, ScrollText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { VersionBadges } from "@/components/archive/version-meta";
 import { CreateArrangementButton } from "@/components/archive/create-buttons.client";
 import { getSpexPage } from "@/lib/archive/archive.server";
@@ -58,15 +58,14 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
           )}
           <div className="flex flex-wrap gap-2 pt-1">
             {spex.arrangementCount > 0 && (
-              <Button variant="outline" size="sm" nativeButton={false} render={<Link href={spexPartsHref(spex.id)} />}>
-                <Download /> {t("downloadParts")}
-              </Button>
+              <Link href={spexPartsHref(spex.id)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+        <Download /> {t("downloadParts")}
+       </Link>
             )}
             {editor && (
-              <Button variant="outline" size="sm" nativeButton={false}
-                      render={<Link href={`/manage/manuscripts/new?spex=${original.id}`} />}>
-                <FilePlus /> {t("newManuscript")}
-              </Button>
+              <Link href={`/manage/manuscripts/new?spex=${original.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+        <FilePlus /> {t("newManuscript")}
+       </Link>
             )}
           </div>
         </header>
@@ -102,9 +101,9 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="numbers" className="text-lg font-semibold">{t("numbers")}</h2>
             {editor && (
-              <Button variant="outline" size="sm" nativeButton={false} render={<Link href={`/spex/${spex.id}/numbers`} />}>
-                <ListOrdered /> {t("editNumbers")}
-              </Button>
+              <Link href={`/spex/${spex.id}/numbers`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+        <ListOrdered /> {t("editNumbers")}
+       </Link>
             )}
           </div>
           {spex.numbersInherited && spex.numbers.length > 0 && (

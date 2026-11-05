@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { FileList, PartsByInstrument } from "@/components/archive/file-list";
 import { VersionFacts } from "@/components/archive/version-meta";
 import { PartFilterControls } from "@/components/archive/part-filter.client";
@@ -66,9 +66,9 @@ export default async function SharePage({ params, searchParams }: {
         <PartFilterControls instruments={instruments} pitches={pitches} />
       )}
       {onlyParts && (
-        <Button nativeButton={false} render={<a href={sharePartsZipHref(token, query)} download />}>
-          <Download /> {filtered ? t("downloadFilteredShow") : t("downloadAllShow")}
-        </Button>
+        <a href={sharePartsZipHref(token, query)} download className={buttonVariants()}>
+     <Download /> {filtered ? t("downloadFilteredShow") : t("downloadAllShow")}
+    </a>
       )}
 
       {versions.map(version => {
@@ -96,20 +96,18 @@ export default async function SharePage({ params, searchParams }: {
             </div>
             <VersionFacts version={{ ...version, usedIn: null }} showSpex={false} />
             <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="outline" nativeButton={false}
-                      render={<a href={versionZipHref(version.id, place)} download />}>
-                <Download /> {t("downloadVersion")}
-              </Button>
+              <a href={versionZipHref(version.id, place)} download className={buttonVariants({ variant: "outline", size: "sm" })}>
+        <Download /> {t("downloadVersion")}
+       </a>
               {versionParts.length > 0 && filtered && shownParts.length > 0 && (
-                <Button size="sm" nativeButton={false} render={<a href={versionPartsZipHref(version.id, query, place)} download />}>
-                  <Download /> {t("downloadFiltered", { count: shownParts.length })}
-                </Button>
+                <a href={versionPartsZipHref(version.id, query, place)} download className={buttonVariants({ size: "sm" })}>
+         <Download /> {t("downloadFiltered", { count: shownParts.length })}
+        </a>
               )}
               {versionParts.length > 0 && !filtered && others.length > 0 && (
-                <Button size="sm" variant="outline" nativeButton={false}
-                        render={<a href={versionPartsZipHref(version.id, "", place)} download />}>
-                  <Download /> {t("downloadAllParts", { count: versionParts.length })}
-                </Button>
+                <a href={versionPartsZipHref(version.id, "", place)} download className={buttonVariants({ variant: "outline", size: "sm" })}>
+         <Download /> {t("downloadAllParts", { count: versionParts.length })}
+        </a>
               )}
             </div>
             {!filtered && others.length > 0 && <FileList files={others} place={place} label={t("files")} />}

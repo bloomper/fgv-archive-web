@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { PdfReader } from "@/components/reader/pdf-reader.client";
 import { getSharedView } from "@/lib/share/share.server";
 import { fileDownloadHref, fileRawHref, isPdf, spexName } from "@/utils/links";
@@ -39,7 +39,7 @@ export default async function SharedFilePage({ params, searchParams }: {
     return (
       <div className="mx-auto max-w-xl space-y-4 p-6">
         <h1 className="text-2xl font-semibold">{file.title}</h1>
-        <Button nativeButton={false} render={<a href={fileDownloadHref(file.id, place)} download />}><Download /> {t("download")}</Button>
+        <a href={fileDownloadHref(file.id, place)} download className={buttonVariants()}><Download /> {t("download")}</a>
       </div>
     );
   }
