@@ -6,7 +6,13 @@ import { apiFetch } from "@/lib/api.server";
 export const ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const PASSED_HEADERS = ["content-type", "content-length", "content-range", "accept-ranges", "content-disposition",
-  "cache-control", "etag", "last-modified"];
+  "cache-control", "etag", "last-modified", "content-security-policy"];
+
+/**
+ * What a file served on the web's own origin may do: nothing. Added to the API's own policy (both apply), so that an
+ * uploaded file that a browser would render, e.g. XML with an XHTML script, can never run here.
+ */
+export const FILE_CSP = "sandbox; default-src 'none'";
 
 /**
  * Whether a request that changes something comes from this application's own pages. Route handlers get none of the
@@ -69,6 +75,7 @@ export async function streamFromApi(request: NextRequest, path: string,
       out.set(name, value);
     }
   }
+  out.append("Content-Security-Policy", FILE_CSP);
   out.set("X-Content-Type-Options", "nosniff");
   return new Response(upstream.body, { status: upstream.status, headers: out });
 }

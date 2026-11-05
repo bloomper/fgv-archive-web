@@ -35,7 +35,8 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
   `useServerState` (`src/hooks/use-server-state.client.ts`), never `useState(prop)`; a form whose fields start from the
   server's values is keyed by the record's `lastModifiedAt` (`VersionForm`) or its content (`SettingsForm`).
 - Locale is a cookie (`sv` default); messages in `messages/{sv,en}.json`, kept in step by `src/__tests__/messages.test.ts`.
-- Auth: Better Auth + Keycloak, stateless. `getSessionContext()` in `src/utils/auth.server.ts` is the single entry
+- Auth: Better Auth + Keycloak, stateless. Its `/get-access-token`, `/refresh-token` and `/account-info` routes are
+  disabled (`disabledPaths` in `src/auth.ts`), so browsers never see the tokens; the server calls `auth.api` directly. `getSessionContext()` in `src/utils/auth.server.ts` is the single entry
   point; roles come from `resource_access["fgv-archive"].roles`: `USER` (access), `EDITOR`, `ADMIN`. Gate pages with
   `withPolicyPage(Policies.<area>.require…)`; `Policies` are `app.requireAccess`, `editor.requireEditor`,
   `admin.requireAdmin`. The server enforces every rule anyway.
@@ -55,10 +56,15 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
   A part matches when it carries any chosen instrument and is written in any chosen pitch.
 - **Files** never go to the browser from the API directly: `/api/files/[id]` (`?download=true`), `/api/files/[id]/preview`,
   `/api/versions/[id]/zip`, `/api/versions/[id]/parts/zip`, `/api/spex/[id]/parts/zip` stream the server's answer with
-  the user's token (`streamFromApi`, passing `Range`, `Content-Range`, `Accept-Ranges` and `Content-Disposition`).
+  the user's token (`streamFromApi`, passing `Range`, `Content-Range`, `Accept-Ranges`, `Content-Disposition` and the
+  server's `Content-Security-Policy`). Every such answer also gets `Content-Security-Policy: sandbox; default-src
+  'none'` and `nosniff` from the web (`FILE_CSP`): files are served on the web's origin, and the page CSP in `proxy.ts`
+  does not cover `/api/*`. The server serves only PDFs and images inline.
   Addresses are built in `src/utils/links.ts`.
 - **The reader** (`src/components/reader/`) is pdf.js (`pdfjs-dist`), loaded only in the browser, with its worker, fonts,
-  CMaps and decoders from `public/pdfjs` (the CSP allows nothing else; `'wasm-unsafe-eval'` is for its decoders). It
+  CMaps and decoders from `public/pdfjs` (the CSP allows nothing else; `'wasm-unsafe-eval'`, for its decoders, only on
+  the reader's pages, `isReaderPath`; elsewhere pdf.js uses its JavaScript fallbacks). Scripts keep `'unsafe-inline'`:
+  a nonce needs every page rendered per request, which Cache Components' static shells rule out. It
   loads byte ranges (`disableAutoFetch`, `disableStream`), renders pages as they come into view with a text layer, has
   thumbnails, zoom (fit width / fit page), full screen, a page view for a music stand (tap the left or right quarter,
   arrow keys or a page-turner pedal) and keeps `?page=` in the address. Shortcuts: arrows, PageUp/PageDown, space,

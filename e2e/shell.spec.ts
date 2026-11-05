@@ -35,4 +35,29 @@ test.describe("The application shell", () => {
     await loginAs("user");
     await expect(page.locator("script[src='/stats/script.js']")).toHaveCount(0);
   });
+
+  test("never hands the tokens to the browser", async ({ page, loginAs }) => {
+    await loginAs("user");
+
+    for (const path of ["get-access-token", "refresh-token", "account-info"]) {
+      const response = await page.request.post(`/api/auth/${path}`, { data: { providerId: "keycloak" } });
+
+      expect(response.status(), path).toBe(404);
+    }
+    // The server still reads the token for the user's own requests
+    await page.goto("/spex");
+    await expect(page.getByRole("heading", { level: 1, name: "Spex", exact: true })).toBeVisible();
+    const session = await page.request.get("/api/auth/get-session");
+
+    expect(session.status()).toBe(200);
+  });
+
+  test("files are served sandboxed, so nothing in them runs", async ({ page, loginAs }) => {
+    await loginAs("user");
+
+    const response = await page.request.get("/api/files/00000000-0000-7000-8000-000000000611");
+
+    expect(response.headers()["content-security-policy"]).toContain("sandbox; default-src 'none'");
+    expect(response.headers()["x-content-type-options"]).toBe("nosniff");
+  });
 });

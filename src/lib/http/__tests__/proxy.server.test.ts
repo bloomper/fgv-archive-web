@@ -60,6 +60,18 @@ describe("streamFromApi", () => {
     expect(response.headers.get("content-range")).toBe("bytes 0-1/10");
     expect(response.headers.get("set-cookie")).toBeNull();
     expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(response.headers.get("content-security-policy")).toBe("sandbox; default-src 'none'");
+  });
+
+  it("keeps the server's own policy and adds the web's sandbox, so an XML file cannot run a script", async () => {
+    apiFetch.mockResolvedValue(new Response("<x:script xmlns:x=\"http://www.w3.org/1999/xhtml\">alert(1)</x:script>", {
+      headers: { "content-type": "application/xml", "content-security-policy": "sandbox" },
+    }));
+
+    const response = await streamFromApi(request(), "/api/files/1");
+
+    expect(response.headers.get("content-security-policy")).toBe("sandbox, sandbox; default-src 'none'");
+    expect(response.headers.get("x-content-type-options")).toBe("nosniff");
   });
 
   it("keeps headers the route sets over the server's", async () => {

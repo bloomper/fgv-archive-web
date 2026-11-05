@@ -13,6 +13,9 @@ const endpoint = (name: string) => `${issuer}/protocol/openid-connect/${name}`;
 export const auth = betterAuth({
   baseURL: appUrl,
   secret: process.env.AUTH_SECRET,
+  // The access and refresh tokens stay on the server: the web calls auth.api.getAccessToken itself, and browsers must
+  // not fetch them through these routes
+  disabledPaths: ["/get-access-token", "/refresh-token", "/account-info"],
   onAPIError: {
     errorURL: "/api/auth/login-error",
   },

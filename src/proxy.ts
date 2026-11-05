@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { contentSecurityPolicy } from "@/utils/csp";
+import { contentSecurityPolicy, isReaderPath } from "@/utils/csp";
 
 const AUTH_BASE_PATH = "/api/auth";
 const ACCOUNT_COOKIE = "account_data";
@@ -13,7 +13,7 @@ export async function proxy(request: NextRequest) {
 
   if (!request.nextUrl.pathname.startsWith("/api/")) {
     result.headers.set("Content-Security-Policy",
-      contentSecurityPolicy(process.env.NODE_ENV === "development"));
+      contentSecurityPolicy(process.env.NODE_ENV === "development", isReaderPath(request.nextUrl.pathname)));
   }
   return result;
 }
