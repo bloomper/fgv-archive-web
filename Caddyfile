@@ -1,0 +1,24 @@
+{
+    local_certs
+    http_port 0
+    https_port 9443
+}
+
+archive.fgv.local.nu:9443 {
+    tls internal
+    encode zstd gzip
+
+    root * /app
+
+    handle /_next/static/* {
+        file_server
+    }
+
+    handle /public/* {
+        file_server
+    }
+
+    handle {
+        reverse_proxy web:3000
+    }
+}

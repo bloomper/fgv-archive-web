@@ -1,0 +1,76 @@
+name: fgv-archive-web
+
+services:
+  web:
+    container_name: archive-web-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - HOSTNAME=0.0.0.0
+      - NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/caddy-root.crt
+      - BETTER_AUTH_URL=https://archive.fgv.local.nu:9443
+      - API_GRAPHQL_ENDPOINT=https://api.archive.fgv.local.nu:8443/api/graphql
+      - MEDIA_ORIGIN=https://api.archive.fgv.local.nu:8443
+      - KEYCLOAK_ISSUER=https://auth.fgv.local.nu:8443/auth/realms/fgv
+    env_file:
+      - .env
+      - .env.local
+    extra_hosts:
+      - "archive.fgv.local.nu:host-gateway"
+      - "auth.fgv.local.nu:host-gateway"
+      - "api.archive.fgv.local.nu:host-gateway"
+      - "analytics.fgv.local.nu:host-gateway"
+    restart: always
+    healthcheck:
+      test: [ "CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:3000/api/auth/ok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - ${INFRA_DEPLOY:-../fgv-infra-deploy}/local/.docker/caddy/data/caddy/pki/authorities/local/root.crt:/usr/local/share/ca-certificates/caddy-root.crt:ro
+      - web_app_static:/app/.next/static
+      - web_app_public:/app/public
+    networks:
+      - web_network
+
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - "9443:9443"
+      - "9443:9443/udp"
+    depends_on:
+      web:
+        condition: service_started
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+      - web_app_static:/app/_next/static:ro
+      - web_app_public:/app/public:ro
+    networks:
+      web_network:
+        aliases:
+          - archive.fgv.local.nu
+
+volumes:
+  caddy_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: .docker/caddy/data
+      o: bind
+  caddy_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: .docker/caddy/config
+      o: bind
+  web_app_static:
+  web_app_public:
+
+networks:
+  web_network:
+    driver: bridge
