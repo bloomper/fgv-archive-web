@@ -96,6 +96,17 @@ test.describe("Editing", () => {
     await expect(page.getByTestId("share-link").filter({ hasText: "Ali Baba 2028, bleck" })).toContainText("Giltig");
   });
 
+  test("an editor shares a spex' recommended versions", async ({ page, loginAs, mock }) => {
+    await loginAs("editor");
+    await page.goto(`/spex/${uuidOf(11)}`);
+    await page.getByRole("button", { name: "Dela spexets material (3 versioner)" }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "Skapa länken" }).click();
+    await expect(page.getByRole("dialog").getByLabel("Delningslänkens adress")).toHaveValue(/\/share\//);
+
+    const { shareLinks } = await mock.state();
+    expect(shareLinks[0].versionIds).toEqual([uuidOf(501), uuidOf(511), uuidOf(521)]);
+  });
+
   test("an editor revokes a share link in the app's own dialog", async ({ page, loginAs }) => {
     await loginAs("editor");
     await page.goto("/manage/share-links");

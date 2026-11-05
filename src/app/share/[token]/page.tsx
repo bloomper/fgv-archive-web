@@ -67,8 +67,8 @@ export default async function SharePage({ params, searchParams }: {
       )}
       {onlyParts && (
         <a href={sharePartsZipHref(token, query)} download className={buttonVariants()}>
-     <Download /> {filtered ? t("downloadFilteredShow") : t("downloadAllShow")}
-    </a>
+          <Download /> {filtered ? t("downloadFilteredShow") : t("downloadAllShow")}
+        </a>
       )}
 
       {versions.map(version => {
@@ -97,17 +97,17 @@ export default async function SharePage({ params, searchParams }: {
             <VersionFacts version={{ ...version, usedIn: null }} showSpex={false} />
             <div className="flex flex-wrap gap-2">
               <a href={versionZipHref(version.id, place)} download className={buttonVariants({ variant: "outline", size: "sm" })}>
-        <Download /> {t("downloadVersion")}
-       </a>
+                <Download /> {t("downloadVersion")}
+              </a>
               {versionParts.length > 0 && filtered && shownParts.length > 0 && (
                 <a href={versionPartsZipHref(version.id, query, place)} download className={buttonVariants({ size: "sm" })}>
-         <Download /> {t("downloadFiltered", { count: shownParts.length })}
-        </a>
+                  <Download /> {t("downloadFiltered", { count: shownParts.length })}
+                </a>
               )}
               {versionParts.length > 0 && !filtered && others.length > 0 && (
                 <a href={versionPartsZipHref(version.id, "", place)} download className={buttonVariants({ variant: "outline", size: "sm" })}>
-         <Download /> {t("downloadAllParts", { count: versionParts.length })}
-        </a>
+                  <Download /> {t("downloadAllParts", { count: versionParts.length })}
+                </a>
               )}
             </div>
             {!filtered && others.length > 0 && <FileList files={others} place={place} label={t("files")} />}

@@ -131,8 +131,8 @@ export default async function ArrangementPage({ params, searchParams }: {
                 </h2>
                 {editor && (
                   <Link href={versionEditHref(version.id)} className={buttonVariants({ variant: "outline", size: "sm" })}>
-          <Pencil /> {t("edit")}
-         </Link>
+                    <Pencil /> {t("edit")}
+                  </Link>
                 )}
               </div>
               <VersionFacts version={version} />
@@ -140,17 +140,17 @@ export default async function ArrangementPage({ params, searchParams }: {
               {version.canOpen && version.allFiles.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   <a href={versionZipHref(version.id)} download data-umami-event="version-download" className={buttonVariants({ variant: "outline", size: "sm" })}>
-          <Download /> {t("downloadVersion")}
-         </a>
+                    <Download /> {t("downloadVersion")}
+                  </a>
                   {partCount > 0 && (
                     <a href={versionPartsZipHref(version.id, "")} download data-umami-event="parts-download" className={buttonVariants({ variant: "outline", size: "sm" })}>
-           <Download /> {t("downloadAllParts", { count: partCount })}
-          </a>
+                      <Download /> {t("downloadAllParts", { count: partCount })}
+                    </a>
                   )}
                   {filtered && parts.length > 0 && (
                     <a href={versionPartsZipHref(version.id, query)} download data-umami-event="filtered-parts-download" className={buttonVariants({ size: "sm" })}>
-           <Download /> {t("downloadFiltered", { count: parts.length })}
-          </a>
+                      <Download /> {t("downloadFiltered", { count: parts.length })}
+                    </a>
                   )}
                 </div>
               )}

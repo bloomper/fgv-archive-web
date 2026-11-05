@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { VersionBadges } from "@/components/archive/version-meta";
 import { CreateArrangementButton } from "@/components/archive/create-buttons.client";
-import { getSpexPage } from "@/lib/archive/archive.server";
+import { getMe, getSpexPage } from "@/lib/archive/archive.server";
+import { ShareLinkButton } from "@/components/archive/share-link-dialog.client";
 import { isEditor } from "@/utils/auth";
 import { ID } from "@/utils/filters";
 import { arrangementHref, manuscriptHref, spexHref, spexName, spexPartsHref, versionAnchor } from "@/utils/links";
@@ -31,6 +32,15 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
     const locale = await getLocale();
     const editor = isEditor(authz.roles);
     const original = spex.original ?? spex;
+    // A share link for the spex: the recommended (else newest) published version of each manuscript and arrangement
+    const pick = <T extends { id: string; recommended: boolean; published: boolean; trashed: boolean }>(versions: T[]) =>
+      versions.filter(version => version.published && !version.trashed)
+        .sort((a, b) => Number(b.recommended) - Number(a.recommended))[0]?.id;
+    const shareable = [
+      ...spex.manuscripts.map(manuscript => pick(manuscript.versions)),
+      ...spex.numbers.map(number => number.arrangement && pick(number.arrangement.versions)),
+    ].filter((id): id is string => Boolean(id));
+    const maxMonths = editor ? (await getMe())?.settings.maxShareLinkMonths ?? 24 : 24;
 
     return (
       <div className="space-y-8 p-4 sm:p-6">
@@ -59,13 +69,18 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
           <div className="flex flex-wrap gap-2 pt-1">
             {spex.arrangementCount > 0 && (
               <Link href={spexPartsHref(spex.id)} className={buttonVariants({ variant: "outline", size: "sm" })}>
-        <Download /> {t("downloadParts")}
-       </Link>
+                <Download /> {t("downloadParts")}
+              </Link>
             )}
             {editor && (
-              <Link href={`/manage/manuscripts/new?spex=${original.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
-        <FilePlus /> {t("newManuscript")}
-       </Link>
+              <Link href={`/manage/manuscripts/new?spex=${original.id}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}>
+                <FilePlus /> {t("newManuscript")}
+              </Link>
+            )}
+            {editor && shareable.length > 0 && (
+              <ShareLinkButton input={{ versionIds: shareable }} defaultName={spexName(spex)} maxMonths={maxMonths}
+                               label={t("share", { count: shareable.length })} />
             )}
           </div>
         </header>
@@ -102,8 +117,8 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
             <h2 id="numbers" className="text-lg font-semibold">{t("numbers")}</h2>
             {editor && (
               <Link href={`/spex/${spex.id}/numbers`} className={buttonVariants({ variant: "outline", size: "sm" })}>
-        <ListOrdered /> {t("editNumbers")}
-       </Link>
+                <ListOrdered /> {t("editNumbers")}
+              </Link>
             )}
           </div>
           {spex.numbersInherited && spex.numbers.length > 0 && (

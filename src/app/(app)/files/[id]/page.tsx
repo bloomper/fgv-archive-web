@@ -53,8 +53,8 @@ export default async function FilePage({ params, searchParams }: {
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">{t("notReadable")}</p>
             <a href={fileDownloadHref(file.id)} download data-umami-event="file-download" className={buttonVariants()}>
-       <Download /> {t("download")}
-      </a>
+              <Download /> {t("download")}
+            </a>
           </div>
         ) : <AccessRequest files={[{ id: file.id, title: file.title }]} />}
       </div>

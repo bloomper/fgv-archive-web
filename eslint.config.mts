@@ -31,6 +31,8 @@ export default defineConfig([
     globalIgnores([
         "node_modules/**",
         ".next/**",
+        // pdf.js, copied by scripts/copy-pdfjs.mjs
+        "public/pdfjs/**",
         "out/**",
         "build/**",
         "next-env.d.ts",

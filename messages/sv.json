@@ -177,7 +177,8 @@
     "missing": "Arrangemang saknas",
     "versions": "{count, plural, one {# version} other {# versioner}}",
     "createArrangement": "Skapa arrangemang",
-    "createArrangementOf": "Skapa arrangemang för {title}"
+    "createArrangementOf": "Skapa arrangemang för {title}",
+    "share": "Dela spexets material ({count, plural, one {# version} other {# versioner}})"
   },
   "Numbers": {
     "title": "Nummer i {spex}",

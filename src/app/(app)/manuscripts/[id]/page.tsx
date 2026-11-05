@@ -61,13 +61,13 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
               <div className="flex flex-wrap gap-2">
                 {version.canOpen && version.files.length > 0 && (
                   <a href={versionZipHref(version.id)} download data-umami-event="version-download" className={buttonVariants({ variant: "outline", size: "sm" })}>
-          <Download /> {t("downloadVersion")}
-         </a>
+                    <Download /> {t("downloadVersion")}
+                  </a>
                 )}
                 {editor && (
                   <Link href={versionEditHref(version.id)} className={buttonVariants({ variant: "outline", size: "sm" })}>
-          <Pencil /> {t("edit")}
-         </Link>
+                    <Pencil /> {t("edit")}
+                  </Link>
                 )}
               </div>
             </div>

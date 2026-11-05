@@ -177,7 +177,8 @@
     "missing": "Arrangement missing",
     "versions": "{count, plural, one {# version} other {# versions}}",
     "createArrangement": "Create arrangement",
-    "createArrangementOf": "Create the arrangement of {title}"
+    "createArrangementOf": "Create the arrangement of {title}",
+    "share": "Share the spex' material ({count, plural, one {# version} other {# versions}})"
   },
   "Numbers": {
     "title": "Numbers of {spex}",

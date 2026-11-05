@@ -300,8 +300,8 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
            className="flex flex-wrap items-center gap-1 border-b bg-background px-2 py-1.5 sm:gap-2 sm:px-3">
         {!fullscreen && (
           <Link href={backHref} aria-label={backLabel} title={backLabel} className={buttonVariants({ variant: "ghost", size: "sm" })}>
-      <ArrowLeft />
-     </Link>
+            <ArrowLeft />
+          </Link>
         )}
         <div className="mr-auto min-w-0 flex-1 basis-40">
           <h1 className="truncate text-sm font-semibold sm:text-base">{title}</h1>
@@ -357,8 +357,8 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
         </Button>
         {downloadHref && (
           <a href={downloadHref} download data-umami-event="file-download" aria-label={t("download")} title={t("download")} className={buttonVariants({ variant: "ghost", size: "icon-sm" })}>
-      <Download />
-     </a>
+            <Download />
+          </a>
         )}
       </div>
 
@@ -391,8 +391,8 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
                 <p role="alert" className="font-medium">{t("error")}</p>
                 {downloadHref && (
                   <a href={downloadHref} download className={buttonVariants({ variant: "outline" })}>
-          <Download /> {t("download")}
-         </a>
+                    <Download /> {t("download")}
+                  </a>
                 )}
               </div>
             </div>
