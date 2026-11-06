@@ -6,7 +6,7 @@
     "node": ">=26"
   },
   "scripts": {
-    "dev": "node scripts/copy-pdfjs.mjs && NODE_EXTRA_CA_CERTS=\"${INFRA_DEPLOY:-$(pwd)/../fgv-infra-deploy}/local/.docker/caddy/data/caddy/pki/authorities/local/root.crt\" next dev --port 3005",
+    "dev": "node scripts/copy-pdfjs.mjs && NODE_EXTRA_CA_CERTS=\"${INFRA_DEPLOY:-$(pwd)/../../fgv-infra-deploy}/local/.docker/caddy/data/caddy/pki/authorities/local/root.crt\" next dev --port 3005",
     "build": "node scripts/copy-pdfjs.mjs && next build",
     "start": "next start",
     "lint": "eslint",
