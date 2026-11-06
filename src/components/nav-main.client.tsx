@@ -1,0 +1,169 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { ChevronRight, type LucideIcon } from "lucide-react";
+
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  SidebarGroup,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+} from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+
+interface NavItem {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  isActive?: boolean;
+  items?: NavItem[];
+}
+
+/** A sub-entry stays highlighted on the pages beneath it, e.g. the guide administration entry on `/admin/guide/draft/…`. */
+const isWithin = (pathname: string, url: string) => pathname === url || pathname.startsWith(`${url}/`);
+
+export function NavMain({ items }: { items: NavItem[] }) {
+  const pathname = usePathname();
+
+  return (
+    <SidebarGroup>
+      <SidebarMenu>
+        {items.map((item) => (
+          <NavMainItem key={item.title} item={item} pathname={pathname} />
+        ))}
+      </SidebarMenu>
+    </SidebarGroup>
+  );
+}
+
+function NavMainItem({ item, pathname }: { item: NavItem; pathname: string }) {
+  const t = useTranslations();
+  const isInternal = item.url.startsWith("/");
+  const hasSubItems = !!item.items?.length;
+  const LinkComponent = isInternal ? Link : "a";
+  const linkProps = { href: item.url };
+
+  const isActive = Boolean(item.isActive || item.items?.some(sub => isWithin(pathname, sub.url) || sub.items?.some(inner => isWithin(pathname, inner.url))));
+
+  const [open, setOpen] = useState(isActive);
+  const [wasActive, setWasActive] = useState(isActive);
+
+  if (isActive !== wasActive) {
+    setWasActive(isActive);
+    if (isActive) {
+      setOpen(true);
+    }
+  }
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="group/menu-item" render={<SidebarMenuItem />}>
+      {hasSubItems ? (
+        <div
+          className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isActive ? "bg-sidebar-accent" : ""}`}>
+          <SidebarMenuButton tooltip={item.title} isActive={isActive}
+                             className="hover:bg-transparent! active:bg-transparent!"
+                             render={<LinkComponent {...linkProps} />}>
+            {item.icon && <item.icon />}
+            <span>{item.title}</span>
+          </SidebarMenuButton>
+          <CollapsibleTrigger
+            render={
+              <button
+                className="mr-1 flex size-7 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform group-data-[collapsible=icon]:hidden" />
+            }
+          >
+            <ChevronRight
+              className="size-4 transition-transform duration-200 group-data-open/menu-item:rotate-90" />
+            <span className="sr-only">{t("Common.toggle")}</span>
+          </CollapsibleTrigger>
+        </div>
+      ) : (
+        <SidebarMenuButton tooltip={item.title} isActive={item.isActive ?? pathname === item.url}
+                           render={<LinkComponent {...linkProps} />}>
+          {item.icon && <item.icon />}
+          <span>{item.title}</span>
+        </SidebarMenuButton>
+      )}
+
+      {hasSubItems && (
+        <CollapsibleContent>
+          <SidebarMenuSub className="mr-0! pr-0!">
+            {item.items?.map((subItem) => (
+              <NavSubItem key={subItem.title} item={subItem} pathname={pathname} />
+            ))}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      )}
+    </Collapsible>
+  );
+}
+
+function NavSubItem({ item, pathname }: { item: NavItem; pathname: string }) {
+  const t = useTranslations();
+  const hasInnerItems = !!item.items?.length;
+  const isSubActive = Boolean(isWithin(pathname, item.url) || item.items?.some(inner => isWithin(pathname, inner.url)));
+
+  const [subOpen, setSubOpen] = useState(isSubActive);
+  const [wasSubActive, setWasSubActive] = useState(isSubActive);
+
+  if (isSubActive !== wasSubActive) {
+    setWasSubActive(isSubActive);
+    if (isSubActive) {
+      setSubOpen(true);
+    }
+  }
+
+  if (!hasInnerItems) {
+    return (
+      <SidebarMenuSubItem>
+        <SidebarMenuSubButton isActive={isWithin(pathname, item.url)} render={<Link href={item.url} />}>
+          {item.icon && <item.icon className="size-4" />}
+          <span>{item.title}</span>
+        </SidebarMenuSubButton>
+      </SidebarMenuSubItem>
+    );
+  }
+
+  return (
+    <SidebarMenuSubItem>
+      <Collapsible open={subOpen} onOpenChange={setSubOpen} className="group/sub-menu-item">
+        <div
+          className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isSubActive ? "bg-sidebar-accent" : ""}`}>
+          <Link href={item.url}
+                className="flex flex-1 items-center gap-2 px-2 py-1.5 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring">
+            {item.icon && <item.icon className="size-4" />}
+            <span className="truncate">{item.title}</span>
+          </Link>
+          <CollapsibleTrigger
+            render={
+              <button
+                className="mr-1 flex size-6 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform" />
+            }
+          >
+            <ChevronRight
+              className="size-4 transition-transform duration-200 group-data-open/sub-menu-item:rotate-90" />
+            <span className="sr-only">{t("Common.toggle")}</span>
+          </CollapsibleTrigger>
+        </div>
+        <CollapsibleContent>
+          <SidebarMenuSub className="mr-0! pr-0!">
+            {item.items?.map((innerItem) => (
+              <SidebarMenuSubItem key={innerItem.title}>
+                <SidebarMenuSubButton isActive={isWithin(pathname, innerItem.url)}
+                                      render={<Link href={innerItem.url} />}>
+                  <span>{innerItem.title}</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </Collapsible>
+    </SidebarMenuSubItem>
+  );
+}
