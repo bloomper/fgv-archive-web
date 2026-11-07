@@ -22,7 +22,8 @@ describe("AppSwitcher", () => {
   it("is just the title when there is no other application", () => {
     render(<AppSwitcher title="Spexregister" applications={[{ id: "spexregister", url: "/", current: true }]} />);
 
-    expect(screen.getByRole("heading", { level: 1, name: "Spexregister" })).toBeInTheDocument();
+    expect(screen.getByText("Spexregister")).toBeInTheDocument();
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 

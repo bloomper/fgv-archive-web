@@ -49,7 +49,8 @@
   },
   "Header": {
     "toggleLanguage": "Change language",
-    "toggleTheme": "Change theme"
+    "toggleTheme": "Change theme",
+    "toggleSidebar": "Show or hide the menu"
   },
   "AppSwitcher": {
     "heading": "Switch application",

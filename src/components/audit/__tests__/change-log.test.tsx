@@ -143,6 +143,7 @@ describe("ChangeLog", () => {
     await renderLog({ page: "-3", actor: "u1" });
     expect(getAuditLog).toHaveBeenCalledWith(0, 50, expect.objectContaining({ actorId: null }));
     expect(screen.getByText("none")).toBeInTheDocument();
+    expect(screen.queryByText(/^count:/)).not.toBeInTheDocument();
   });
 
   it("says that nothing matches a filter, also when the log could not be read", async () => {
@@ -150,7 +151,7 @@ describe("ChangeLog", () => {
 
     await renderLog({ action: "TRASH" });
     expect(screen.getByText("noneFiltered")).toBeInTheDocument();
-    expect(screen.getByText("count:{\"count\":0}")).toBeInTheDocument();
+    expect(screen.queryByText(/^count:/)).not.toBeInTheDocument();
   });
 });
 

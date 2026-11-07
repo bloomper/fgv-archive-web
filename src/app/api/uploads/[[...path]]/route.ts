@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiFetch } from "@/lib/api.server";
-import { crossSite, sameOrigin } from "@/lib/http/proxy.server";
+import { crossSite, FILE_CSP, sameOrigin } from "@/lib/http/proxy.server";
 
 const UPLOAD_ID = /^[0-9a-f-]{36}$/;
 const TUS_REQUEST_HEADERS = ["tus-resumable", "upload-length", "upload-metadata", "upload-offset", "content-type", "content-length"];
@@ -50,6 +50,9 @@ async function forward(request: NextRequest, { params }: Params): Promise<Respon
     }
   }
   out.set("Access-Control-Expose-Headers", TUS_RESPONSE_HEADERS.join(", "));
+  // The answer has no type of its own (an error is the server's text); never let a browser render it as a page
+  out.set("Content-Security-Policy", FILE_CSP);
+  out.set("X-Content-Type-Options", "nosniff");
   return new Response(request.method === "HEAD" ? null : upstream.body, { status: upstream.status, headers: out });
 }
 

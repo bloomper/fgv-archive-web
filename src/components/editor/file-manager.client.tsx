@@ -419,7 +419,7 @@ export function FileManager({ versionId, files, roles, instruments, maxUploadMb,
                 className={cn("space-y-3 px-2 py-2", dragged === file.id && "opacity-50")} data-testid="managed-file">
               <div className="flex flex-wrap items-center gap-2">
                 <GripVertical className="size-4 shrink-0 cursor-grab text-muted-foreground" aria-hidden />
-                <Checkbox checked={selected.includes(file.id)} aria-label={t("select", { title: file.title })}
+                <Checkbox className="relative after:absolute after:-inset-3" checked={selected.includes(file.id)} aria-label={t("select", { title: file.title })}
                           onCheckedChange={checked => setSelected(list => checked === true ? [...list, file.id] : list.filter(id => id !== file.id))} />
                 <div className="min-w-0 flex-1 basis-48">
                   <p className="font-medium">{file.title}</p>
