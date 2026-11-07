@@ -16,7 +16,8 @@ export default async function NewManuscriptPage({ searchParams }: { searchParams
       <div className="space-y-6 p-4 sm:p-6">
         <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
         <p className="max-w-2xl text-sm text-muted-foreground">{t("text")}</p>
-        <NewManuscript spex={original ? {
+        {/* Keyed by the spex: Next keeps this page alive, and the picker starts from the address' spex */}
+        <NewManuscript key={original?.id ?? ""} spex={original ? {
           id: original.id, title: original.title, year: original.year, revival: original.revival,
           categoryName: original.categoryName,
         } : null} />

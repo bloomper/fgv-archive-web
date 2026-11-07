@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { FileList } from "@/components/archive/file-list";
 import { AccessRequest } from "@/components/archive/access-request.client";
 import { PdfReader } from "@/components/reader/pdf-reader.client";
+import { CollapseSidebarOnTablet } from "@/components/reader/collapse-sidebar-on-tablet.client";
 import { getFile, getFileVersion } from "@/lib/archive/archive.server";
 import { ID } from "@/utils/filters";
 import { fileDownloadHref, fileRawHref, isPdf, spexName, versionHref } from "@/utils/links";
@@ -38,9 +39,12 @@ export default async function FilePage({ params, searchParams }: {
 
     if (file.canOpen && isPdf(file)) {
       return (
-        <PdfReader src={fileRawHref(file.id)} title={file.title} subtitle={subtitle} downloadHref={fileDownloadHref(file.id)}
-                   backHref={back} backLabel={t("back", { title: parentTitle })}
-                   initialPage={Number.isInteger(page) && page > 0 ? page : 1} />
+        <>
+          <CollapseSidebarOnTablet />
+          <PdfReader src={fileRawHref(file.id)} title={file.title} subtitle={subtitle} downloadHref={fileDownloadHref(file.id)}
+                     backHref={back} backLabel={t("back", { title: parentTitle })}
+                     initialPage={Number.isInteger(page) && page > 0 ? page : 1} />
+        </>
       );
     }
 

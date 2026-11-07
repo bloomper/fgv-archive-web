@@ -34,13 +34,16 @@ export const test = base.extend<{
   }, { auto: true }],
   loginAs: async ({ page, request }, provide) => {
     await provide(async (persona: Persona) => {
-      await request.post(`${MOCK_URL}/__persona`, { data: { persona } });
+      expect((await request.post(`${MOCK_URL}/__persona`, { data: { persona } })).status(), "persona set").toBe(204);
       // Better Auth limits requests per client IP. Every test comes from the same machine, so without an address
       // of its own each login would count against one shared limit, and a busy run gets "Too many requests"
       await page.setExtraHTTPHeaders({ "x-forwarded-for": nextClientIp() });
       // A second login in one test starts afresh too: c15t also remembers the dismissed notice in local storage
       if (page.url().startsWith("http")) {
         await page.evaluate(() => localStorage.clear());
+        // Leave the page first: its own requests would otherwise start logins of their own once the cookies are
+        // gone, and theirs replace this login's state cookie ("State mismatch", now and then a failed login)
+        await page.goto("about:blank");
       }
       await page.context().clearCookies();
       await page.goto("/api/auth/login");

@@ -1,6 +1,8 @@
 import {defineConfig, devices} from "@playwright/test";
 import {APP_PORT, AUTH_SECRET, BASE_URL, MOCK_PORT} from "./e2e/constants";
 
+// Every variable the app reads is set here, so that a developer's .env.local (which points at the local stack) never
+// wins over the mock
 const appEnv: Record<string, string> = {
     AUTH_SECRET,
     KEYCLOAK_CLIENT_ID: "fgv-archive",
@@ -12,6 +14,15 @@ const appEnv: Record<string, string> = {
     FEEDBACK_EMAIL: "feedback.archive@example.org",
     UMAMI_URL: "",
     UMAMI_WEBSITE_ID: "",
+    SUPPORTED_LOCALES: "sv,en",
+    DEFAULT_LOCALE: "sv",
+    // No other application in the switcher
+    SPEXREGISTER_WEB_URL: "",
+    FGV_REVIVAL_WEB_URL: "",
+    SPEXFLIX_WEB_URL: "",
+    SPEXIFY_WEB_URL: "",
+    SPEXGRAM_WEB_URL: "",
+    ARCHIVE_WEB_URL: "",
 };
 
 export default defineConfig({

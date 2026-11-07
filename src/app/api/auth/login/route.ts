@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { normalizeLocale } from "@/utils/utils.server";
-import { normalizeTheme } from "@/utils/auth";
+import { normalizeTheme, returnPath } from "@/utils/auth";
 
 export const GET = async (req: NextRequest) => {
   const cookieLocale = req.cookies.get("locale")?.value;
@@ -14,7 +14,7 @@ export const GET = async (req: NextRequest) => {
   const { url } = await auth.api.signInSocial({
     body: {
       provider: "keycloak",
-      callbackURL: returnTo(req.nextUrl.searchParams.get("returnTo")),
+      callbackURL: returnPath(req.nextUrl.searchParams.get("returnTo")),
       additionalParams: {
         ui_locales: locale,
         ...(theme ? { theme } : {}),
@@ -29,9 +29,3 @@ export const GET = async (req: NextRequest) => {
   redirect(url);
 };
 
-/**
- * Where to go after logging in: a path of this application only, e.g. the version an access request email links to.
- */
-function returnTo(value: string | null): string {
-  return value && /^\/(?![/\\])[^\s]*$/.test(value) && !value.startsWith("/api/") ? value : "/";
-}

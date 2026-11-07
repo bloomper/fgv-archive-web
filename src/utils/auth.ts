@@ -54,3 +54,33 @@ export function normalizeTheme(value?: string): "light" | "dark" | "system" | un
   if (value === "light" || value === "dark" || value === "system") return value;
   return undefined;
 }
+
+/**
+ * Where to come back to after logging in: a path in this application, never another site, e.g. the version an access
+ * request email links to.
+ */
+export function returnPath(value: string | null): string {
+  // Browsers drop tabs and newlines from addresses, so "/\t/evil.example" would become "//evil.example": refuse
+  // whitespace, control characters and backslashes anywhere, not only after the first slash
+  if (!value || !/^\/(?!\/)/.test(value) || /[\s\\\u0000-\u001f\u007f]/.test(value)) {
+    return "/";
+  }
+  try {
+    const url = new URL(value, "http://return.invalid");
+
+    return url.origin === "http://return.invalid" && !url.pathname.startsWith("/api/")
+      ? `${url.pathname}${url.search}${url.hash}`
+      : "/";
+  } catch {
+    return "/";
+  }
+}
+
+/**
+ * The login address that comes back to the path afterwards.
+ */
+export function loginHref(path: string | null | undefined): string {
+  const back = returnPath(path ?? null);
+
+  return back === "/" ? "/api/auth/login" : `/api/auth/login?returnTo=${encodeURIComponent(back)}`;
+}

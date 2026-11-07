@@ -16,10 +16,17 @@ const asAdmin = <T, >(work: () => Promise<T>) => withPolicyAction(Policies.admin
   return result;
 }));
 
-function requireId(...ids: string[]) {
-  if (!ids.every(id => ID.test(id))) {
+function requireId(...ids: unknown[]) {
+  if (!ids.every(id => typeof id === "string" && ID.test(id))) {
     throw new Error("Invalid id");
   }
+}
+
+function requireIds(ids: unknown) {
+  if (!Array.isArray(ids) || ids.length > 1000) {
+    throw new Error("Invalid ids");
+  }
+  requireId(...ids);
 }
 
 function names(input: { nameSv: string; nameEn: string }) {
@@ -78,7 +85,7 @@ export async function updateInstrumentAction(id: string, input: InstrumentInput)
 }
 
 export async function reorderInstrumentsAction(ids: string[]) {
-  requireId(...ids);
+  requireIds(ids);
   return asAdmin(async () => {
     await admin.instrumentsReorder(ids);
     return null;
@@ -117,7 +124,7 @@ export async function updateFileRoleAction(id: string, input: FileRoleInput) {
 }
 
 export async function reorderFileRolesAction(ids: string[]) {
-  requireId(...ids);
+  requireIds(ids);
   return asAdmin(async () => {
     await admin.fileRolesReorder(ids);
     return null;

@@ -1184,7 +1184,13 @@ async function handle(req, res, chunks) {
     currentPersona = "admin";
     res.writeHead(204).end();
   } else if (req.method === "POST" && path === "/__persona") {
-    currentPersona = JSON.parse(body).persona;
+    const { persona } = JSON.parse(body);
+    // Another web's tests reaching this mock would otherwise log in as nobody
+    if (!Object.hasOwn(PERSONAS, persona)) {
+      res.writeHead(400).end(`unknown persona ${persona}`);
+      return;
+    }
+    currentPersona = persona;
     res.writeHead(204).end();
   } else if (req.method === "GET" && path === "/__state") {
     res.writeHead(200, { "content-type": "application/json" }).end(JSON.stringify({

@@ -44,6 +44,8 @@ describe("the tus upload proxy", () => {
     expect(response.headers.get("location")).toBe(`/api/uploads/${ID}`);
     expect(response.headers.get("set-cookie")).toBeNull();
     expect(response.headers.get("access-control-expose-headers")).toContain("upload-offset");
+    expect(response.headers.get("content-security-policy")).toBe("sandbox; default-src 'none'");
+    expect(response.headers.get("x-content-type-options")).toBe("nosniff");
   });
 
   it("streams a chunk to the server's upload", async () => {

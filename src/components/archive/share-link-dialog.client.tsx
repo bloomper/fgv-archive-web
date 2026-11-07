@@ -69,6 +69,7 @@ export function ShareLinkButton({ input, defaultName = "", maxMonths, label, dis
         setUrl(null);
         setCopied(false);
         setName(defaultName);
+        setMonths(String(Math.min(12, maxMonths)));
         setOpen(true);
       }}>
         <Share2 /> {label ?? t("create")}

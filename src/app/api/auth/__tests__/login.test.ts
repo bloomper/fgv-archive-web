@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { GET as login } from "@/app/api/auth/login/route";
+import { returnPath } from "@/utils/auth";
 import { GET as loginError } from "@/app/api/auth/login-error/route";
 
 const redirect = vi.hoisted(() => vi.fn((url: string) => {
@@ -26,6 +27,27 @@ describe("logging in", () => {
 
     await expect(login(request("/api/auth/login", "locale=en; theme=dark"))).rejects.toThrow("redirect:https://auth.test/authorize");
     expect(signInSocial.mock.calls[0][0].body.additionalParams).toEqual({ ui_locales: "en", theme: "dark" });
+  });
+
+  it("comes back to the page the user was on, but never to another site", async () => {
+    signInSocial.mockResolvedValue({ url: "https://auth.test/authorize" });
+
+    await expect(login(request("/api/auth/login?returnTo=%2Fversions%2Fx%3Fpage%3D2"))).rejects.toThrow("redirect:");
+    expect(signInSocial.mock.calls[0][0].body.callbackURL).toBe("/versions/x?page=2");
+    signInSocial.mockClear();
+    await expect(login(request("/api/auth/login?returnTo=%2F%09%2Fevil.example"))).rejects.toThrow("redirect:");
+    expect(signInSocial.mock.calls[0][0].body.callbackURL).toBe("/");
+    expect(returnPath("//evil.example")).toBe("/");
+    expect(returnPath("/\\evil.example")).toBe("/");
+    expect(returnPath("https://evil.example")).toBe("/");
+    expect(returnPath("/api/auth/login")).toBe("/");
+    expect(returnPath(null)).toBe("/");
+    expect(returnPath("/\t/evil.example")).toBe("/");
+    expect(returnPath("/\n/evil.example")).toBe("/");
+    expect(returnPath("/\u0000/evil.example")).toBe("/");
+    expect(returnPath("/a\\..\\/evil.example")).toBe("/");
+    expect(returnPath("/x/../api/auth/login")).toBe("/");
+    expect(returnPath("/search?q=a%20b#top")).toBe("/search?q=a%20b#top");
   });
 
   it("fails loudly when Keycloak gives no address", async () => {

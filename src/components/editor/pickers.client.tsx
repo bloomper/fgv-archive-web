@@ -161,12 +161,12 @@ export function InstrumentsPicker({ instruments, value, onChange, id }: {
               <li key={instrumentId} className="inline-flex items-center gap-0.5 rounded-full border bg-secondary py-0.5 pr-1 pl-2.5 text-sm">
                 {name}
                 {index > 0 && (
-                  <button type="button" className="rounded-full p-0.5 hover:bg-accent" aria-label={t("first", { name })}
+                  <button type="button" className="rounded-full p-0.5 hover:bg-accent pointer-coarse:p-1.5" aria-label={t("first", { name })}
                           onClick={() => onChange([instrumentId, ...value.filter(other => other !== instrumentId)])}>
                     <ArrowUp className="size-3.5" />
                   </button>
                 )}
-                <button type="button" className="rounded-full p-0.5 hover:bg-accent" aria-label={t("remove", { name })}
+                <button type="button" className="rounded-full p-0.5 hover:bg-accent pointer-coarse:p-1.5" aria-label={t("remove", { name })}
                         onClick={() => onChange(value.filter(other => other !== instrumentId))}>
                   <X className="size-3.5" />
                 </button>

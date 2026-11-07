@@ -181,11 +181,14 @@ export async function ChangeLog({ path, search, isAdmin, entityTypes, linkOf }: 
                                  className="text-primary hover:underline">{t("allRecords")}</Link>
         </p>
       )}
-      <p className="text-sm text-muted-foreground" aria-live="polite">{t("count", { count: log?.totalCount ?? 0 })}</p>
+      {/* One line when there is nothing: the count ("Inga ändringar") would only repeat the message */}
       {log && log.entries.length > 0 ? (
-        <EntryTable entries={log.entries} linkOf={linkOf}
-                    historyHref={entry => entry.entityId && !search.entity ? auditHref(path, {}, { entity: entry.entityId }) : undefined} />
-      ) : <p className="text-muted-foreground">{filtered ? t("noneFiltered") : t("none")}</p>}
+        <>
+          <p className="text-sm text-muted-foreground" aria-live="polite">{t("count", { count: log.totalCount })}</p>
+          <EntryTable entries={log.entries} linkOf={linkOf}
+                      historyHref={entry => entry.entityId && !search.entity ? auditHref(path, {}, { entity: entry.entityId }) : undefined} />
+        </>
+      ) : <p className="text-muted-foreground" aria-live="polite">{filtered ? t("noneFiltered") : t("none")}</p>}
       {pages > 1 && (
         <nav className="flex items-center gap-3 text-sm" aria-label={t("pages")}>
           {page > 0 && <Link href={auditHref(path, search, { page: String(page - 1) })}

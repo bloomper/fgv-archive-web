@@ -26,6 +26,7 @@ export function SiteHeader({ applications }: { applications: Application[] }) {
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
+            aria-label={t("Header.toggleSidebar")}
           >
             <SidebarIcon />
           </Button>

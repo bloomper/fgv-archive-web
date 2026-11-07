@@ -49,7 +49,8 @@
   },
   "Header": {
     "toggleLanguage": "Byt språk",
-    "toggleTheme": "Byt tema"
+    "toggleTheme": "Byt tema",
+    "toggleSidebar": "Visa eller dölj menyn"
   },
   "AppSwitcher": {
     "heading": "Byt applikation",
