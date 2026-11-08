@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { type ReactNode, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -16,14 +16,17 @@ import { track } from "@/utils/umami";
 /**
  * Makes a share link for what is given (versions, files, or a spex' instruments and transpositions): a name saying who
  * it is for and how many months it lasts. The address is shown once, with a copy button; only its hash is kept.
+ * `afterCreate` adds to the dialog once the link is made (e.g. emailing it), and `onDone` runs when that dialog closes.
  */
-export function ShareLinkButton({ input, defaultName = "", maxMonths, label, disabled = false, size = "sm" }: {
+export function ShareLinkButton({ input, defaultName = "", maxMonths, label, disabled = false, size = "sm", afterCreate, onDone }: {
   input: Omit<ShareLinkInput, "name" | "months">;
   defaultName?: string;
   maxMonths: number;
   label?: string;
   disabled?: boolean;
-  size?: "sm" | "default";
+  size?: "xs" | "sm" | "default";
+  afterCreate?: (url: string, months: number) => ReactNode;
+  onDone?: () => void;
 }) {
   const t = useTranslations("ShareLinks");
   const router = useRouter();
@@ -33,6 +36,13 @@ export function ShareLinkButton({ input, defaultName = "", maxMonths, label, dis
   const [url, setUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [pending, startTransition] = useTransition();
+
+  const changeOpen = (next: boolean) => {
+    setOpen(next);
+    if (!next && url) {
+      onDone?.();
+    }
+  };
 
   const create = () => startTransition(async () => {
     const result = await createShareLinkAction({ ...input, name, months: Number(months) });
@@ -74,7 +84,7 @@ export function ShareLinkButton({ input, defaultName = "", maxMonths, label, dis
       }}>
         <Share2 /> {label ?? t("create")}
       </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={changeOpen}>
         <DialogContent className="sm:max-w-lg">
           {url ? (
             <div className="grid gap-4">
@@ -89,8 +99,9 @@ export function ShareLinkButton({ input, defaultName = "", maxMonths, label, dis
                   {copied ? <Check /> : <Copy />} {t("copy")}
                 </Button>
               </div>
+              {afterCreate?.(url, Number(months))}
               <DialogFooter>
-                <Button type="button" onClick={() => setOpen(false)}>{t("done")}</Button>
+                <Button type="button" onClick={() => changeOpen(false)}>{t("done")}</Button>
               </DialogFooter>
             </div>
           ) : (

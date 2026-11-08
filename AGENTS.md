@@ -70,8 +70,10 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
   arrow keys or a page-turner pedal) and keeps `?page=` in the address. Shortcuts: arrows, PageUp/PageDown, space,
   Home/End, `+`/`-`/`0`, `f`, `t`, `p`.
 - **Restricted versions** list their files with a lock for users; `AccessRequest` asks the editors with a reason.
-  Editors see the requests at `/manage/access-requests` (open first; `?show=handled|all`) and mark them handled, or
-  open again (`accessRequestHandle`), after answering, e.g. with a share link.
+  Editors see the requests at `/manage/access-requests` (open first; `?show=handled|all`) and answer one with
+  `ShareRequestButton`: a share link for exactly the requested files, named after the person, with a `mailto:` carrying
+  the address, marking the request handled when the dialog closes (`ShareLinkButton`'s `afterCreate` and `onDone`).
+  They can also mark requests handled, or open them again, by hand (`accessRequestHandle`).
   `/versions/[id]` (linked from the access request emails) redirects to the version in its parent's page; logging in
   from there comes back to it (`/api/auth/login?returnTo=`).
 - **Numbers** are the archive's own until Spexipedia (spec 4.4): `/spex/[id]/numbers` pastes, adds, edits, reorders

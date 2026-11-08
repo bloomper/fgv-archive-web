@@ -143,6 +143,31 @@ test.describe("Editing", () => {
     await expect(page.getByText("Inga hanterade förfrågningar.")).toBeVisible();
   });
 
+  test("an editor answers an access request with a share link for the requested files", async ({ page, loginAs, mock }) => {
+    await loginAs("user");
+    await page.goto(`/arrangements/${uuidOf(412)}`);
+    await page.getByRole("button", { name: "Be om åtkomst" }).click();
+    await page.getByRole("dialog").getByLabel("Varför behöver du dem?").fill("Bandet behöver stämmorna.");
+    await page.getByRole("dialog").getByRole("button", { name: "Skicka" }).click();
+    await expect(page.getByText("Förfrågan är skickad till redaktörerna")).toBeVisible();
+
+    await loginAs("editor");
+    await page.goto("/manage/access-requests");
+    const request = page.getByTestId("access-request").filter({ hasText: "Bandet behöver stämmorna." });
+    await request.getByRole("button", { name: "Dela filerna" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByLabel("Vem är den till?")).toHaveValue("Ulla Användare, åtkomstförfrågan");
+    await dialog.getByRole("button", { name: "Skapa länken" }).click();
+    await expect(dialog.getByLabel("Delningslänkens adress")).toHaveValue(/\/share\/e2e-/);
+    await expect(dialog.getByRole("link", { name: "Mejla länken till Ulla Användare" })).toHaveAttribute("href", /^mailto:/);
+    await dialog.getByRole("button", { name: "Klar" }).click();
+    await expect(page.getByText("Inga öppna förfrågningar.")).toBeVisible();
+
+    const { shareLinks } = await mock.state();
+    expect(shareLinks[0]).toMatchObject({ name: "Ulla Användare, åtkomstförfrågan", versionIds: [] });
+    expect(shareLinks[0].fileIds.length).toBeGreaterThan(0);
+  });
+
   test("an editor pastes numbers and deletes one", async ({ page, loginAs, mock }) => {
     await loginAs("editor");
     await page.goto(`/spex/${uuidOf(11)}/numbers`);

@@ -2,24 +2,27 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { LinkTabs } from "@/components/link-tabs";
 import { getAccessRequests } from "@/lib/admin/admin.server";
+import { getMe } from "@/lib/archive/archive.server";
 import { formatDate, formatInstant } from "@/utils/format";
 import { fileHref } from "@/utils/links";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 import { HandleButton } from "./handle-button.client";
+import { ShareRequestButton } from "./share-request-button.client";
 
 type Show = "open" | "handled" | "all";
 
 /**
  * Users' requests for access to restricted files, newest first; the editors also get them by email. Access is given
- * with a share link, and the request is then marked handled. Open requests are shown first (`?show=handled|all`).
+ * with a share link for the requested files (`ShareRequestButton`), which also marks the request handled. Open requests are shown first (`?show=handled|all`).
  */
 export default async function AccessRequestsPage({ searchParams }: { searchParams: Promise<{ show?: string }> }) {
   return withPolicyPage(Policies.editor.requireEditor, async () => {
     const t = await getTranslations("AccessRequests");
     const { show: raw } = await searchParams;
     const show: Show = raw === "handled" || raw === "all" ? raw : "open";
-    const requests = await getAccessRequests(show === "all" ? null : show === "handled");
+    const [requests, me] = await Promise.all([getAccessRequests(show === "all" ? null : show === "handled"), getMe()]);
+    const maxMonths = me?.settings.maxShareLinkMonths ?? 24;
     const tab = (value: Show) => ({
       href: value === "open" ? "/manage/access-requests" : `/manage/access-requests?show=${value}`,
       label: t(value),
@@ -46,6 +49,9 @@ export default async function AccessRequestsPage({ searchParams }: { searchParam
                   </p>
                   <span className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground tabular-nums">{formatInstant(request.createdAt)}</span>
+                    <ShareRequestButton id={request.id} name={request.userName ?? null} email={request.userEmail ?? null}
+                                        fileIds={request.files.map(file => file.id)} handled={Boolean(request.handledAt)}
+                                        maxMonths={maxMonths} />
                     <HandleButton id={request.id} handled={Boolean(request.handledAt)} name={request.userName ?? ""} />
                   </span>
                 </div>

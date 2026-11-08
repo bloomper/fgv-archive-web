@@ -620,7 +620,7 @@
   },
   "AccessRequests": {
     "title": "Åtkomstförfrågningar",
-    "text": "Användare som bett om att få öppna begränsade filer. Ge åtkomst med en delningslänk och markera förfrågan som hanterad.",
+    "text": "Användare som bett om att få öppna begränsade filer. Dela filerna med dem och markera förfrågan som hanterad.",
     "none": "Inga förfrågningar.",
     "version": "version",
     "open": "Öppna",
@@ -635,7 +635,13 @@
     "handledDone": "Markerad som hanterad",
     "reopened": "Öppnad igen",
     "noneOpen": "Inga öppna förfrågningar.",
-    "noneHandled": "Inga hanterade förfrågningar."
+    "noneHandled": "Inga hanterade förfrågningar.",
+    "share": "Dela filerna",
+    "shareName": "{name}, åtkomstförfrågan",
+    "mail": "Mejla länken till {name}",
+    "mailSubject": "Din åtkomst till filer i Spexarkivet",
+    "mailBody": "Hej {name}!\n\nHär är en länk till filerna du bad om i Spexarkivet:\n{url}\n\nLänken gäller i {months, plural, one {# månad} other {# månader}}. Skicka den inte vidare.",
+    "markOnClose": "Markera förfrågan som hanterad när jag stänger"
   },
   "Trash": {
     "title": "Papperskorgen",

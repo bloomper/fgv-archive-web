@@ -620,7 +620,7 @@
   },
   "AccessRequests": {
     "title": "Access requests",
-    "text": "Users who asked to open restricted files. Give access with a share link and mark the request handled.",
+    "text": "Users who asked to open restricted files. Share the files with them and mark the request handled.",
     "none": "No requests.",
     "version": "version",
     "open": "Open",
@@ -635,7 +635,13 @@
     "handledDone": "Marked handled",
     "reopened": "Opened again",
     "noneOpen": "No open requests.",
-    "noneHandled": "No handled requests."
+    "noneHandled": "No handled requests.",
+    "share": "Share the files",
+    "shareName": "{name}, access request",
+    "mail": "Email the link to {name}",
+    "mailSubject": "Your access to files in Spexarkivet",
+    "mailBody": "Hi {name},\n\nHere is a link to the files you asked for in Spexarkivet:\n{url}\n\nThe link is valid for {months, plural, one {# month} other {# months}}. Please do not pass it on.",
+    "markOnClose": "Mark the request handled when I close"
   },
   "Trash": {
     "title": "Trash",
