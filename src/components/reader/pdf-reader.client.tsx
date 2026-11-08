@@ -23,7 +23,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/utils/utils";
-import { openPdf, renderPage } from "./pdf.client";
+import { getPdfPage, openPdf, type RenderedPage, renderPage } from "./pdf.client";
 
 type View = "scroll" | "page";
 type Size = { width: number; height: number };
@@ -97,12 +97,15 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
   useEffect(() => {
     let cancelled = false;
     let destroy: (() => void) | null = null;
+    let opened: PDFDocumentProxy | null = null;
 
     openPdf(src).then(async ({ task, pdf: loading }) => {
       destroy = () => void task.destroy();
       try {
         const doc = await loading;
-        const first = await doc.getPage(1);
+
+        opened = doc;
+        const first = await getPdfPage(doc, 1);
         const { width, height } = first.getViewport({ scale: 1 });
 
         if (!cancelled) {
@@ -120,6 +123,13 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
     return () => {
       cancelled = true;
       destroy?.();
+      // A destroyed document can no longer give pages. Cache Components hides the reader rather than unmounting it
+      // when the user goes elsewhere, and runs this effect again on the way back: the pages must not use the old one.
+      const destroyed = opened;
+
+      if (destroyed) {
+        setPdf(current => (current === destroyed ? null : current));
+      }
     };
   }, [src]);
 
@@ -471,7 +481,7 @@ function PageView({ pdf, number, scale, base, lazy = false, label }: {
 
     let cancelled = false;
 
-    pdf.getPage(number).then(loaded => !cancelled && setPage(loaded), () => undefined);
+    getPdfPage(pdf, number).then(loaded => !cancelled && setPage(loaded), () => undefined);
     return () => {
       cancelled = true;
     };
@@ -536,12 +546,14 @@ function Thumbnail({ pdf, number, base }: { pdf: PDFDocumentProxy; number: numbe
       return;
     }
 
-    let rendered: { cancel: () => void } | null = null;
+    let rendered: RenderedPage | null = null;
     let cancelled = false;
 
-    pdf.getPage(number).then(page => {
+    getPdfPage(pdf, number).then(page => {
       if (!cancelled && canvas.current) {
         rendered = renderPage(page, canvas.current, THUMBNAIL_WIDTH / page.getViewport({ scale: 1 }).width);
+        // A thumbnail that cannot be drawn stays blank
+        rendered.done.catch(() => undefined);
       }
     }, () => undefined);
     return () => {

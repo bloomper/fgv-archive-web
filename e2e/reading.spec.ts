@@ -188,4 +188,25 @@ test.describe("Reading", () => {
     await answerDialog(page, "Avbryt");
     await expect(page.getByRole("heading", { level: 1, name: "Ali Baba" })).toBeVisible();
   });
+
+  test("the reader shows its pages again after the user goes elsewhere and comes back", async ({ page, loginAs }) => {
+    // Cache Components hides the reader rather than unmounting it, which destroys its document: the pages must load a
+    // new one, not ask the old one (pdf.js threw "Cannot read properties of null (reading 'sendWithPromise')")
+    const errors: string[] = [];
+
+    page.on("pageerror", error => errors.push(error.message));
+    await loginAs("user");
+    await page.goto(`/files/${uuidOf(611)}`);
+    const reader = page.getByTestId("pdf-reader");
+    await expect(reader.getByRole("img", { name: "Sida 1" })).toBeVisible();
+
+    for (let round = 0; round < 2; round++) {
+      await page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Sök", exact: true }).click();
+      await expect(page).toHaveURL(/\/search/);
+      await page.goBack();
+      await reader.getByRole("img", { name: "Sida 3" }).scrollIntoViewIfNeeded();
+      await expect(reader.getByRole("img", { name: "Sida 3" })).toBeVisible();
+    }
+    expect(errors).toEqual([]);
+  });
 });
