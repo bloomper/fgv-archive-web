@@ -22,6 +22,22 @@ test.describe("The application shell", () => {
     await expect(page.getByRole("heading", { name: "Du har inte behörighet" })).toBeVisible();
   });
 
+  test("the command palette goes to a page or searches the archive", async ({ page, loginAs }) => {
+    await loginAs("editor");
+    await page.goto("/");
+    await expect(page.getByRole("button", { name: "Öppna kommandopaletten" })).toBeVisible();
+
+    await page.keyboard.press("ControlOrMeta+k");
+    await page.getByPlaceholder("Hoppa till sida eller åtgärd…").fill("papper");
+    await page.getByRole("option", { name: "Papperskorgen" }).click();
+    await expect(page).toHaveURL(/\/manage\/trash$/);
+
+    await page.getByRole("button", { name: "Öppna kommandopaletten" }).click();
+    await page.getByPlaceholder("Hoppa till sida eller åtgärd…").fill("finalen");
+    await page.getByRole("option", { name: /Sök i arkivet efter/ }).click();
+    await expect(page).toHaveURL(/\/search\?q=finalen$/);
+  });
+
   test("greets the user and lists the recently changed versions, without unpublished ones", async ({ page, loginAs }) => {
     await loginAs("user");
 
