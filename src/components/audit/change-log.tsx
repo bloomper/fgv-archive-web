@@ -1,8 +1,9 @@
+import Form from "next/form";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { History } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/submit-button.client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
@@ -65,9 +66,9 @@ async function EntryRow({ entry, linkOf, historyHref }: {
         </div>
       </TableCell>
       <TableCell className="align-top">
-        {link ? <Link href={link} className="hover:underline">{entry.summary}</Link> : entry.summary}
+        {link ? <Link href={link} className="hover:text-primary">{entry.summary}</Link> : entry.summary}
         {historyHref && (
-          <Link href={historyHref} className="ml-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          <Link href={historyHref} className="ml-2 inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80"
                 aria-label={t("historyOf", { summary: entry.summary })}>
             <History className="size-3" />{t("history")}
           </Link>
@@ -128,7 +129,7 @@ export async function ChangeLog({ path, search, isAdmin, entityTypes, linkOf }: 
   return (
     <div className="space-y-4">
       {/* Keyed by the filter: its fields are uncontrolled, and a new filter must show in them */}
-      <form key={auditHref(path, search, { page: undefined })} method="get" action={path} role="search"
+      <Form key={auditHref(path, search, { page: undefined })} action={path} role="search"
             aria-label={t("filters")}
             className="grid gap-3 rounded-lg border p-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto_auto]">
         {search.entity && <input type="hidden" name="entity" value={search.entity} />}
@@ -171,14 +172,14 @@ export async function ChangeLog({ path, search, isAdmin, entityTypes, linkOf }: 
           <Input id="audit-to" name="to" type="date" defaultValue={search.to ?? ""} />
         </div>
         <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-6">
-          <Button type="submit">{t("filter")}</Button>
-          {filtered && <Link href={path} className="px-3 py-2 text-sm text-primary hover:underline">{t("reset")}</Link>}
+          <SubmitButton>{t("filter")}</SubmitButton>
+          {filtered && <Link href={path} className="px-3 py-2 text-sm text-primary hover:text-primary/80">{t("reset")}</Link>}
         </div>
-      </form>
+      </Form>
       {search.entity && (
         <p className="text-sm text-muted-foreground">
           {t("oneRecord")} <Link href={auditHref(path, search, { entity: undefined, page: undefined })}
-                                 className="text-primary hover:underline">{t("allRecords")}</Link>
+                                 className="text-primary hover:text-primary/80">{t("allRecords")}</Link>
         </p>
       )}
       {/* One line when there is nothing: the count ("Inga ändringar") would only repeat the message */}
@@ -192,10 +193,10 @@ export async function ChangeLog({ path, search, isAdmin, entityTypes, linkOf }: 
       {pages > 1 && (
         <nav className="flex items-center gap-3 text-sm" aria-label={t("pages")}>
           {page > 0 && <Link href={auditHref(path, search, { page: String(page - 1) })}
-                             className="text-primary hover:underline">{t("newer")}</Link>}
+                             className="text-primary hover:text-primary/80">{t("newer")}</Link>}
           <span className="text-muted-foreground">{t("pageOf", { page: page + 1, pages })}</span>
           {page + 1 < pages && <Link href={auditHref(path, search, { page: String(page + 1) })}
-                                     className="text-primary hover:underline">{t("older")}</Link>}
+                                     className="text-primary hover:text-primary/80">{t("older")}</Link>}
         </nav>
       )}
     </div>
@@ -221,7 +222,7 @@ export async function RecordHistory({ entityId, path, linkOf }: {
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="record-history" className="text-lg font-semibold">{t("recordHistory")}</h2>
         {log.totalCount > log.entries.length && (
-          <Link href={auditHref(path, {}, { entity: entityId })} className="text-sm text-primary hover:underline">
+          <Link href={auditHref(path, {}, { entity: entityId })} className="text-sm text-primary hover:text-primary/80">
             {t("allChanges", { count: log.totalCount })}
           </Link>
         )}

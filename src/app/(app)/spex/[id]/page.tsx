@@ -53,7 +53,7 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
           </h1>
           {spex.original && (
             <p className="text-sm">
-              {t("revivalOf")} <Link href={spexHref(spex.original.id)} className="text-primary hover:underline">{spexName(spex.original)}</Link>
+              {t("revivalOf")} <Link href={spexHref(spex.original.id)} className="text-primary hover:text-primary/80">{spexName(spex.original)}</Link>
             </p>
           )}
           {spex.revivals.length > 0 && (
@@ -90,15 +90,15 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
           {spex.manuscripts.length === 0 ? <p className="text-sm text-muted-foreground">{t("noManuscripts")}</p> : (
             <ul className="space-y-3">
               {spex.manuscripts.map(manuscript => (
-                <li key={manuscript.id} className="rounded-lg border bg-card p-3">
-                  <Link href={manuscriptHref(manuscript.id)} className="flex items-center gap-2 font-medium hover:underline">
+                <li key={manuscript.id} className="link-row rounded-lg border bg-card p-3">
+                  <Link href={manuscriptHref(manuscript.id)} className="row-link flex items-center gap-2 font-medium">
                     <ScrollText className="size-4 text-primary" aria-hidden /> {manuscript.title}
                   </Link>
                   {manuscript.authors && <p className="text-sm text-muted-foreground">{manuscript.authors}</p>}
                   <ul className="mt-2 space-y-1 text-sm">
                     {manuscript.versions.map(version => (
                       <li key={version.id} className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <Link href={`${manuscriptHref(manuscript.id)}#${versionAnchor(version.id)}`} className="hover:underline">
+                        <Link href={`${manuscriptHref(manuscript.id)}#${versionAnchor(version.id)}`} className="hover:text-primary">
                           {version.label}
                         </Link>
                         {version.usedIn && <span className="text-muted-foreground">{spexName(version.usedIn)}</span>}
@@ -125,17 +125,18 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
             <p className="text-sm text-muted-foreground">{t("inherited")}</p>
           )}
           {spex.numbers.length === 0 ? <p className="text-sm text-muted-foreground">{t("noNumbers")}</p> : (
-            <ol className="divide-y rounded-lg border bg-card" aria-label={t("numbers")}>
+            <ol className="divide-y overflow-hidden rounded-lg border bg-card" aria-label={t("numbers")}>
               {spex.numbers.map(number => {
                 const arrangement = number.arrangement;
                 const keys = [...new Set((arrangement?.versions ?? []).filter(v => v.key).map(v => formatKey(v.key!, locale)))];
 
                 return (
-                  <li key={number.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2" data-testid="number-row">
+                  <li key={number.id} data-testid="number-row"
+                      className="link-row flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2">
                     <span className="w-6 shrink-0 text-right text-sm tabular-nums text-muted-foreground">{number.position}.</span>
                     <div className="min-w-0 flex-1 basis-48">
                       {arrangement
-                        ? <Link href={arrangementHref(arrangement.id)} className="font-medium hover:underline">{number.title}</Link>
+                        ? <Link href={arrangementHref(arrangement.id)} className="row-link font-medium">{number.title}</Link>
                         : <span className="font-medium">{number.title}</span>}
                       <p className="text-xs text-muted-foreground">
                         {[number.originalSong, [number.lyricist, number.composer].filter(Boolean).join(" / ")].filter(Boolean).join(" · ")}

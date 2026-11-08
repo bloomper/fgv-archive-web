@@ -10,7 +10,7 @@ const TROMBONE = uuidOf(206);
 test.describe("Reading", () => {
   test("a user browses from a spex to an arrangement and reads its score", async ({ page, loginAs }) => {
     await loginAs("user");
-    await page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Spex", exact: true }).click();
+    await page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Bläddra", exact: true }).click();
     await page.getByRole("link", { name: /^Ali Baba 1985/ }).click();
 
     await expect(page.getByRole("heading", { level: 1, name: /Ali Baba/ })).toBeVisible();
@@ -137,6 +137,22 @@ test.describe("Reading", () => {
     await expect(hits.getByRole("link", { name: "Ali Baba manus" })).toHaveAttribute("href", `/files/${uuidOf(601)}?page=2`);
     // A restricted file of another user is not among the hits
     await expect(hits.filter({ hasText: "Kärleksduetten" })).toHaveCount(0);
+  });
+
+  test("an empty search explains itself, and a too short word is pointed out at the field", async ({ page, loginAs }) => {
+    await loginAs("user");
+    await page.goto("/search");
+    await expect(page.getByText("Vad letar du efter?")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Eller bläddra bland alla spex" })).toHaveAttribute("href", "/spex");
+
+    await page.goto(`/search?instruments=${TRUMPET}`);
+    await expect(page.getByText(/Instrumentfiltret begränsar sökträffarna/)).toBeVisible();
+
+    await page.goto("/search?q=a");
+    await expect(page.getByLabel("Sökord")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.getByText("Skriv minst två tecken.")).toBeVisible();
+    await expect(page.getByText("Inga träffar.")).toHaveCount(0);
+    await expect(page.getByText("Vad letar du efter?")).toHaveCount(0);
   });
 
   test("search by a key typed in Swedish", async ({ page, loginAs }) => {

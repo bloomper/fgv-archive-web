@@ -89,7 +89,7 @@ export function AboutPage({ feedbackEmail }: { feedbackEmail: string }) {
 
         <section
           className="relative overflow-hidden rounded-3xl bg-primary px-8 py-10 text-primary-foreground shadow-xl">
-          <div className="relative z-10 space-y-4">
+          <div className="space-y-4">
             <div
               className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary-foreground/20">
               <Mail className="size-6" />

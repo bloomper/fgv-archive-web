@@ -50,7 +50,11 @@
   "Header": {
     "toggleLanguage": "Byt språk",
     "toggleTheme": "Byt tema",
-    "toggleSidebar": "Visa eller dölj menyn"
+    "showMenu": "Visa menyn"
+  },
+  "Sidebar": {
+    "hideMenu": "Dölj menyn",
+    "showMenu": "Visa menyn"
   },
   "AppSwitcher": {
     "heading": "Byt applikation",
@@ -115,7 +119,7 @@
   },
   "Nav": {
     "home": "Start",
-    "spex": "Spex",
+    "spex": "Bläddra",
     "search": "Sök",
     "manage": "Redigera",
     "newManuscript": "Nytt manus",
@@ -139,7 +143,6 @@
     "intro": "Här finns spexens manus och arrangemang genom åren: läs dem här, på en surfplatta på notstället, eller ladda ner dem.",
     "browse": "Bläddra",
     "withMaterial": "Spex med material",
-    "decade": "{decade}-talet",
     "recent": "Senast tillagt och ändrat",
     "allSpex": "Alla spex med material",
     "empty": "Inget är publicerat ännu.",
@@ -579,7 +582,11 @@
     "keyHint": "Skriv # och b eller svenska namn: Ess, Fiss, H.",
     "keyUnknown": "Tonarten känns inte igen.",
     "submit": "Sök",
-    "hint": "Sök på titlar, författare, arrangörer, melodier och nummer, och i filernas text.",
+    "emptyTitle": "Vad letar du efter?",
+    "hint": "Sök på titlar, författare, arrangörer, melodier och nummer och i filernas text, eller på en tonart.",
+    "browse": "Eller bläddra bland alla spex",
+    "filterOnly": "Instrumentfiltret begränsar sökträffarna, så skriv ett sökord eller en tonart också. Alla stämmor för ett instrument i ett spex finns på spexets sida, under Ladda ner stämmor.",
+    "tooShort": "Skriv minst två tecken.",
     "none": "Inga träffar.",
     "count": "{count, plural, one {# träff} other {# träffar}}",
     "spex": "Spex",
@@ -821,5 +828,9 @@
       "TRASH": "Papperskorg",
       "ACCESS_REQUEST": "Åtkomstförfrågan"
     }
+  },
+  "YearBrowser": {
+    "decade": "{decade}-talet",
+    "yearsOf": "År på {decade}-talet"
   }
 }

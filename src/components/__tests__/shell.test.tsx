@@ -66,7 +66,7 @@ describe("the shell", () => {
 
   it("has a header with the menu button and search", async () => {
     render(<TooltipProvider><SidebarProvider><SiteHeader applications={[]} /></SidebarProvider></TooltipProvider>);
-    await userEvent.click(screen.getByRole("button", { name: "Header.toggleSidebar" }));
+    await userEvent.click(screen.getByRole("button", { name: "showMenu" }));
     expect(screen.getByRole("link", { name: "title" })).toHaveAttribute("href", "/search");
   });
 

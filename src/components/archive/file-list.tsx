@@ -35,7 +35,7 @@ export function FileRow({ file, place = {}, showInstruments = true, lead }: {
   const readable = file.canOpen && isPdf(file);
 
   return (
-    <li className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2" data-testid="file-row">
+    <li className="link-row flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2" data-testid="file-row">
       <div className="hidden size-10 shrink-0 items-center justify-center overflow-hidden rounded border bg-white sm:flex">
         {file.canOpen && file.hasPreview
           // eslint-disable-next-line @next/next/no-img-element -- the preview comes through a route handler with the session
@@ -45,7 +45,7 @@ export function FileRow({ file, place = {}, showInstruments = true, lead }: {
       <div className="min-w-0 flex-1 basis-48">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           {readable
-            ? <Link href={fileHref(file.id, place)} className="font-medium hover:underline">{lead ? `${lead} · ` : ""}{file.title}</Link>
+            ? <Link href={fileHref(file.id, place)} className="row-link font-medium">{lead ? `${lead} · ` : ""}{file.title}</Link>
             : <span className="font-medium">{lead ? `${lead} · ` : ""}{file.title}</span>}
           <Badge variant="outline">{localName(file.role, locale)}</Badge>
           {transposition && <Badge variant="secondary" title={t("transposition")}>{t("inPitch", { pitch: transposition })}</Badge>}
@@ -87,7 +87,7 @@ export function FileList({ files, place, label }: { files: ArchiveFile[]; place?
     return null;
   }
   return (
-    <ul aria-label={label} className="divide-y rounded-lg border bg-card">
+    <ul aria-label={label} className="divide-y overflow-hidden rounded-lg border bg-card">
       {files.map(file => <FileRow key={file.id} file={file} place={place} />)}
     </ul>
   );

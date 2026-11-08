@@ -50,7 +50,11 @@
   "Header": {
     "toggleLanguage": "Change language",
     "toggleTheme": "Change theme",
-    "toggleSidebar": "Show or hide the menu"
+    "showMenu": "Show menu"
+  },
+  "Sidebar": {
+    "hideMenu": "Hide menu",
+    "showMenu": "Show menu"
   },
   "AppSwitcher": {
     "heading": "Switch application",
@@ -115,7 +119,7 @@
   },
   "Nav": {
     "home": "Home",
-    "spex": "Spex",
+    "spex": "Browse",
     "search": "Search",
     "manage": "Editing",
     "newManuscript": "New manuscript",
@@ -139,7 +143,6 @@
     "intro": "The spex' manuscripts and arrangements through the years: read them here, on a tablet on the music stand, or download them.",
     "browse": "Browse",
     "withMaterial": "Spex with material",
-    "decade": "{decade}s",
     "recent": "Recently added and changed",
     "allSpex": "All spex with material",
     "empty": "Nothing is published yet.",
@@ -579,7 +582,11 @@
     "keyHint": "Type # and b, e.g. Bb or F#m.",
     "keyUnknown": "The key is not recognised.",
     "submit": "Search",
-    "hint": "Search titles, authors, arrangers, melodies and numbers, and the text of the files.",
+    "emptyTitle": "What are you looking for?",
+    "hint": "Search titles, authors, arrangers, melodies and numbers and the text of the files, or a key.",
+    "browse": "Or browse all spex",
+    "filterOnly": "The instrument filter narrows the hits, so type a word or a key as well. Every part for an instrument in a spex is on the spex page, under Download parts.",
+    "tooShort": "Type at least two characters.",
     "none": "No hits.",
     "count": "{count, plural, one {# hit} other {# hits}}",
     "spex": "Spex",
@@ -821,5 +828,9 @@
       "TRASH": "Trash",
       "ACCESS_REQUEST": "Access request"
     }
+  },
+  "YearBrowser": {
+    "decade": "{decade}s",
+    "yearsOf": "Years in the {decade}s"
   }
 }

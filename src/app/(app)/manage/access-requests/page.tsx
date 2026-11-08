@@ -41,7 +41,7 @@ export default async function AccessRequestsPage({ searchParams }: { searchParam
                   <p className="font-medium">
                     {request.userName ?? "–"}
                     {request.userEmail && (
-                      <a href={`mailto:${request.userEmail}`} className="ml-2 text-sm font-normal text-primary hover:underline">{request.userEmail}</a>
+                      <a href={`mailto:${request.userEmail}`} className="ml-2 text-sm font-normal text-primary hover:text-primary/80">{request.userEmail}</a>
                     )}
                   </p>
                   <span className="flex items-center gap-2">
@@ -53,8 +53,8 @@ export default async function AccessRequestsPage({ searchParams }: { searchParam
                 <ul className="flex flex-wrap gap-2 text-sm">
                   {request.files.map(file => (
                     <li key={file.id}>
-                      <Link href={fileHref(file.id)} className="text-primary hover:underline">{file.title}</Link>
-                      {" "}<Link href={`/versions/${file.versionId}/edit`} className="text-xs text-muted-foreground hover:underline">({t("version")})</Link>
+                      <Link href={fileHref(file.id)} className="text-primary hover:text-primary/80">{file.title}</Link>
+                      {" "}<Link href={`/versions/${file.versionId}/edit`} className="text-xs text-muted-foreground hover:text-primary">({t("version")})</Link>
                     </li>
                   ))}
                 </ul>

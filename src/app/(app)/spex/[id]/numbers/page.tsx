@@ -27,7 +27,7 @@ export default async function NumbersPage({ params }: { params: Promise<{ id: st
     return (
       <div className="max-w-4xl space-y-6 p-4 sm:p-6">
         <div className="space-y-1">
-          <Link href={spexHref(spex.id)} className="text-sm text-primary hover:underline">← {spexName(spex)}</Link>
+          <Link href={spexHref(spex.id)} className="text-sm text-primary hover:text-primary/80">← {spexName(spex)}</Link>
           <h1 className="text-2xl font-semibold tracking-tight">{t("title", { spex: spexName(spex) })}</h1>
           <p className="text-sm text-muted-foreground">{t("text")}</p>
           {spex.numbersInherited && <p className="text-sm text-muted-foreground">{t("inheritedHint")}</p>}

@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { FileMusic, ScrollText } from "lucide-react";
 import { HomeSection } from "@/components/home-section";
 import { VersionBadges } from "@/components/archive/version-meta";
+import { YearBrowser } from "@/components/year-browser.client";
 import { getHome, getMe } from "@/lib/archive/archive.server";
 import { formatDate } from "@/utils/format";
 import { arrangementHref, manuscriptHref, spexName, versionAnchor } from "@/utils/links";
@@ -11,8 +12,8 @@ import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 
 /**
- * The start page: a greeting with the admins' text, browsing by category and year, and the versions added or changed
- * most recently.
+ * The start page: a greeting with the admins' text, browsing by category and year (folded into decades), and the
+ * versions added or changed most recently.
  */
 export default async function HomePage() {
   return withPolicyPage(Policies.app.requireAccess, async () => {
@@ -21,7 +22,6 @@ export default async function HomePage() {
     const [home, me] = await Promise.all([getHome(), getMe()]);
     const welcome = locale === "en" ? me?.settings.welcomeEn : me?.settings.welcomeSv;
     const chip = "rounded-full border px-3 py-1 text-sm hover:bg-accent";
-    const decades = [...new Set((home?.years ?? []).map(year => Math.floor(year / 10) * 10))];
 
     return (
       <div className="space-y-8 p-4 sm:p-6">
@@ -42,19 +42,7 @@ export default async function HomePage() {
               ))}
               <Link href="/spex?material=1" className={chip}>{t("withMaterial")}</Link>
             </div>
-            <div className="space-y-1.5">
-              {decades.map(decade => (
-                <div key={decade} className="flex flex-wrap items-center gap-1.5">
-                  <span className="w-14 text-xs text-muted-foreground tabular-nums">{t("decade", { decade })}</span>
-                  {home.years.filter(year => Math.floor(year / 10) * 10 === decade).sort((a, b) => a - b).map(year => (
-                    <Link key={year} href={`/spex?year=${year}`}
-                          className="rounded-md border px-2 py-0.5 text-sm tabular-nums hover:bg-accent">
-                      {year}
-                    </Link>
-                  ))}
-                </div>
-              ))}
-            </div>
+            <YearBrowser years={home.years} hrefPrefix="/spex?year=" />
           </nav>
         )}
 

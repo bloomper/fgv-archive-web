@@ -45,7 +45,7 @@ export default async function VersionEditPage({ params }: { params: Promise<{ id
       <div className="max-w-5xl space-y-8 p-4 sm:p-6">
         <header className="space-y-2">
           <p className="text-sm">
-            <Link href={parentHref} className="text-primary hover:underline">← {title}</Link>
+            <Link href={parentHref} className="text-primary hover:text-primary/80">← {title}</Link>
             <span className="text-muted-foreground"> · {spexName(spex)}</span>
           </p>
           <h1 className="flex flex-wrap items-center gap-2 text-2xl font-semibold tracking-tight">
@@ -56,7 +56,7 @@ export default async function VersionEditPage({ params }: { params: Promise<{ id
                           trashed={version.trashed} admin={isAdmin(authz.roles)} parentHref={parentHref} />
             <ShareLinkButton input={{ versionIds: [version.id] }} defaultName={`${title}, ${version.label}`}
                              maxMonths={maxShareLinkMonths} label={t("shareVersion")} />
-            <Link href={versionHref(version)} className="px-2 text-sm text-primary hover:underline">{t("view")}</Link>
+            <Link href={versionHref(version)} className="px-2 text-sm text-primary hover:text-primary/80">{t("view")}</Link>
           </div>
         </header>
 

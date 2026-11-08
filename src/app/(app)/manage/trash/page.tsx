@@ -17,8 +17,8 @@ export default async function TrashPage() {
     const trash = await getTrash();
     const admin = isAdmin(authz.roles);
     const empty = !trash || trash.manuscripts.length + trash.arrangements.length + trash.versions.length === 0;
-    const list = "divide-y rounded-lg border bg-card";
-    const row = "flex flex-wrap items-center justify-between gap-2 px-3 py-2";
+    const list = "divide-y overflow-hidden rounded-lg border bg-card";
+    const row = "link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2";
 
     return (
       <div className="max-w-4xl space-y-6 p-4 sm:p-6">
@@ -36,7 +36,7 @@ export default async function TrashPage() {
                   {trash.manuscripts.map(manuscript => (
                     <li key={manuscript.id} className={row}>
                       <span>
-                        <Link href={manuscriptHref(manuscript.id)} className="font-medium hover:underline">{manuscript.title}</Link>
+                        <Link href={manuscriptHref(manuscript.id)} className="row-link font-medium">{manuscript.title}</Link>
                         <span className="text-sm text-muted-foreground"> · {spexName(manuscript.spex)} · {t("versions", { count: manuscript.versions.length })}</span>
                       </span>
                       <TrashActions kind="MANUSCRIPT" id={manuscript.id} title={manuscript.title} admin={admin} />
@@ -52,7 +52,7 @@ export default async function TrashPage() {
                   {trash.arrangements.map(arrangement => (
                     <li key={arrangement.id} className={row}>
                       <span>
-                        <Link href={arrangementHref(arrangement.id)} className="font-medium hover:underline">{arrangement.number.title}</Link>
+                        <Link href={arrangementHref(arrangement.id)} className="row-link font-medium">{arrangement.number.title}</Link>
                         <span className="text-sm text-muted-foreground"> · {spexName(arrangement.number.spex)} · {t("versions", { count: arrangement.versions.length })}</span>
                       </span>
                       <TrashActions kind="ARRANGEMENT" id={arrangement.id} title={arrangement.number.title} admin={admin} />
@@ -72,7 +72,7 @@ export default async function TrashPage() {
                     return (
                       <li key={version.id} className={row}>
                         <span>
-                          <Link href={versionEditHref(version.id)} className="font-medium hover:underline">{title}, {version.label}</Link>
+                          <Link href={versionEditHref(version.id)} className="row-link font-medium">{title}, {version.label}</Link>
                           <span className="text-sm text-muted-foreground"> · {spexName(spex)}</span>
                         </span>
                         <TrashActions kind="VERSION" id={version.id} title={`${title}, ${version.label}`} admin={admin} />

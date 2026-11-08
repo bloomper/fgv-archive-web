@@ -64,7 +64,7 @@ export default async function ArrangementPage({ params, searchParams }: {
       <div className="space-y-8 p-4 sm:p-6">
         <header className="space-y-2">
           <p className="text-sm">
-            <Link href={spexHref(number.spex.id)} className="text-primary hover:underline">{spexName(number.spex)}</Link>
+            <Link href={spexHref(number.spex.id)} className="text-primary hover:text-primary/80">{spexName(number.spex)}</Link>
             <span className="text-muted-foreground"> · {t("number", { position: number.position })}</span>
           </p>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -88,8 +88,8 @@ export default async function ArrangementPage({ params, searchParams }: {
             <div className="overflow-x-auto">
               <ul className="flex gap-3 pb-2" aria-label={t("versions")}>
                 {arrangement.versions.map(version => (
-                  <li key={version.id} className="w-60 shrink-0 rounded-lg border bg-card p-3 text-sm" data-testid="version-card">
-                    <a href={`#${versionAnchor(version.id)}`} className="font-medium hover:underline">{version.label}</a>
+                  <li key={version.id} className="link-row w-60 shrink-0 rounded-lg border bg-card p-3 text-sm" data-testid="version-card">
+                    <a href={`#${versionAnchor(version.id)}`} className="row-link font-medium">{version.label}</a>
                     <div className="mt-1"><VersionBadges version={version} /></div>
                     <dl className="mt-2 space-y-1">
                       <dt className="text-xs text-muted-foreground">{t("key")}</dt>

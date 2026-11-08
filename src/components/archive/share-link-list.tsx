@@ -46,7 +46,7 @@ export async function ShareLinkList({ all }: { all: boolean }) {
           <ul className="space-y-0.5 text-sm">
             {link.spex && (
               <li>
-                <Link href={spexHref(link.spex.id)} className="text-primary hover:underline">{spexName(link.spex)}</Link>
+                <Link href={spexHref(link.spex.id)} className="text-primary hover:text-primary/80">{spexName(link.spex)}</Link>
                 {": "}{[...link.instruments.map(instrument => localName(instrument, locale)),
                   ...link.transpositions.map(pitch => noteName(pitch, locale))].join(", ")}
               </li>
@@ -54,14 +54,14 @@ export async function ShareLinkList({ all }: { all: boolean }) {
             {link.versions.map(version => (
               <li key={version.id}>
                 <Link href={versionHref({ ...version, parentId: version.manuscript?.id ?? version.arrangement?.id ?? "" })}
-                      className="text-primary hover:underline">
+                      className="text-primary hover:text-primary/80">
                   {version.manuscript?.title ?? version.arrangement?.number.title}
                 </Link>
                 <span className="text-muted-foreground"> · {version.label}</span>
               </li>
             ))}
             {link.files.map(file => (
-              <li key={file.id}><Link href={fileHref(file.id)} className="text-primary hover:underline">{file.title}</Link></li>
+              <li key={file.id}><Link href={fileHref(file.id)} className="text-primary hover:text-primary/80">{file.title}</Link></li>
             ))}
           </ul>
           {link.downloads.length > 0 && (

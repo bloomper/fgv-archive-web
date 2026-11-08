@@ -14,7 +14,7 @@ export function HomeSection({ id, title, more, children }: {
     <section className="space-y-3" aria-labelledby={id}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
         <h2 id={id} className="text-lg font-semibold">{title}</h2>
-        {more && <Link href={more.href} className="text-sm text-primary hover:underline">{more.label}</Link>}
+        {more && <Link href={more.href} className="text-sm text-primary hover:text-primary/80">{more.label}</Link>}
       </div>
       {children}
     </section>

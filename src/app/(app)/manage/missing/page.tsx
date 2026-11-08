@@ -1,6 +1,7 @@
+import Form from "next/form";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/submit-button.client";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { CreateArrangementButton } from "@/components/archive/create-buttons.client";
@@ -25,7 +26,7 @@ export default async function MissingPage({ searchParams }: { searchParams: Prom
       <div className="space-y-6 p-4 sm:p-6">
         <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
         <p className="max-w-4xl text-sm text-muted-foreground">{t("text")}</p>
-        <form method="get" action="/manage/missing" className="flex flex-wrap items-end gap-2">
+        <Form action="/manage/missing" className="flex flex-wrap items-end gap-2">
           <div className="space-y-1.5">
             <Label htmlFor="missing-category">{t("category")}</Label>
             <NativeSelect id="missing-category" name="category" defaultValue={categoryId ?? ""}>
@@ -33,20 +34,20 @@ export default async function MissingPage({ searchParams }: { searchParams: Prom
               {data?.categories.map(item => <NativeSelectOption key={item.id} value={item.id}>{item.name}</NativeSelectOption>)}
             </NativeSelect>
           </div>
-          <Button type="submit" variant="outline">{t("filter")}</Button>
-        </form>
+          <SubmitButton variant="outline">{t("filter")}</SubmitButton>
+        </Form>
         <div className="grid gap-6 lg:grid-cols-2">
           <section className="space-y-2" aria-labelledby="missing-manuscripts">
             <h2 id="missing-manuscripts" className="text-lg font-semibold">
               {t("manuscripts", { count: data?.missingManuscripts.length ?? 0 })}
             </h2>
-            <ul className="divide-y rounded-lg border bg-card">
+            <ul className="divide-y overflow-hidden rounded-lg border bg-card">
               {data?.missingManuscripts.map(spex => (
-                <li key={spex.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
-                  <Link href={spexHref(spex.id)} className="hover:underline">{spexName(spex)}</Link>
+                <li key={spex.id} className="link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2">
+                  <Link href={spexHref(spex.id)} className="row-link">{spexName(spex)}</Link>
                   <span className="flex items-center gap-2 text-xs text-muted-foreground">
                     {spex.categoryName}
-                    <Link href={`/manage/manuscripts/new?spex=${spex.id}`} className="text-primary hover:underline">{t("add")}</Link>
+                    <Link href={`/manage/manuscripts/new?spex=${spex.id}`} className="text-primary hover:text-primary/80">{t("add")}</Link>
                   </span>
                 </li>
               ))}
@@ -57,12 +58,12 @@ export default async function MissingPage({ searchParams }: { searchParams: Prom
             <h2 id="missing-arrangements" className="text-lg font-semibold">
               {t("arrangements", { count: data?.missingArrangements.length ?? 0 })}
             </h2>
-            <ul className="divide-y rounded-lg border bg-card">
+            <ul className="divide-y overflow-hidden rounded-lg border bg-card">
               {data?.missingArrangements.map(number => (
-                <li key={number.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
+                <li key={number.id} className="link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2">
                   <span>
                     <span className="tabular-nums text-muted-foreground">{number.position}. </span>{number.title}
-                    <Link href={spexHref(number.spex.id)} className="ml-2 text-sm text-muted-foreground hover:underline">
+                    <Link href={spexHref(number.spex.id)} className="row-link ml-2 text-sm text-muted-foreground">
                       {spexName(number.spex)}
                     </Link>
                   </span>

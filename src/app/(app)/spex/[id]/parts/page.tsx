@@ -53,7 +53,7 @@ export default async function SpexPartsPage({ params, searchParams }: {
     return (
       <div className="space-y-6 p-4 sm:p-6">
         <div className="space-y-1">
-          <Link href={spexHref(spex.id)} className="text-sm text-primary hover:underline">← {spexName(spex)}</Link>
+          <Link href={spexHref(spex.id)} className="text-sm text-primary hover:text-primary/80">← {spexName(spex)}</Link>
           <h1 className="text-2xl font-semibold tracking-tight">{t("title", { spex: spexName(spex) })}</h1>
           <p className="max-w-4xl text-pretty text-sm text-muted-foreground">{t("text")}</p>
         </div>
@@ -85,11 +85,11 @@ export default async function SpexPartsPage({ params, searchParams }: {
             <li key={arrangement.id} className="space-y-1">
               <h2 className="text-sm font-semibold">
                 {arrangement.number.position}.{" "}
-                <Link href={arrangementHref(arrangement.id)} className="hover:underline">{arrangement.number.title}</Link>
+                <Link href={arrangementHref(arrangement.id)} className="hover:text-primary">{arrangement.number.title}</Link>
                 {version && <span className="font-normal text-muted-foreground"> · {version.label}</span>}
               </h2>
               {version && version.files.length > 0 ? (
-                <ul className="divide-y rounded-lg border bg-card">
+                <ul className="divide-y overflow-hidden rounded-lg border bg-card">
                   {version.files.map(file => <FileRow key={file.id} file={file} />)}
                 </ul>
               ) : <p className="text-sm text-muted-foreground">{t("noneHere")}</p>}

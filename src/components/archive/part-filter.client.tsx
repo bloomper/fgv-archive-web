@@ -66,7 +66,7 @@ export function PartFilterControls({ instruments, pitches = PITCHES, value, onCh
         <span className="flex items-center gap-2">
           {pending && <Spinner className="size-4" />}
           {active && (
-            <button type="button" className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+            <button type="button" className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80"
                     onClick={() => apply({ instrumentIds: [], transpositions: [] })}>
               <X className="size-3.5" /> {t("clear")}
             </button>

@@ -68,7 +68,7 @@ export function VersionFacts({ version, showSpex = true }: { version: VersionLik
   const rows: [string, React.ReactNode][] = [];
 
   if (showSpex && version.usedIn) {
-    rows.push([t("usedIn"), <Link key="spex" href={spexHref(version.usedIn.id)} className="hover:underline">{spexName(version.usedIn)}</Link>]);
+    rows.push([t("usedIn"), <Link key="spex" href={spexHref(version.usedIn.id)} className="hover:text-primary">{spexName(version.usedIn)}</Link>]);
   }
   if (keys) {
     rows.push([t("key"), <span key="key" data-testid="version-key">{keys}</span>]);

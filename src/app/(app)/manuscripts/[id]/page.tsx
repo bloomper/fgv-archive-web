@@ -35,7 +35,7 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
       <div className="space-y-8 p-4 sm:p-6">
         <header className="space-y-2">
           <p className="text-sm">
-            <Link href={spexHref(manuscript.spex.id)} className="text-primary hover:underline">{spexName(manuscript.spex)}</Link>
+            <Link href={spexHref(manuscript.spex.id)} className="text-primary hover:text-primary/80">{spexName(manuscript.spex)}</Link>
             <span className="text-muted-foreground"> · {t("manuscript")}</span>
           </p>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -84,7 +84,7 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
                     <li key={number.id}>
                       <span className="tabular-nums text-muted-foreground">{number.position}. </span>
                       {number.arrangement
-                        ? <Link href={arrangementHref(number.arrangement.id)} className="text-primary hover:underline">{number.title}</Link>
+                        ? <Link href={arrangementHref(number.arrangement.id)} className="text-primary hover:text-primary/80">{number.title}</Link>
                         : number.title}
                     </li>
                   ))}

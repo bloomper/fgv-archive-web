@@ -6,7 +6,7 @@ test.describe("The application shell", () => {
 
     const sidebar = page.locator("[data-slot=\"sidebar\"]:visible");
     await expect(sidebar.getByRole("link", { name: "Start" })).toHaveAttribute("href", "/");
-    await expect(sidebar.getByRole("link", { name: "Spex", exact: true })).toHaveAttribute("href", "/spex");
+    await expect(sidebar.getByRole("link", { name: "Bläddra", exact: true })).toHaveAttribute("href", "/spex");
     await expect(sidebar.getByRole("link", { name: "Redigera" })).toBeVisible();
     await expect(sidebar.getByRole("link", { name: "Administration" })).toBeVisible();
   });
@@ -28,6 +28,9 @@ test.describe("The application shell", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Hej Ulla Användare!" })).toBeVisible();
     await expect(page.getByRole("link", { name: /Ouvertyr.*Transponerad till D/ })).toBeVisible();
     await expect(page.getByText("Utkast 2028")).toHaveCount(0);
+    // The years are folded into decades
+    await expect(page.getByRole("link", { name: "1985", exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "1980-talet" }).click();
     await expect(page.getByRole("link", { name: "1985", exact: true })).toHaveAttribute("href", "/spex?year=1985");
   });
 
