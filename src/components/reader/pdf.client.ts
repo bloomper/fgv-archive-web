@@ -40,6 +40,18 @@ export async function openPdf(url: string): Promise<{ task: PDFDocumentLoadingTa
   return { task, pdf: task.promise };
 }
 
+/**
+ * A page of the document, or a rejection when the document is gone: pdf.js throws at once then, rather than rejecting,
+ * which a `.then(…, onRejected)` would not catch.
+ */
+export function getPdfPage(pdf: PDFDocumentProxy, number: number): Promise<PDFPageProxy> {
+  try {
+    return pdf.getPage(number);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
 export type RenderedPage = { cancel: () => void; done: Promise<void> };
 
 /**
@@ -58,11 +70,18 @@ export function renderPage(page: PDFPageProxy, canvas: HTMLCanvasElement, scale:
   canvas.style.width = `${Math.floor(viewport.width)}px`;
   canvas.style.height = `${Math.floor(viewport.height)}px`;
 
-  const task = page.render({
-    canvas,
-    viewport,
-    transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : undefined,
-  });
+  let task: ReturnType<PDFPageProxy["render"]>;
+
+  try {
+    task = page.render({
+      canvas,
+      viewport,
+      transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : undefined,
+    });
+  } catch (error) {
+    // The document is gone (the reader was hidden or closed); there is nothing to draw
+    return { cancel: () => undefined, done: Promise.reject(error) };
+  }
 
   const done = task.promise.then(async () => {
     if (cancelled || !textLayer) {
