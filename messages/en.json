@@ -74,12 +74,12 @@
   "Forbidden": {
     "title": "You do not have permission",
     "text": "You do not have permission to see this page. Ask a admin if you need it.",
-    "home": "Go to the start page"
+    "home": "To the home page"
   },
   "NotFound": {
     "title": "Page not found",
     "text": "The page or the album does not exist, or you do not have access to it.",
-    "home": "Go to the start page"
+    "home": "To the home page"
   },
   "Error": {
     "title": "Something went wrong",
