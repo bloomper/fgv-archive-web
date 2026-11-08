@@ -77,7 +77,7 @@ test.describe("The header on a phone", () => {
 
     const name = page.locator("header").first().getByText("Spexarkiv", { exact: true });
 
-    await expect(page.locator("header").first().getByRole("button", { name: "Visa eller dölj menyn" })).toBeVisible();
+    await expect(page.locator("header").first().getByRole("button", { name: "Visa menyn" })).toBeVisible();
 
     await expect(name).toBeVisible();
     expect(await name.evaluate(element => element.scrollWidth <= element.clientWidth), "the name is not cut off").toBe(true);
