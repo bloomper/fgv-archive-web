@@ -832,7 +832,10 @@
     "period": "Period",
     "details": "Show details",
     "openRecord": "Open record",
-    "noneText": "Changes show up here as they are made."
+    "noneText": "Changes show up here as they are made.",
+    "untilNow": "today",
+    "pickStart": "Pick the first day.",
+    "pickEnd": "Pick the last day, or close to see up to today."
   },
   "YearBrowser": {
     "decade": "{decade}s",
