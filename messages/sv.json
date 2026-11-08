@@ -1,9 +1,9 @@
 {
   "App": {
-    "name": "Spexarkivet"
+    "name": "Spexarkiv"
   },
   "Meta": {
-    "title": "Spexarkivet",
+    "title": "Spexarkiv",
     "description": "Spexens manus och arrangemang"
   },
   "Common": {
@@ -59,7 +59,7 @@
     "spexflix": "Spexflix",
     "spexify": "Spexify",
     "spexgram": "Spexgram",
-    "archive": "Spexarkivet"
+    "archive": "Spexarkiv"
   },
   "LoginError": {
     "title": "Inloggningen misslyckades",
@@ -83,7 +83,7 @@
   },
   "NoAccess": {
     "title": "Du har inte åtkomst",
-    "text": "Ditt FGV-konto ({email}) har inte åtkomst till Spexarkivet. Be en administratör om åtkomst, eller logga ut och logga in med ett annat konto.",
+    "text": "Ditt FGV-konto ({email}) har inte åtkomst till Spexarkiv. Be en administratör om åtkomst, eller logga ut och logga in med ett annat konto.",
     "logout": "Logga ut"
   },
   "Errors": {
@@ -98,8 +98,8 @@
   },
   "About": {
     "title": "Om",
-    "heading": "Om Spexarkivet",
-    "description": "Spexarkivet tillhandahålls av FGV och samlar spexens manus och arrangemang, med sina versioner genom åren.",
+    "heading": "Om Spexarkiv",
+    "description": "Spexarkiv tillhandahålls av FGV och samlar spexens manus och arrangemang, med sina versioner genom åren.",
     "behindTheScenes": "Bakom kulisserna",
     "feedback": "Tyck till",
     "feedbackDescription": "Vi värdesätter dina åsikter. Har du förslag på förbättringar eller har du hittat en bugg? Hör gärna av dig på {email}.",
@@ -133,7 +133,7 @@
     "adminMaintenance": "Underhåll"
   },
   "Home": {
-    "title": "Spexarkivet",
+    "title": "Spexarkiv",
     "mustBeLoggedIn": "Du behöver vara inloggad med ditt FGV-konto för att läsa manus och noter.",
     "greeting": "Hej {name}!",
     "intro": "Här finns spexens manus och arrangemang genom åren: läs dem här, på en surfplatta på notstället, eller ladda ner dem.",
@@ -183,7 +183,7 @@
   },
   "Numbers": {
     "title": "Nummer i {spex}",
-    "text": "Numren i föreställningens ordning. Spexarkivet håller dem tills Spexipedia tar över, med samma id:n.",
+    "text": "Numren i föreställningens ordning. Spexarkiv håller dem tills Spexipedia tar över, med samma id:n.",
     "inheritedHint": "Nyuppsättningen visar originalets nummer tills du lägger till egna här.",
     "list": "Nummer",
     "none": "Inga nummer ännu.",

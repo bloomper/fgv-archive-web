@@ -8,9 +8,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Spexarkivet Web — project notes
+# Spexarkiv Web — project notes
 
-Next.js 16 App Router + React 19 frontend for Spexarkivet, FGV's archive of the spex' manuscripts and arrangements. It
+Next.js 16 App Router + React 19 frontend for Spexarkiv, FGV's archive of the spex' manuscripts and arrangements. It
 is backed by `fgv-archive-server`'s GraphQL API and its plain HTTP endpoints for files, previews, zips, share links and
 tus uploads. Stack and setup: `README.md`. Product spec: `fgv-archive-spec`. The scaffolding (auth, layout, i18n,
 shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
@@ -45,7 +45,7 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
   `src/app/(app)/admin/actions.server.ts` (admins); they check ids, return `ActionResult` and revalidate the whole app
   (`revalidatePath("/", "layout")`), since material shows on many pages.
 
-## How Spexarkivet works in the web
+## How Spexarkiv works in the web
 
 - **Notes and keys** (`src/utils/music.ts`): the server's enums are ASCII (`C_SHARP`, `B_FLAT`); show them with
   `noteName`, `formatKey`, `formatKeys` (with modulations, "F-dur → G-dur") and `formatTransposition` ("B 8vb"). Swedish
@@ -101,7 +101,7 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
 
 The look is FGV's, the same as Spexregister's, Nyuppsättning's, Spexify's and Spexflix's: `Logo`, `LogoText` and
 `LogoHome` in `src/components/`, `src/app/favicon.ico`, and the colours in `src/app/globals.css`. Don't give the
-application a logo or colours of its own; its name, Spexarkivet, appears as text (the header's title, the share
+application a logo or colours of its own; its name, Spexarkiv, appears as text (the header's title, the share
 pages). `src/app/icon.svg` (the FGV logo) is only for the installable app's manifest. `globals.css` also holds pdf.js's
 text layer rules.
 

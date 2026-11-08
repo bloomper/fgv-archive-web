@@ -1,4 +1,4 @@
-/** The kinds of record Spexarkivet's change log has. */
+/** The kinds of record Spexarkiv's change log has. */
 export const ENTITY_TYPES = ["MANUSCRIPT", "ARRANGEMENT", "VERSION", "FILE", "NUMBER", "SHARE_LINK", "INSTRUMENT",
   "FILE_ROLE", "SETTINGS", "TRASH", "ACCESS_REQUEST"] as const;
 

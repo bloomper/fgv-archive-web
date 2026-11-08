@@ -21,7 +21,7 @@ export default function ShareLayout({ children }: { children: React.ReactNode })
         <div className="flex min-w-0 items-center gap-3">
           <div className="size-9 shrink-0"><Logo /></div>
           <LogoText className="hidden h-9 w-auto text-foreground sm:block" />
-          <span className="truncate text-base font-semibold">Spexarkivet</span>
+          <span className="truncate text-base font-semibold">Spexarkiv</span>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <LanguageToggle />

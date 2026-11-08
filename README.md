@@ -1,13 +1,13 @@
-# Spexarkivet Web
+# Spexarkiv Web
 
 ## Overview
 
-Spexarkivet Web is the frontend of Spexarkivet, FGV's archive of the spex' manuscripts and musical arrangements.
+Spexarkiv Web is the frontend of Spexarkiv, FGV's archive of the spex' manuscripts and musical arrangements.
 Readers browse the spex, read manuscripts and scores in the page (pdf.js, also on a tablet on a music stand), filter
 parts by instrument and transposition, download files, versions and parts as zips, search the files' text, and ask for
 access to restricted material. Editors keep the numbers of each spex, upload files, edit versions and make share
 links; admins keep the settings, instruments and file roles. Share links open their material to anyone, without
-logging in. It talks to [Spexarkivet Server][1] over GraphQL and plain HTTP. The product spec is in
+logging in. It talks to [Spexarkiv Server][1] over GraphQL and plain HTTP. The product spec is in
 [fgv-archive-spec][2].
 
 ## Tech Stack
@@ -39,7 +39,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    ```
 
 2. **Configure environment:**
-   Start fgv-infra-deploy's local stack, Spexregister's and [Spexarkivet Server][1]'s (its getting started guide
+   Start fgv-infra-deploy's local stack, Spexregister's and [Spexarkiv Server][1]'s (its getting started guide
    describes all three), then create `.env.local` (`.env` already holds the rest):
    ```
    BETTER_AUTH_URL=http://localhost:3005
@@ -56,14 +56,14 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    ```
    The client secret is in `realm/fgv.json` in [fgv-keycloak][7]; search for `fgv-archive`.
    For visitor statistics, run fgv-infra-deploy's `local/bin/configure-umami.sh` and put the ID it prints for
-   Spexarkivet in `.env.local` as `UMAMI_WEBSITE_ID`, with `UMAMI_URL=https://analytics.fgv.local.nu:8443`.
+   Spexarkiv in `.env.local` as `UMAMI_WEBSITE_ID`, with `UMAMI_URL=https://analytics.fgv.local.nu:8443`.
    `npm run dev` and `docker compose` trust the root certificate of fgv-infra-deploy's local Caddy
    (`local/.docker/caddy/data/caddy/pki/authorities/local/root.crt`), read from `../../fgv-infra-deploy`, or from
    `INFRA_DEPLOY` if it is checked out elsewhere.
 
    | Variable                         | Purpose                                                                   |
    |----------------------------------|---------------------------------------------------------------------------|
-   | `API_GRAPHQL_ENDPOINT`           | Spexarkivet Server's GraphQL endpoint; its file, zip, share and upload endpoints share the origin |
+   | `API_GRAPHQL_ENDPOINT`           | Spexarkiv Server's GraphQL endpoint; its file, zip, share and upload endpoints share the origin |
    | `SPEXREGISTER_WEB_URL`           | Spexregister, for the application switcher in the header                  |
    | `FGV_REVIVAL_WEB_URL`            | Nyupps√§ttning, for the application switcher                               |
    | `SPEXIFY_WEB_URL`                | Spexify, for the application switcher                                     |
@@ -86,7 +86,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    (`scripts/copy-pdfjs.mjs`), which is not in git.
 
 The sample data's users (`admin@fgv.nu`, `editor@fgv.nu`, `user@fgv.nu`, `no-access@fgv.nu`) and share links are listed
-under *Test credentials* in Spexarkivet Server's getting started guide.
+under *Test credentials* in Spexarkiv Server's getting started guide.
 
 ## Docker
 
@@ -146,13 +146,13 @@ npm run start
 
 Contributors to this project agree to uphold its [code of conduct][3].
 
-You can contribute to Spexarkivet Web by:
+You can contribute to Spexarkiv Web by:
 
 - Opening a [pull request][4]. Please see the [contributor guidelines][5] for details
 
 ## License
 
-Spexarkivet Web is open source software released under the [Apache 2.0 license][6].
+Spexarkiv Web is open source software released under the [Apache 2.0 license][6].
 
 [1]: https://github.com/bloomper/fgv-archive-server
 

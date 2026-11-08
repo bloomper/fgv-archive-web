@@ -1,4 +1,4 @@
-// A stand-in for Spexarkivet Server and Keycloak in E2E tests: GraphQL for reading, editing, share links and
+// A stand-in for Spexarkiv Server and Keycloak in E2E tests: GraphQL for reading, editing, share links and
 // administration, the file, preview and zip endpoints (with byte ranges), the share link endpoints, tus uploads, and a
 // mini-Keycloak (discovery, authorize, token, JWKS, userinfo, logout). All data is fictitious.
 

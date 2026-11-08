@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
 
 /**
- * Makes Spexarkivet installable on phones and tablets, so that a score opens like an app on the music stand.
+ * Makes Spexarkiv installable on phones and tablets, so that a score opens like an app on the music stand.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Spexarkivet",
-    short_name: "Spexarkivet",
+    name: "Spexarkiv",
+    short_name: "Spexarkiv",
     description: "Spexens manus och arrangemang",
     start_url: "/",
     display: "standalone",

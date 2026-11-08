@@ -1,9 +1,9 @@
 {
   "App": {
-    "name": "Spexarkivet"
+    "name": "Spexarkiv"
   },
   "Meta": {
-    "title": "Spexarkivet",
+    "title": "Spexarkiv",
     "description": "The spex' manuscripts and arrangements"
   },
   "Common": {
@@ -59,7 +59,7 @@
     "spexflix": "Spexflix",
     "spexify": "Spexify",
     "spexgram": "Spexgram",
-    "archive": "Spexarkivet"
+    "archive": "Spexarkiv"
   },
   "LoginError": {
     "title": "Login failed",
@@ -83,7 +83,7 @@
   },
   "NoAccess": {
     "title": "You do not have access",
-    "text": "Your FGV account ({email}) does not have access to Spexarkivet. Ask an admin for access, or log out and log in with another account.",
+    "text": "Your FGV account ({email}) does not have access to Spexarkiv. Ask an admin for access, or log out and log in with another account.",
     "logout": "Log out"
   },
   "Errors": {
@@ -98,8 +98,8 @@
   },
   "About": {
     "title": "About",
-    "heading": "About Spexarkivet",
-    "description": "Spexarkivet is provided by FGV and collects the spex' manuscripts and arrangements, with their versions over the years.",
+    "heading": "About Spexarkiv",
+    "description": "Spexarkiv is provided by FGV and collects the spex' manuscripts and arrangements, with their versions over the years.",
     "behindTheScenes": "Behind the scenes",
     "feedback": "Feedback",
     "feedbackDescription": "We value your opinion. Do you have suggestions for improvements or have you found a bug? Get in touch at {email}.",
@@ -133,7 +133,7 @@
     "adminMaintenance": "Maintenance"
   },
   "Home": {
-    "title": "Spexarkivet",
+    "title": "Spexarkiv",
     "mustBeLoggedIn": "Log in with your FGV account to read manuscripts and sheet music.",
     "greeting": "Hi {name}!",
     "intro": "The spex' manuscripts and arrangements through the years: read them here, on a tablet on the music stand, or download them.",
@@ -183,7 +183,7 @@
   },
   "Numbers": {
     "title": "Numbers of {spex}",
-    "text": "The numbers in the order of the show. Spexarkivet keeps them until Spexipedia takes over, with the same ids.",
+    "text": "The numbers in the order of the show. Spexarkiv keeps them until Spexipedia takes over, with the same ids.",
     "inheritedHint": "The revival shows the original's numbers until you add its own here.",
     "list": "Numbers",
     "none": "No numbers yet.",

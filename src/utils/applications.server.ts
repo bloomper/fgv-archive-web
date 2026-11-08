@@ -6,8 +6,8 @@ import { type Application, resolveApplications } from "@/utils/applications";
 import type { AccessTokenClaims } from "@/types/auth";
 
 /**
- * The applications the signed-in user can switch to from Spexarkivet. The addresses are read from the environment
- * at request time, so one image serves every environment; without a session only Spexarkivet itself is listed.
+ * The applications the signed-in user can switch to from Spexarkiv. The addresses are read from the environment
+ * at request time, so one image serves every environment; without a session only Spexarkiv itself is listed.
  */
 export async function getApplications(): Promise<Application[]> {
   const { accessToken } = await getSessionContext();

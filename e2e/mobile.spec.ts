@@ -75,7 +75,7 @@ test.describe("The header on a phone", () => {
     await page.setViewportSize({ width: 360, height: 740 });
     await loginAs("user");
 
-    const name = page.locator("header").first().getByText("Spexarkivet", { exact: true });
+    const name = page.locator("header").first().getByText("Spexarkiv", { exact: true });
 
     await expect(page.locator("header").first().getByRole("button", { name: "Visa eller dölj menyn" })).toBeVisible();
 

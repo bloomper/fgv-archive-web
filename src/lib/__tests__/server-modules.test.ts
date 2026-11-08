@@ -92,7 +92,7 @@ describe("the plain HTTP endpoints", () => {
 });
 
 describe("the applications", () => {
-  it("lists the others from the token's roles, and only Spexarkivet without a session", async () => {
+  it("lists the others from the token's roles, and only Spexarkiv without a session", async () => {
     const { getApplications } = await import("@/utils/applications.server");
 
     mocks.getSessionContext.mockResolvedValue({ accessToken: null });

@@ -23,7 +23,7 @@ export async function withPolicyAction<T>(
 }
 
 /**
- * As {@link withPolicyAction}, but a user who is logged in without access to Spexarkivet at all is sent to the
+ * As {@link withPolicyAction}, but a user who is logged in without access to Spexarkiv at all is sent to the
  * no-access page, and one who lacks the page's role gets the forbidden page instead of an error.
  */
 export async function withPolicyPage<T>(
