@@ -1,17 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import * as React from "react";
 import { ChangeLog, RecordHistory } from "@/components/audit/change-log";
+import { ChangeLogView } from "@/components/audit/change-log.client";
+import type { AuditRow } from "@/utils/audit";
 
 const getAuditLog = vi.hoisted(() => vi.fn());
 const getAuditActors = vi.hoisted(() => vi.fn());
+const router = vi.hoisted(() => ({ replace: vi.fn() }));
 
 vi.mock("@/lib/admin/admin.server", () => ({ getAuditLog, getAuditActors }));
+vi.mock("next/navigation", () => ({ useRouter: () => router, usePathname: () => "/manage/audit" }));
 vi.mock("next-intl/server", () => ({
-  getTranslations: async () => Object.assign(
-    (key: string, values?: Record<string, unknown>) => (values ? `${key}:${JSON.stringify(values)}` : key),
-    { has: (key: string) => key !== "action.ODD" && key !== "type.ODD" },
-  ),
+  getTranslations: async () => (key: string, values?: Record<string, unknown>) =>
+    values ? `${key}:${JSON.stringify(values)}` : key,
 }));
 
 /**
@@ -47,43 +50,48 @@ const ENTRY = {
   at: "2026-11-01T10:00:00Z",
   actorName: "Anna",
   action: "UPDATE",
-  entityType: "ALBUM",
+  entityType: "VIDEO",
   entityId: "a1",
-  summary: "Ändrade albumet Nobel",
+  summary: "Ändrade filmen Nobel",
 };
-const linkOf = (type: string, id: string) => (type === "ALBUM" ? `/manage/albums/${id}` : null);
-const props = { path: "/manage/audit", entityTypes: ["ALBUM", "TRACK"], linkOf };
+const linkOf = (type: string, id: string) => (type === "VIDEO" ? `/manage/videos/${id}` : null);
+const loadMore = vi.fn();
+const props = { path: "/manage/audit", entityTypes: ["VIDEO", "COLLECTION"], linkOf, loadMore };
 
 async function renderLog(search: Record<string, string>, isAdmin = false) {
   render(<>{await resolve(await ChangeLog({ ...props, search, isAdmin }))}</>);
 }
 
+const row = (id: string, overrides: Partial<AuditRow> = {}): AuditRow => ({
+  id,
+  at: "2026-11-01T10:00:00Z",
+  actorName: "Anna",
+  action: "UPDATE",
+  entityType: "VIDEO",
+  summary: `Ändring ${id}`,
+  link: null,
+  historyHref: null,
+  ...overrides,
+});
+
 describe("ChangeLog", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    getAuditActors.mockResolvedValue([{ id: "u1", name: "Anna" }, { id: "u2", name: null }]);
+    getAuditActors.mockResolvedValue([
+      { id: "u1", name: "Anna" },
+      { id: "u2", name: null },
+    ]);
   });
 
   it("lists the changes with links to their records and their histories, without filters", async () => {
     getAuditLog.mockResolvedValue({
-      totalCount: 3, entries: [
-        ENTRY,
-        { ...ENTRY, id: "e2", action: "DELETE", summary: "Tog bort albumet Fritiof" },
-        {
-          id: "e3",
-          at: "2026-11-01T11:00:00Z",
-          actorName: null,
-          action: "ODD",
-          entityType: "ODD",
-          entityId: null,
-          summary: "Något annat",
-        },
-      ],
+      totalCount: 2,
+      entries: [ENTRY, { ...ENTRY, id: "e2", action: "DELETE", summary: "Tog bort filmen Fritiof" }],
     });
 
     await renderLog({});
 
-    expect(getAuditLog).toHaveBeenCalledWith(0, 50, {
+    expect(getAuditLog).toHaveBeenCalledWith(0, 15, {
       entityType: null,
       action: null,
       actorId: null,
@@ -93,65 +101,113 @@ describe("ChangeLog", () => {
       entityId: null,
     });
     expect(getAuditActors).not.toHaveBeenCalled();
-    expect(screen.queryByLabelText("who")).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Ändrade albumet Nobel" })).toHaveAttribute("href", "/manage/albums/a1");
-    expect(screen.queryByRole("link", { name: "Tog bort albumet Fritiof" })).not.toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /historyOf/ })[0]).toHaveAttribute("href", "/manage/audit?entity=a1");
+    expect(screen.queryByRole("button", { name: /Audit.who/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Ändrade filmen Nobel" })).toHaveAttribute("href", "/manage/videos/a1");
+    expect(screen.queryByRole("link", { name: "Tog bort filmen Fritiof" })).not.toBeInTheDocument();
+    expect(screen.getByText('Audit.count:{"count":2}')).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Audit.reset" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Common.loadMore" })).not.toBeInTheDocument();
 
-    const odd = screen.getByText("Något annat").closest("tr")!;
-
-    expect(within(odd).getByText("ODD", { selector: "[data-slot=badge]:first-child" })).toBeInTheDocument();
-    expect(within(odd).getByText("–")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "reset" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("navigation", { name: "pages" })).not.toBeInTheDocument();
+    // The opened row has the record and its history
+    await userEvent.click(screen.getAllByRole("button", { name: "Audit.details" })[0]);
+    expect(screen.getByRole("link", { name: "openRecord" })).toHaveAttribute("href", "/manage/videos/a1");
+    expect(screen.getByRole("link", { name: /historyOf/ })).toHaveAttribute("href", "/manage/audit?entity=a1");
   });
 
   it("filters by everything in the address, and lets an admin pick a person", async () => {
     getAuditLog.mockResolvedValue({ totalCount: 120, entries: [ENTRY] });
 
-    await renderLog({
-      page: "1",
-      type: "ALBUM",
-      action: "UPDATE",
-      actor: "u1",
-      from: "2026-11-01",
-      to: "2026-11-02",
-      q: "  nobel ",
-      entity: "a1",
-    }, true);
+    await renderLog(
+      {
+        type: "VIDEO",
+        action: "UPDATE",
+        actor: "u1",
+        from: "2026-11-01",
+        to: "2026-11-02",
+        q: "  nobel ",
+        entity: "a1",
+      },
+      true
+    );
 
-    expect(getAuditLog).toHaveBeenCalledWith(1, 50, expect.objectContaining({
-      entityType: "ALBUM", action: "UPDATE", actorId: "u1", q: "nobel", entityId: "a1",
-      from: "2026-10-31T23:00:00.000Z", to: "2026-11-02T23:00:00.000Z",
-    }));
-    expect(screen.getByLabelText("who")).toHaveValue("u1");
-    expect(screen.getByRole("option", { name: "u2" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "reset" })).toHaveAttribute("href", "/manage/audit");
-    expect(screen.getByRole("link", { name: "allRecords" })).not.toHaveAttribute("href", expect.stringContaining("entity="));
-    expect(screen.queryByRole("link", { name: /historyOf/ })).not.toBeInTheDocument();
-
-    const pages = screen.getByRole("navigation", { name: "pages" });
-
-    expect(within(pages).getByRole("link", { name: "newer" })).toHaveAttribute("href", expect.not.stringContaining("page="));
-    expect(within(pages).getByRole("link", { name: "older" })).toHaveAttribute("href", expect.stringContaining("page=2"));
-    expect(pages).toHaveTextContent("pageOf:{\"page\":2,\"pages\":3}");
+    expect(getAuditLog).toHaveBeenCalledWith(
+      0,
+      15,
+      expect.objectContaining({
+        entityType: "VIDEO",
+        action: "UPDATE",
+        actorId: "u1",
+        q: "nobel",
+        entityId: "a1",
+        from: "2026-10-31T23:00:00.000Z",
+        to: "2026-11-02T23:00:00.000Z",
+      })
+    );
+    expect(screen.getByRole("button", { name: /Audit.who/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Audit.reset" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Audit.allRecords" })).not.toHaveAttribute(
+      "href",
+      expect.stringContaining("entity=")
+    );
+    expect(screen.getByRole("button", { name: "Common.loadMore" })).toBeInTheDocument();
   });
 
-  it("ignores the person for editors and a bad page, and says when nothing matches", async () => {
-    getAuditLog.mockResolvedValue({ totalCount: 0, entries: [] });
-
-    await renderLog({ page: "-3", actor: "u1" });
-    expect(getAuditLog).toHaveBeenCalledWith(0, 50, expect.objectContaining({ actorId: null }));
-    expect(screen.getByText("none")).toBeInTheDocument();
-    expect(screen.queryByText(/^count:/)).not.toBeInTheDocument();
-  });
-
-  it("says that nothing matches a filter, also when the log could not be read", async () => {
+  it("ignores the person for editors and says when nothing matches", async () => {
     getAuditLog.mockResolvedValue(null);
 
-    await renderLog({ action: "TRASH" });
-    expect(screen.getByText("noneFiltered")).toBeInTheDocument();
-    expect(screen.queryByText(/^count:/)).not.toBeInTheDocument();
+    await renderLog({ actor: "u1" });
+    expect(getAuditLog).toHaveBeenCalledWith(0, 15, expect.objectContaining({ actorId: null }));
+    expect(screen.getByText("Audit.noneFiltered")).toBeInTheDocument();
+    expect(screen.queryByText(/^Audit.count:/)).not.toBeInTheDocument();
+  });
+});
+
+describe("ChangeLogView", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const view = (search: Record<string, string>, rows: AuditRow[], totalCount: number) => (
+    <ChangeLogView
+      search={search}
+      isAdmin={false}
+      entityTypes={["VIDEO"]}
+      actors={[]}
+      initial={{ rows, totalCount }}
+      pageSize={2}
+      loadMore={loadMore}
+    />
+  );
+
+  it("loads more with the same filter and appends what comes", async () => {
+    loadMore.mockResolvedValue({ rows: [row("e2"), row("e3")], totalCount: 3 });
+
+    render(view({ type: "VIDEO" }, [row("e1"), row("e2")], 3));
+    await userEvent.click(screen.getByRole("button", { name: "Common.loadMore" }));
+
+    expect(loadMore).toHaveBeenCalledWith({ type: "VIDEO" }, 1, 2);
+    await waitFor(() => expect(screen.getByText("Ändring e3")).toBeInTheDocument());
+    expect(screen.getAllByText("Ändring e2")).toHaveLength(1);
+    expect(screen.queryByRole("button", { name: "Common.loadMore" })).not.toBeInTheDocument();
+  });
+
+  it("puts the search in the address and clears the filter", async () => {
+    render(view({ action: "TRASH" }, [], 0));
+    expect(screen.getByText("Audit.noneFiltered")).toBeInTheDocument();
+
+    await userEvent.type(screen.getByRole("searchbox", { name: "Audit.search" }), "nobel");
+    await waitFor(() =>
+      expect(router.replace).toHaveBeenLastCalledWith("/manage/audit?action=TRASH&q=nobel", { scroll: false })
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Audit.reset" }));
+    expect(router.replace).toHaveBeenLastCalledWith("/manage/audit", { scroll: false });
+  });
+
+  it("shows the event under the person on a narrow screen", () => {
+    render(view({}, [row("e1", { action: "TRASH" })], 1));
+
+    const cells = within(screen.getByText("Ändring e1").closest("tr")!).getAllByRole("cell");
+
+    expect(cells[2]).toHaveTextContent("TRASH");
   });
 });
 
@@ -165,7 +221,11 @@ describe("RecordHistory", () => {
 
     expect(getAuditLog).toHaveBeenCalledWith(0, 10, { entityId: "a1" });
     expect(screen.getByRole("heading", { name: "recordHistory" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "allChanges:{\"count\":12}" })).toHaveAttribute("href", "/manage/audit?entity=a1");
+    expect(screen.getByRole("link", { name: 'allChanges:{"count":12}' })).toHaveAttribute(
+      "href",
+      "/manage/audit?entity=a1"
+    );
+    expect(screen.getByRole("link", { name: "Ändrade filmen Nobel" })).toBeInTheDocument();
   });
 
   it("shows nothing without changes or when the log cannot be read", async () => {

@@ -45,7 +45,8 @@
     "clearSearch": "Rensa sökningen",
     "datePlaceholder": "ÅÅÅÅ-MM-DD",
     "pickDate": "Välj datum",
-    "noMatches": "Inget matchar"
+    "noMatches": "Inget matchar",
+    "loadMore": "Visa fler"
   },
   "Header": {
     "toggleLanguage": "Byt språk",
@@ -785,13 +786,9 @@
     "when": "När",
     "who": "Vem",
     "what": "Vad",
-    "pages": "Sidor",
-    "newer": "Nyare",
-    "older": "Äldre",
-    "pageOf": "Sida {page} av {pages}",
     "event": "Händelse",
     "filters": "Filtrera ändringsloggen",
-    "search": "Sök i beskrivningen",
+    "search": "Sök i beskrivningen…",
     "typeLabel": "Sort",
     "allTypes": "Alla sorter",
     "actionLabel": "Händelse",
@@ -799,7 +796,6 @@
     "everyone": "Alla",
     "from": "Från och med",
     "to": "Till och med",
-    "filter": "Filtrera",
     "reset": "Rensa filtret",
     "count": "{count, plural, =0 {Inga ändringar} one {# ändring} other {# ändringar}}",
     "none": "Inga ändringar ännu.",
@@ -833,7 +829,11 @@
       "SETTINGS": "Inställningar",
       "TRASH": "Papperskorg",
       "ACCESS_REQUEST": "Åtkomstförfrågan"
-    }
+    },
+    "period": "Period",
+    "details": "Visa detaljer",
+    "openRecord": "Öppna posten",
+    "noneText": "Ändringar syns här när de görs."
   },
   "YearBrowser": {
     "decade": "{decade}-talet",

@@ -45,7 +45,8 @@
     "clearSearch": "Clear search",
     "datePlaceholder": "YYYY-MM-DD",
     "pickDate": "Pick a date",
-    "noMatches": "Nothing matches"
+    "noMatches": "Nothing matches",
+    "loadMore": "Load more"
   },
   "Header": {
     "toggleLanguage": "Change language",
@@ -785,13 +786,9 @@
     "when": "When",
     "who": "Who",
     "what": "What",
-    "pages": "Pages",
-    "newer": "Newer",
-    "older": "Older",
-    "pageOf": "Page {page} of {pages}",
     "event": "Event",
     "filters": "Filter the change log",
-    "search": "Search the descriptions",
+    "search": "Search the summaries…",
     "typeLabel": "Kind",
     "allTypes": "All kinds",
     "actionLabel": "Event",
@@ -799,7 +796,6 @@
     "everyone": "Everyone",
     "from": "From",
     "to": "To",
-    "filter": "Filter",
     "reset": "Clear the filter",
     "count": "{count, plural, =0 {No changes} one {# change} other {# changes}}",
     "none": "No changes yet.",
@@ -833,7 +829,11 @@
       "SETTINGS": "Settings",
       "TRASH": "Trash",
       "ACCESS_REQUEST": "Access request"
-    }
+    },
+    "period": "Period",
+    "details": "Show details",
+    "openRecord": "Open record",
+    "noneText": "Changes show up here as they are made."
   },
   "YearBrowser": {
     "decade": "{decade}s",
