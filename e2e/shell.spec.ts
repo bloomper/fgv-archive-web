@@ -5,7 +5,7 @@ test.describe("The application shell", () => {
     await loginAs("admin");
 
     const sidebar = page.locator("[data-slot=\"sidebar\"]:visible");
-    await expect(sidebar.getByRole("link", { name: "Start" })).toHaveAttribute("href", "/");
+    await expect(sidebar.getByRole("link", { name: "Hem" })).toHaveAttribute("href", "/");
     await expect(sidebar.getByRole("link", { name: "Bläddra", exact: true })).toHaveAttribute("href", "/spex");
     await expect(sidebar.getByRole("link", { name: "Redigera" })).toBeVisible();
     await expect(sidebar.getByRole("link", { name: "Administration" })).toBeVisible();
