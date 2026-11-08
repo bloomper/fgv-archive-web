@@ -49,10 +49,10 @@ export default async function SharePage({ params, searchParams }: {
     (a.kind === b.kind ? 0 : a.kind === "MANUSCRIPT" ? -1 : 1) || (a.numberPosition ?? 0) - (b.numberPosition ?? 0));
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
+    <div className="mx-auto max-w-5xl flex flex-1 flex-col gap-6 p-4 md:p-8">
       <header className="space-y-1">
         <p className="text-sm text-muted-foreground">{spexNames.join(", ")}</p>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{view.name}</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{view.name}</h1>
         <p className="text-sm text-muted-foreground">
           {t("sharedBy", { name: view.createdByName ?? "–", date: formatDate(view.expiresAt) ?? "" })}
         </p>

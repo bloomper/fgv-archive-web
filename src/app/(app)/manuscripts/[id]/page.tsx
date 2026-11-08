@@ -14,6 +14,7 @@ import { ID } from "@/utils/filters";
 import { arrangementHref, spexHref, spexName, versionAnchor, versionEditHref, versionZipHref } from "@/utils/links";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { DataEmpty } from "@/components/data-empty";
 
 /**
  * A manuscript: its versions, the recommended one first, each with its files and the numbers of the spex it was used
@@ -32,13 +33,13 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
     const editor = isEditor(authz.roles);
 
     return (
-      <div className="space-y-8 p-4 sm:p-6">
+      <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
         <header className="space-y-2">
           <p className="text-sm">
             <Link href={spexHref(manuscript.spex.id)} className="text-primary hover:text-primary/80">{spexName(manuscript.spex)}</Link>
             <span className="text-muted-foreground"> · {t("manuscript")}</span>
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {manuscript.title} {manuscript.trashed && <Badge variant="destructive">{t("trashed")}</Badge>}
           </h1>
           {manuscript.authors && <p className="text-muted-foreground">{t("by", { authors: manuscript.authors })}</p>}
@@ -49,7 +50,7 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
           )}
         </header>
 
-        {manuscript.versions.length === 0 && <p className="text-muted-foreground">{t("noVersions")}</p>}
+        {manuscript.versions.length === 0 && <DataEmpty title={t("noVersions")} description={null} />}
 
         {manuscript.versions.map(version => (
           <section key={version.id} id={versionAnchor(version.id)} aria-labelledby={`title-${version.id}`}

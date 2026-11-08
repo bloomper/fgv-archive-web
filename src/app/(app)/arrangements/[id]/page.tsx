@@ -23,6 +23,7 @@ import {
 import { formatKeys, type Pitch, PITCHES } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { DataEmpty } from "@/components/data-empty";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -61,13 +62,13 @@ export default async function ArrangementPage({ params, searchParams }: {
     const query = partFilterToApiQuery(filter);
 
     return (
-      <div className="space-y-8 p-4 sm:p-6">
+      <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
         <header className="space-y-2">
           <p className="text-sm">
             <Link href={spexHref(number.spex.id)} className="text-primary hover:text-primary/80">{spexName(number.spex)}</Link>
             <span className="text-muted-foreground"> · {t("number", { position: number.position })}</span>
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {number.title} {arrangement.trashed && <Badge variant="destructive">{t("trashed")}</Badge>}
           </h1>
           <p className="text-muted-foreground">
@@ -115,7 +116,7 @@ export default async function ArrangementPage({ params, searchParams }: {
                               pitches={PITCHES.filter(pitch => presentPitches.has(pitch))} />
         )}
 
-        {arrangement.versions.length === 0 && <p className="text-muted-foreground">{t("noVersions")}</p>}
+        {arrangement.versions.length === 0 && <DataEmpty title={t("noVersions")} description={null} />}
 
         {arrangement.versions.map(version => {
           const parts = version.files.filter(file => file.instruments.length > 0);

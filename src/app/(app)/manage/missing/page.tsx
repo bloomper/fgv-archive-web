@@ -1,9 +1,6 @@
-import Form from "next/form";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { SubmitButton } from "@/components/submit-button.client";
-import { Label } from "@/components/ui/label";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { FilterBar, FilterSelect } from "@/components/url-filters.client";
 import { CreateArrangementButton } from "@/components/archive/create-buttons.client";
 import { getMissing } from "@/lib/archive/archive.server";
 import { ID } from "@/utils/filters";
@@ -23,19 +20,13 @@ export default async function MissingPage({ searchParams }: { searchParams: Prom
     const data = await getMissing(categoryId);
 
     return (
-      <div className="space-y-6 p-4 sm:p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="max-w-4xl text-sm text-muted-foreground">{t("text")}</p>
-        <Form action="/manage/missing" className="flex flex-wrap items-end gap-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="missing-category">{t("category")}</Label>
-            <NativeSelect id="missing-category" name="category" defaultValue={categoryId ?? ""}>
-              <NativeSelectOption value="">{t("allCategories")}</NativeSelectOption>
-              {data?.categories.map(item => <NativeSelectOption key={item.id} value={item.id}>{item.name}</NativeSelectOption>)}
-            </NativeSelect>
-          </div>
-          <SubmitButton variant="outline">{t("filter")}</SubmitButton>
-        </Form>
+        <FilterBar label={t("filters")} values={{ category: categoryId ?? undefined }}>
+          <FilterSelect name="category" label={t("category")} allLabel={t("allCategories")}
+                        options={data?.categories.map(item => ({ value: item.id, label: item.name })) ?? []} />
+        </FilterBar>
         <div className="grid gap-6 lg:grid-cols-2">
           <section className="space-y-2" aria-labelledby="missing-manuscripts">
             <h2 id="missing-manuscripts" className="text-lg font-semibold">

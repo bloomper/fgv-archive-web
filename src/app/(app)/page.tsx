@@ -10,6 +10,7 @@ import { arrangementHref, manuscriptHref, spexName, versionAnchor } from "@/util
 import { formatKeys } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { DataEmpty } from "@/components/data-empty";
 
 /**
  * The start page: a greeting with the admins' text, browsing by category and year (folded into decades), and the
@@ -24,9 +25,9 @@ export default async function HomePage() {
     const chip = "rounded-full border px-3 py-1 text-sm hover:bg-accent";
 
     return (
-      <div className="space-y-8 p-4 sm:p-6">
+      <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
         <section className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t("greeting", { name: me?.me.displayName ?? me?.me.username ?? "" })}
           </h1>
           <p className="max-w-4xl whitespace-pre-line text-pretty text-muted-foreground">{welcome || t("intro")}</p>
@@ -78,7 +79,7 @@ export default async function HomePage() {
                 );
               })}
             </ul>
-          ) : <p className="text-muted-foreground">{t("empty")}</p>}
+          ) : <DataEmpty title={t("empty")} description={null} />}
         </HomeSection>
       </div>
     );

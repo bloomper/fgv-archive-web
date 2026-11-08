@@ -49,9 +49,9 @@ export default async function FilePage({ params, searchParams }: {
     }
 
     return (
-      <div className="max-w-3xl space-y-4 p-4 sm:p-6">
-        <Link href={back} className="text-sm text-primary hover:text-primary/80">← {subtitle}</Link>
-        <h1 className="text-2xl font-semibold tracking-tight">{file.title}</h1>
+      <div className="max-w-3xl flex flex-1 flex-col gap-4 p-4 md:p-8">
+        <Link href={back} className="w-fit text-sm text-primary hover:text-primary/80">← {subtitle}</Link>
+        <h1 className="text-2xl font-bold tracking-tight">{file.title}</h1>
         <FileList files={[file]} />
         {file.canOpen ? (
           <div className="space-y-2">

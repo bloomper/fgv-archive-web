@@ -159,7 +159,6 @@
     "year": "År",
     "allYears": "Alla år",
     "withMaterial": "Bara med material",
-    "filter": "Filtrera",
     "reset": "Rensa",
     "none": "Inga spex",
     "noneText": "Inga spex matchar filtret.",
@@ -613,11 +612,11 @@
     "text": "Spex utan publicerat manus och nummer utan publicerat arrangemang, nyaste spexen först, så att materialet kan letas upp.",
     "category": "Kategori",
     "allCategories": "Alla kategorier",
-    "filter": "Visa",
     "manuscripts": "Spex utan manus ({count})",
     "arrangements": "Nummer utan arrangemang ({count})",
     "add": "Lägg till manus",
-    "none": "Inget saknas."
+    "none": "Inget saknas.",
+    "filters": "Filtrera materialet"
   },
   "AccessRequests": {
     "title": "Åtkomstförfrågningar",
@@ -838,5 +837,16 @@
   "YearBrowser": {
     "decade": "{decade}-talet",
     "yearsOf": "År på {decade}-talet"
+  },
+  "CommandPalette": {
+    "title": "Kommandopalett",
+    "description": "Hoppa till en sida eller starta en åtgärd",
+    "open": "Öppna kommandopaletten",
+    "hint": "Hoppa till…",
+    "placeholder": "Hoppa till sida eller åtgärd…",
+    "navigation": "Navigering",
+    "search": "Sök",
+    "searchFor": "Sök i arkivet efter ”{query}”",
+    "create": "Skapa"
   }
 }

@@ -159,7 +159,6 @@
     "year": "Year",
     "allYears": "All years",
     "withMaterial": "Only with material",
-    "filter": "Filter",
     "reset": "Clear",
     "none": "No spex",
     "noneText": "No spex match the filter.",
@@ -613,11 +612,11 @@
     "text": "Spex without a published manuscript and numbers without a published arrangement, newest spex first, so that the material can be hunted down.",
     "category": "Category",
     "allCategories": "All categories",
-    "filter": "Show",
     "manuscripts": "Spex without a manuscript ({count})",
     "arrangements": "Numbers without an arrangement ({count})",
     "add": "Add a manuscript",
-    "none": "Nothing is missing."
+    "none": "Nothing is missing.",
+    "filters": "Filter the material"
   },
   "AccessRequests": {
     "title": "Access requests",
@@ -838,5 +837,16 @@
   "YearBrowser": {
     "decade": "{decade}s",
     "yearsOf": "Years in the {decade}s"
+  },
+  "CommandPalette": {
+    "title": "Command palette",
+    "description": "Jump to a page or start an action",
+    "open": "Open the command palette",
+    "hint": "Jump to…",
+    "placeholder": "Jump to page or action…",
+    "navigation": "Navigation",
+    "search": "Search",
+    "searchFor": "Search the archive for “{query}”",
+    "create": "Create"
   }
 }

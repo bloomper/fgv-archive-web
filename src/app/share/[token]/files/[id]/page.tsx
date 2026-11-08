@@ -38,7 +38,7 @@ export default async function SharedFilePage({ params, searchParams }: {
   if (!isPdf(file)) {
     return (
       <div className="mx-auto max-w-xl space-y-4 p-6">
-        <h1 className="text-2xl font-semibold">{file.title}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{file.title}</h1>
         <a href={fileDownloadHref(file.id, place)} download className={buttonVariants()}><Download /> {t("download")}</a>
       </div>
     );

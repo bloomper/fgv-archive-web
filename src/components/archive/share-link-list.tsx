@@ -7,6 +7,7 @@ import { getMe } from "@/lib/archive/archive.server";
 import { formatDate } from "@/utils/format";
 import { fileHref, spexHref, spexName, versionHref } from "@/utils/links";
 import { localName, noteName } from "@/utils/music";
+import { DataEmpty } from "@/components/data-empty";
 
 /**
  * Share links, newest first: who they are for, what they open, when they expire and how often each file was
@@ -19,7 +20,7 @@ export async function ShareLinkList({ all }: { all: boolean }) {
   const maxMonths = me?.settings.maxShareLinkMonths ?? 24;
 
   if (links.length === 0) {
-    return <p className="text-muted-foreground">{t("none")}</p>;
+    return <DataEmpty title={t("none")} description={null} />;
   }
   return (
     <ul className="space-y-3">

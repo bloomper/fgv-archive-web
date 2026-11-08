@@ -42,13 +42,13 @@ export default async function VersionEditPage({ params }: { params: Promise<{ id
     const maxShareLinkMonths = me?.settings.maxShareLinkMonths ?? 24;
 
     return (
-      <div className="max-w-5xl space-y-8 p-4 sm:p-6">
+      <div className="max-w-5xl flex flex-1 flex-col gap-8 p-4 md:p-8">
         <header className="space-y-2">
           <p className="text-sm">
             <Link href={parentHref} className="text-primary hover:text-primary/80">← {title}</Link>
             <span className="text-muted-foreground"> · {spexName(spex)}</span>
           </p>
-          <h1 className="flex flex-wrap items-center gap-2 text-2xl font-semibold tracking-tight">
+          <h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold tracking-tight">
             {t("title", { label: version.label })} <VersionBadges version={version} />
           </h1>
           <div className="flex flex-wrap items-center gap-2">

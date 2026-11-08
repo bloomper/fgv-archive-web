@@ -10,8 +10,8 @@ export default async function SettingsPage() {
     const settings = await getSettings();
 
     return (
-      <div className="space-y-6 p-4 sm:p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         {settings && <SettingsForm key={JSON.stringify(settings)} initial={settings} />}
       </div>
     );

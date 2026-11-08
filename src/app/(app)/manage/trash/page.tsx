@@ -6,6 +6,7 @@ import { arrangementHref, manuscriptHref, spexName, versionEditHref } from "@/ut
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 import { EmptyTrashButton, TrashActions } from "./trash.client";
+import { DataEmpty } from "@/components/data-empty";
 
 /**
  * What is in the trash: manuscripts and arrangements (with their versions) and versions trashed on their own. Files stay
@@ -21,13 +22,13 @@ export default async function TrashPage() {
     const row = "link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2";
 
     return (
-      <div className="max-w-4xl space-y-6 p-4 sm:p-6">
+      <div className="max-w-4xl flex flex-1 flex-col gap-6 p-4 md:p-8">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
           {admin && !empty && <EmptyTrashButton />}
         </div>
         <p className="text-sm text-muted-foreground">{admin ? t("textAdmin") : t("text")}</p>
-        {empty ? <p className="text-muted-foreground">{t("none")}</p> : (
+        {empty ? <DataEmpty title={t("none")} description={null} /> : (
           <>
             {trash.manuscripts.length > 0 && (
               <section className="space-y-2">

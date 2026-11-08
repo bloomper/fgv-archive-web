@@ -17,8 +17,8 @@ export default async function StoragePage() {
     const share = total > 0 ? Math.round(used / total * 1000) / 10 : 0;
 
     return (
-      <div className="max-w-2xl space-y-6 p-4 sm:p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <div className="max-w-2xl flex flex-1 flex-col gap-6 p-4 md:p-8">
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         {storage && (
           <>
             <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">

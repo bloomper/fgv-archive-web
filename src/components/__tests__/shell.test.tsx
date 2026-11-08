@@ -64,10 +64,11 @@ describe("the shell", () => {
     expect(screen.getByText("nav-user")).toBeInTheDocument();
   });
 
-  it("has a header with the menu button and search", async () => {
-    render(<TooltipProvider><SidebarProvider><SiteHeader applications={[]} /></SidebarProvider></TooltipProvider>);
+  it("has a header with the menu button, search and the command palette", async () => {
+    render(<TooltipProvider><SidebarProvider><SiteHeader applications={[]} roles={["USER"]} /></SidebarProvider></TooltipProvider>);
     await userEvent.click(screen.getByRole("button", { name: "showMenu" }));
     expect(screen.getByRole("link", { name: "title" })).toHaveAttribute("href", "/search");
+    expect(screen.getByRole("button", { name: "CommandPalette.open" })).toBeInTheDocument();
   });
 
   it("searches from the header", async () => {

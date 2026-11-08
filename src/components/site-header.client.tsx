@@ -10,8 +10,10 @@ import { ModeToggle } from "@/components/mode-toggle.client";
 import { LanguageToggle } from "@/components/language-toggle.client";
 import { useIsClient } from "@/hooks/use-is-client.client";
 import { HeaderSearch } from "@/components/header-search.client";
+import { CommandPalette } from "@/components/command-palette.client";
+import type { Role } from "@/types/auth";
 
-export function SiteHeader({ applications }: { applications: Application[] }) {
+export function SiteHeader({ applications, roles }: { applications: Application[]; roles: Role[] }) {
   const isClient = useIsClient();
   const t = useTranslations();
 
@@ -27,6 +29,7 @@ export function SiteHeader({ applications }: { applications: Application[] }) {
           {isClient ? (
             <>
               <HeaderSearch />
+              <CommandPalette roles={roles} />
               <LanguageToggle />
               <ModeToggle />
             </>

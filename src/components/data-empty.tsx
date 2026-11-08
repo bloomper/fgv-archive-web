@@ -8,7 +8,8 @@ export function DataEmpty({
                             icon: Icon = Search,
                           }: {
   title?: string,
-  description?: string,
+  /** null leaves the description out. */
+  description?: string | null,
   icon?: LucideIcon
 }) {
   const t = useTranslations();
@@ -20,9 +21,11 @@ export function DataEmpty({
           <Icon />
         </EmptyMedia>
         <EmptyTitle>{title ?? t("Common.noDataHeading")}</EmptyTitle>
-        <EmptyDescription>
-          {description ?? t("Common.noDataDescription")}
-        </EmptyDescription>
+        {description !== null && (
+          <EmptyDescription>
+            {description ?? t("Common.noDataDescription")}
+          </EmptyDescription>
+        )}
       </EmptyHeader>
     </Empty>
   );

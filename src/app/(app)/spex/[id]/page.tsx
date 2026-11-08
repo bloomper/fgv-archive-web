@@ -43,12 +43,12 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
     const maxMonths = editor ? (await getMe())?.settings.maxShareLinkMonths ?? 24 : 24;
 
     return (
-      <div className="space-y-8 p-4 sm:p-6">
+      <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
         <header className="space-y-2">
           <p className="text-sm text-muted-foreground">
             {[spex.categoryName, spex.revival ? t("revival") : null].filter(Boolean).join(" · ")}
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {spex.title} <span className="tabular-nums text-muted-foreground">{spex.year}</span>
           </h1>
           {spex.original && (

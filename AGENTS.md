@@ -98,6 +98,8 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
 - **The change log** (`ChangeLog`, `RecordHistory`) is Spexify's; record kinds and their pages are in
   `src/app/(app)/manage/audit/links.ts`.
 - **Editors** work under `/manage` and on `/versions/[id]/edit`, **admins** under `/admin`.
+- **Command palette** (`CommandPalette`, Cmd/Ctrl+K, as in Spexregister and Nyuppsättning): the sidebar's pages for the
+  user's roles, *new manuscript*, and a search of the archive for what was typed. The reader leaves Ctrl/Cmd keys alone.
 
 ## Look
 
@@ -114,7 +116,7 @@ category. Umami, self-hosted in `fgv-infra-deploy`, is reached server-side at `U
 tracker and forwards events. `src/components/umami.tsx` renders nothing unless `UMAMI_URL` and `UMAMI_WEBSITE_ID` are
 both set, and drops query strings. Events go through `track()` (`src/utils/umami.ts`), enum values, counts and booleans
 only: `access-request` (`files`), `arrangement-create`, `manuscript-create`, `version-publish` (`published`),
-`file-upload` (`instruments`), `share-link-create` (`versions`, `files`, `instruments`), and `data-umami-event` on the
+`file-upload` (`instruments`), `share-link-create` (`versions`, `files`, `instruments`), `command-palette` (`target`, the entry's id), and `data-umami-event` on the
 download links.
 
 ## Application switcher

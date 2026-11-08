@@ -13,6 +13,7 @@ import { arrangementHref, fileHref, manuscriptHref, spexHref, spexName } from "@
 import { formatKey, formatKeys, formatTransposition, localName, parseKey, parseKeyParam } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { DataEmpty } from "@/components/data-empty";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -49,8 +50,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     const row = "link-row px-3 py-2";
 
     return (
-      <div className="space-y-6 p-4 sm:p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <Form action="/search" role="search" className="grid gap-3 sm:grid-cols-[2fr_1fr_auto]">
           {filter.instrumentIds.length > 0 && <input type="hidden" name="instruments" value={filter.instrumentIds.join(",")} />}
           {filter.transpositions.length > 0 && <input type="hidden" name="pitches" value={filter.transpositions.join(",")} />}
@@ -86,7 +87,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             </EmptyContent>
           </Empty>
         ) : !found || total === 0 ? (
-          <p className="text-muted-foreground">{t("none")}</p>
+          <DataEmpty title={t("none")} description={null} />
         ) : (
           <div className="space-y-6">
             <p className="text-sm text-muted-foreground" aria-live="polite">{t("count", { count: total })}</p>

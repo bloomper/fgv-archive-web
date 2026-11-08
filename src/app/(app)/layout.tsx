@@ -93,7 +93,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="[--header-height:calc(--spacing(14))]">
       <DialogsProvider>
         <SidebarProvider className="flex flex-col">
-          <SiteHeader applications={applications} />
+          <SiteHeader applications={applications} roles={roles} />
           <div className="flex flex-1">
             <AppSidebar roles={roles} accountUrl={accountUrl} />
             <SidebarInset className="min-w-0">

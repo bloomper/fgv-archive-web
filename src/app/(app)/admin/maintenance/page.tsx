@@ -16,8 +16,8 @@ export default async function MaintenancePage() {
     const jobs = await getMaintenanceJobs();
 
     return (
-      <div className="max-w-2xl space-y-6 p-4 sm:p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <div className="max-w-2xl flex flex-1 flex-col gap-6 p-4 md:p-8">
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("text")}</p>
         <RefreshWhileRunning running={jobs.some(job => job.running)} />
         <ul className="space-y-4">
