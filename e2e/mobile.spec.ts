@@ -8,7 +8,7 @@ const WIDTHS = [360, 390, 768];
 const READING = ["/", "/spex", `/spex/${uuidOf(11)}`, `/spex/${uuidOf(11)}/parts`, `/manuscripts/${uuidOf(401)}`,
   `/arrangements/${uuidOf(411)}`, `/arrangements/${uuidOf(412)}`, `/files/${uuidOf(611)}`, "/search?q=kungamantel",
   "/about", "/support"];
-const EDITING = [`/versions/${uuidOf(511)}/edit`, `/spex/${uuidOf(11)}/numbers`, "/manage/missing", "/manage/share-links",
+const EDITING = [`/versions/${uuidOf(511)}/edit`, "/manage/missing", "/manage/share-links",
   "/manage/trash", "/manage/audit", "/manage/access-requests?show=all", "/manage/manuscripts/new", "/admin/settings",
   "/admin/instruments", "/admin/file-roles", "/admin/storage", "/admin/maintenance", "/admin/share-links"];
 const SHARED = ["/share/exempel-giltig-delningslank-0000000000000001",

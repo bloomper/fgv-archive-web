@@ -64,6 +64,7 @@
     "spexflix": "Spexflix",
     "spexify": "Spexify",
     "spexgram": "Spexgram",
+    "spexipedia": "Spexipedia",
     "archive": "Spexarkiv"
   },
   "LoginError": {
@@ -96,7 +97,7 @@
     "FORBIDDEN": "Du har inte behörighet att göra det.",
     "NOT_FOUND": "Det finns inte.",
     "BAD_REQUEST": "Uppgifterna är inte giltiga.",
-    "SPEXREGISTER_UNAVAILABLE": "Spexregistret är tillfälligt otillgängligt. Försök igen om en stund.",
+    "SPEXIPEDIA_UNAVAILABLE": "Spexipedia är tillfälligt otillgängligt. Försök igen om en stund.",
     "UNAUTHORIZED": "Du är inte inloggad.",
     "INTERNAL_ERROR": "Något gick fel. Försök igen.",
     "DIRECTORY_UNAVAILABLE": "FGV-kontona går inte att nå just nu. Försök igen om en stund."
@@ -175,54 +176,16 @@
     "manuscripts": "Manus",
     "noManuscripts": "Inget manus finns i arkivet ännu.",
     "numbers": "Nummer",
-    "editNumbers": "Redigera nummer",
-    "inherited": "Nyuppsättningen har inga egna nummer, så originalets visas.",
+    "editInSpexipedia": "Redigera i Spexipedia",
+    "retiredNumber": "Borttaget i Spexipedia",
+    "characters": "Roller",
+    "inherited": "Originalets nummer visas, med nyuppsättningens egna.",
     "noNumbers": "Inga nummer är inlagda ännu.",
     "missing": "Arrangemang saknas",
     "versions": "{count, plural, one {# version} other {# versioner}}",
     "createArrangement": "Skapa arrangemang",
     "createArrangementOf": "Skapa arrangemang för {title}",
     "share": "Dela spexets material ({count, plural, one {# version} other {# versioner}})"
-  },
-  "Numbers": {
-    "title": "Nummer i {spex}",
-    "text": "Numren i föreställningens ordning. Spexarkiv håller dem tills Spexipedia tar över, med samma id:n.",
-    "inheritedHint": "Nyuppsättningen visar originalets nummer tills du lägger till egna här.",
-    "list": "Nummer",
-    "none": "Inga nummer ännu.",
-    "form": "Nummer",
-    "save": "Spara",
-    "cancel": "Avbryt",
-    "saved": "Sparat",
-    "add": "Lägg till nummer",
-    "hasArrangement": "har arrangemang",
-    "moveUp": "Flytta upp {title}",
-    "moveDown": "Flytta ner {title}",
-    "edit": "Redigera {title}",
-    "mergeOf": "Slå ihop {title} med ett annat nummer",
-    "deleteOf": "Radera {title}",
-    "cannotDelete": "Ett nummer med arrangemang kan bara slås ihop med ett annat.",
-    "deleteTitle": "Radera {title}?",
-    "deleteText": "Numret tas bort ur spexet.",
-    "delete": "Radera",
-    "deleted": "Numret är raderat",
-    "mergeTitle": "Slå ihop {title} med…",
-    "mergeConfirm": "Slå ihop {title}?",
-    "mergeText": "Arrangemanget flyttar med till det andra numret, eller dess versioner till det andra numrets arrangemang, och numret raderas.",
-    "merge": "Slå ihop",
-    "merged": "Numren är ihopslagna",
-    "reordered": "Ordningen är sparad",
-    "paste": "Klistra in nummer",
-    "pasteHint": "Ett nummer per rad, läggs till sist: \"Titel\", \"3. Titel\", \"Titel (Melodi)\" eller kolumner från ett kalkylark: titel, melodi, textförfattare, kompositör.",
-    "pastePlaceholder": "1. Ouvertyr\n2. Kärleksduett (Yesterday)",
-    "pasteButton": "Lägg till",
-    "pasted": "Numren är tillagda",
-    "fields": {
-      "title": "Titel",
-      "originalSong": "Originalmelodi",
-      "lyricist": "Textförfattare",
-      "composer": "Kompositör"
-    }
   },
   "SpexParts": {
     "title": "Stämmor i {spex}",
@@ -679,6 +642,10 @@
     "saved": "Sparat"
   },
   "AdminInstruments": {
+    "fromSpexipedia": "Från Spexipedia",
+    "retired": "Inte längre i Spexipedia",
+    "nameFromSpexipedia": "Namnet kommer från uppgiften i Spexipedia.",
+    "changeInSpexipedia": "Instrumentet är en uppgift i Spexipedia; ändra det där.",
     "title": "Instrument",
     "text": "Instrumenten i besättningar och stämmor, per grupp. Förkortningarna känner igen instrumentet i filnamn; förvald stämning är den en ny stämma får.",
     "add": "Lägg till instrument",
@@ -753,7 +720,7 @@
     "jobs": {
       "SPEX_REFRESH": {
         "title": "Uppdatering av spex",
-        "description": "Kopierar spexen från Spexregistret."
+        "description": "Läser Spexipedias ändringsflöde från början: spex, nummer, roller och instrument. Ändringar kommer också inom några minuter."
       },
       "UPLOAD_CLEANUP": {
         "title": "Städning av uppladdningar",

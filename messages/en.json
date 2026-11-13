@@ -64,6 +64,7 @@
     "spexflix": "Spexflix",
     "spexify": "Spexify",
     "spexgram": "Spexgram",
+    "spexipedia": "Spexipedia",
     "archive": "Spexarkiv"
   },
   "LoginError": {
@@ -96,7 +97,7 @@
     "FORBIDDEN": "You are not allowed to do that.",
     "NOT_FOUND": "It does not exist.",
     "BAD_REQUEST": "The details are not valid.",
-    "SPEXREGISTER_UNAVAILABLE": "Spexregister is temporarily unavailable. Try again in a moment.",
+    "SPEXIPEDIA_UNAVAILABLE": "Spexipedia is temporarily unavailable. Try again in a moment.",
     "UNAUTHORIZED": "You are not logged in.",
     "INTERNAL_ERROR": "Something went wrong. Please try again.",
     "DIRECTORY_UNAVAILABLE": "The FGV accounts cannot be reached right now. Try again in a moment."
@@ -175,54 +176,16 @@
     "manuscripts": "Manuscripts",
     "noManuscripts": "No manuscript is in the archive yet.",
     "numbers": "Numbers",
-    "editNumbers": "Edit numbers",
-    "inherited": "The revival has no numbers of its own, so the original's are shown.",
+    "editInSpexipedia": "Edit in Spexipedia",
+    "retiredNumber": "Removed in Spexipedia",
+    "characters": "Characters",
+    "inherited": "The original's numbers are shown, with the revival's own.",
     "noNumbers": "No numbers have been added yet.",
     "missing": "Arrangement missing",
     "versions": "{count, plural, one {# version} other {# versions}}",
     "createArrangement": "Create arrangement",
     "createArrangementOf": "Create the arrangement of {title}",
     "share": "Share the spex' material ({count, plural, one {# version} other {# versions}})"
-  },
-  "Numbers": {
-    "title": "Numbers of {spex}",
-    "text": "The numbers in the order of the show. Spexarkiv keeps them until Spexipedia takes over, with the same ids.",
-    "inheritedHint": "The revival shows the original's numbers until you add its own here.",
-    "list": "Numbers",
-    "none": "No numbers yet.",
-    "form": "Number",
-    "save": "Save",
-    "cancel": "Cancel",
-    "saved": "Saved",
-    "add": "Add a number",
-    "hasArrangement": "has an arrangement",
-    "moveUp": "Move {title} up",
-    "moveDown": "Move {title} down",
-    "edit": "Edit {title}",
-    "mergeOf": "Merge {title} into another number",
-    "deleteOf": "Delete {title}",
-    "cannotDelete": "A number with an arrangement can only be merged into another.",
-    "deleteTitle": "Delete {title}?",
-    "deleteText": "The number is removed from the spex.",
-    "delete": "Delete",
-    "deleted": "The number is deleted",
-    "mergeTitle": "Merge {title} into…",
-    "mergeConfirm": "Merge {title}?",
-    "mergeText": "Its arrangement moves to the other number, or its versions into the other number's arrangement, and the number is deleted.",
-    "merge": "Merge",
-    "merged": "The numbers are merged",
-    "reordered": "The order is saved",
-    "paste": "Paste numbers",
-    "pasteHint": "One number per line, added last: \"Title\", \"3. Title\", \"Title (Melody)\" or columns from a spreadsheet: title, melody, lyricist, composer.",
-    "pastePlaceholder": "1. Overture\n2. Love duet (Yesterday)",
-    "pasteButton": "Add",
-    "pasted": "The numbers are added",
-    "fields": {
-      "title": "Title",
-      "originalSong": "Original song",
-      "lyricist": "Lyricist",
-      "composer": "Composer"
-    }
   },
   "SpexParts": {
     "title": "Parts of {spex}",
@@ -679,6 +642,10 @@
     "saved": "Saved"
   },
   "AdminInstruments": {
+    "fromSpexipedia": "From Spexipedia",
+    "retired": "No longer in Spexipedia",
+    "nameFromSpexipedia": "The name comes from the task in Spexipedia.",
+    "changeInSpexipedia": "The instrument is a task in Spexipedia; change it there.",
     "title": "Instruments",
     "text": "The instruments of instrumentations and parts, by group. The abbreviations recognise the instrument in file names; the default transposition is what a new part gets.",
     "add": "Add an instrument",
@@ -753,7 +720,7 @@
     "jobs": {
       "SPEX_REFRESH": {
         "title": "Spex refresh",
-        "description": "Copies the spex from Spexregister."
+        "description": "Reads Spexipedia's change feed from the start: spex, numbers, characters and instruments. Changes also arrive within minutes."
       },
       "UPLOAD_CLEANUP": {
         "title": "Upload cleanup",

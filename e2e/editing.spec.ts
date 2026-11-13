@@ -168,21 +168,6 @@ test.describe("Editing", () => {
     expect(shareLinks[0].fileIds.length).toBeGreaterThan(0);
   });
 
-  test("an editor pastes numbers and deletes one", async ({ page, loginAs, mock }) => {
-    await loginAs("editor");
-    await page.goto(`/spex/${uuidOf(11)}/numbers`);
-    await page.getByLabel("Klistra in nummer").fill("4. Rövarvisan (Dancing Queen)\nEpilog");
-    await page.getByRole("button", { name: "Lägg till", exact: true }).click();
-    await expect(page.getByTestId("number-row")).toHaveCount(5);
-
-    await page.getByRole("button", { name: "Radera Epilog" }).click();
-    await answerDialog(page, "Radera");
-    await expect(page.getByTestId("number-row")).toHaveCount(4);
-    expect((await mock.state()).numbers.map(number => number.title)).toContain("Rövarvisan");
-    // A number with an arrangement can only be merged
-    await expect(page.getByRole("button", { name: "Radera Ouvertyr" })).toBeDisabled();
-  });
-
   test("an editor creates a manuscript and lands on its first version", async ({ page, loginAs }) => {
     await loginAs("editor");
     await page.goto(`/manage/manuscripts/new?spex=${uuidOf(13)}`);

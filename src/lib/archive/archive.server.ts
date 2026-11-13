@@ -47,8 +47,9 @@ const SpexPageQuery = graphql(`
                 id title authors description trashed
                 versions { ...VersionFields }
             }
+            characters { id name }
             numbers {
-                id spexId position title originalSong lyricist composer
+                id spexId act position title originalSong lyricist composer retired
                 arrangement {
                     id trashed
                     versions { id label published restricted recommended trashed key { tonic mode } usedIn { ...SpexBrief } }
@@ -156,7 +157,7 @@ const SearchQuery = graphql(`
 
 const InstrumentsQuery = graphql(`
     query Instruments {
-        instruments { ...InstrumentBrief abbreviations useCount }
+        instruments { ...InstrumentBrief abbreviations useCount taskId retired }
     }
 `);
 

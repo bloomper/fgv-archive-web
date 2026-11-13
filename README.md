@@ -53,6 +53,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    SPEXIFY_WEB_URL=http://localhost:3002
    SPEXFLIX_WEB_URL=http://localhost:3003
    SPEXGRAM_WEB_URL=http://localhost:3004
+   SPEXIPEDIA_WEB_URL=http://localhost:3006
    ```
    The client secret is in `realm/fgv.json` in [fgv-keycloak][7]; search for `fgv-archive`.
    For visitor statistics, run fgv-infra-deploy's `local/bin/configure-umami.sh` and put the ID it prints for
@@ -69,6 +70,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    | `SPEXIFY_WEB_URL`                | Spexify, for the application switcher                                     |
    | `SPEXFLIX_WEB_URL`               | Spexflix, for the application switcher                                    |
    | `SPEXGRAM_WEB_URL`               | Spexgram, for the application switcher                                    |
+   | `SPEXIPEDIA_WEB_URL`             | Spexipedia, for the application switcher                                    |
 
 3. **Generate GraphQL types:**
    If you change GraphQL queries or the schema, regenerate types from a sibling `fgv-archive-server` checkout:

@@ -29,7 +29,11 @@ export default async function VersionEditPage({ params }: { params: Promise<{ id
     }
 
     const t = await getTranslations("VersionEdit");
-    const [roles, instruments, me] = await Promise.all([getFileRoles(), getInstruments(), getMe()]);
+    const [roles, all, me] = await Promise.all([getFileRoles(), getInstruments(), getMe()]);
+    // Instruments Spexipedia retired are not offered anew, but stay where the version has them
+    const used = new Set([...version.files.flatMap(file => file.instruments.map(instrument => instrument.id)),
+      ...version.instrumentation.map(entry => entry.instrument.id)]);
+    const instruments = all.filter(instrument => !instrument.retired || used.has(instrument.id));
     const manuscript = version.manuscript;
     const number = version.arrangement?.number;
     const spex = manuscript?.spex ?? number?.spex;

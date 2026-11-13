@@ -129,9 +129,9 @@ function resetState() {
     instruments: INSTRUMENTS.map((instrument, index) => ({ ...instrument, position: index + 1 })),
     roles: ROLES.map((role, index) => ({ ...role, position: index + 1 })),
     numbers: [
-      { id: uuidOf(101), spexId: ALI_BABA.id, position: 1, title: "Ouvertyr", originalSong: null, lyricist: null, composer: "Kalle Kompositör" },
-      { id: uuidOf(102), spexId: ALI_BABA.id, position: 2, title: "Kärleksduetten", originalSong: "Yesterday (The Beatles)", lyricist: "Lotta Lyriker", composer: null },
-      { id: uuidOf(103), spexId: ALI_BABA.id, position: 3, title: "Finalen", originalSong: null, lyricist: null, composer: null },
+      { id: uuidOf(101), spexId: ALI_BABA.id, act: 1, retired: false, position: 1, title: "Ouvertyr", originalSong: null, lyricist: null, composer: "Kalle Kompositör" },
+      { id: uuidOf(102), spexId: ALI_BABA.id, act: 1, retired: false, position: 2, title: "Kärleksduetten", originalSong: "Yesterday (The Beatles)", lyricist: "Lotta Lyriker", composer: null },
+      { id: uuidOf(103), spexId: ALI_BABA.id, act: 1, retired: false, position: 3, title: "Finalen", originalSong: null, lyricist: null, composer: null },
     ],
     manuscripts: [
       { id: uuidOf(401), spexId: ALI_BABA.id, title: "Ali Baba", authors: "Anna Författare, Bo Skribent", description: "Rövarna och kungen.", trashedAt: null, createdAt: "2026-10-01T10:00:00Z" },
@@ -291,10 +291,10 @@ function versionView(persona, v, parts = null) {
 }
 
 function numbersOf(persona, spex) {
-  const own = state.numbers.filter(number => number.spexId === spex.id);
-  const list = own.length || !spex.parentId ? own : state.numbers.filter(number => number.spexId === spex.parentId);
+  // As Spexipedia keeps them: a revival has its original's and its own
+  const list = state.numbers.filter(number => number.spexId === spex.id || number.spexId === spex.parentId);
 
-  return list.sort((a, b) => a.position - b.position).map(number => numberView(persona, number));
+  return list.sort((a, b) => a.act - b.act || a.position - b.position).map(number => numberView(persona, number));
 }
 
 const versionOrder = (a, b) => Number(b.recommended) - Number(a.recommended) || b.createdAt.localeCompare(a.createdAt);
@@ -338,7 +338,8 @@ function spexPage(persona, spex, parts) {
     ...withFamily(spex),
     ...spexCounts(persona, spex),
     revivals: SPEX.filter(other => other.parentId === spex.id).map(brief),
-    numbersInherited: spex.parentId !== null && !state.numbers.some(number => number.spexId === spex.id),
+    numbersInherited: spex.parentId !== null && state.numbers.some(number => number.spexId === spex.parentId),
+    characters: [{ id: uuidOf(151), name: "Ali Baba" }, { id: uuidOf(152), name: "Morgiana" }].filter(() => familyOf(spex) === ALI_BABA.id),
     manuscripts: manuscriptsOfFamily(persona, spex),
     numbers,
     arrangements: numbers.filter(number => number.arrangement).map(number => {
@@ -698,38 +699,6 @@ const resolvers = {
     requireEditor(persona);
     state.files = state.files.filter(f => f.id !== id);
     return { fileDelete: null };
-  },
-  NumbersPaste: (persona, { spexId, text }) => {
-    requireEditor(persona);
-    for (const line of text.split("\n").map(value => value.trim()).filter(Boolean)) {
-      const [, title, song] = /^(?:\d+\.\s*)?(.*?)(?:\s*\((.*)\))?$/.exec(line);
-
-      state.numbers.push({ id: newId(), spexId, position: state.numbers.filter(n => n.spexId === spexId).length + 1, title, originalSong: song ?? null, lyricist: null, composer: null });
-    }
-    return { numbersPaste: [] };
-  },
-  NumberCreate: (persona, { spexId, input }) => {
-    requireEditor(persona);
-    state.numbers.push({ id: newId(), spexId, position: state.numbers.filter(n => n.spexId === spexId).length + 1, ...input });
-    return { numberCreate: { id: "x" } };
-  },
-  NumberUpdate: (persona, { id, input }) => {
-    requireEditor(persona);
-    Object.assign(numberById(id), input);
-    return { numberUpdate: { id } };
-  },
-  NumbersReorder: (persona, { ids }) => {
-    requireEditor(persona);
-    ids.forEach((id, index) => (numberById(id).position = index + 1));
-    return { numbersReorder: [] };
-  },
-  NumberDelete: (persona, { id }) => {
-    requireEditor(persona);
-    if (state.arrangements.some(a => a.numberId === id)) {
-      throw new GraphQLError("CONFLICT", "Numret har ett arrangemang.");
-    }
-    state.numbers = state.numbers.filter(n => n.id !== id);
-    return { numberDelete: null };
   },
   ShareLinkCreate: (persona, { input }) => {
     requireEditor(persona);

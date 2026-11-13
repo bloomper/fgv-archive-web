@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BookUser, Check, ChevronsUpDown, Clapperboard, Drama, Images, Library, type LucideIcon, Music } from "lucide-react";
+import { BookOpenText, BookUser, Check, ChevronsUpDown, Clapperboard, Drama, Images, Library, type LucideIcon, Music } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,7 @@ const icons: Record<ApplicationId, LucideIcon> = {
   spexflix: Clapperboard,
   spexify: Music,
   spexgram: Images,
+  spexipedia: BookOpenText,
   archive: Library,
 };
 
