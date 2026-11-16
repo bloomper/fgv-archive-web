@@ -49,7 +49,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    KEYCLOAK_ISSUER=https://auth.fgv.local.nu:8443/auth/realms/fgv
    API_GRAPHQL_ENDPOINT=https://api.archive.fgv.local.nu:8443/api/graphql
    SPEXREGISTER_WEB_URL=https://register.fgv.local.nu:8443
-   FGV_REVIVAL_WEB_URL=http://localhost:3001
+   REVIVAL_WEB_URL=http://localhost:3001
    SPEXIFY_WEB_URL=http://localhost:3002
    SPEXFLIX_WEB_URL=http://localhost:3003
    SPEXGRAM_WEB_URL=http://localhost:3004
@@ -66,7 +66,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    |----------------------------------|---------------------------------------------------------------------------|
    | `API_GRAPHQL_ENDPOINT`           | Spexarkiv Server's GraphQL endpoint; its file, zip, share and upload endpoints share the origin |
    | `SPEXREGISTER_WEB_URL`           | Spexregister, for the application switcher in the header                  |
-   | `FGV_REVIVAL_WEB_URL`            | Nyupps√§ttning, for the application switcher                               |
+   | `REVIVAL_WEB_URL`            | Nyupps√§ttning, for the application switcher                               |
    | `SPEXIFY_WEB_URL`                | Spexify, for the application switcher                                     |
    | `SPEXFLIX_WEB_URL`               | Spexflix, for the application switcher                                    |
    | `SPEXGRAM_WEB_URL`               | Spexgram, for the application switcher                                    |
@@ -123,7 +123,7 @@ already on Docker Hub.
 
 The image contains no environment-specific values. All configuration is read at runtime: `BETTER_AUTH_URL`,
 `AUTH_SECRET`, `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET`, `KEYCLOAK_ISSUER`, `API_GRAPHQL_ENDPOINT`,
-`SPEXREGISTER_WEB_URL`, `FGV_REVIVAL_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXGRAM_WEB_URL`,
+`SPEXREGISTER_WEB_URL`, `REVIVAL_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXGRAM_WEB_URL`,
 `SUPPORT_EMAIL`, `FEEDBACK_EMAIL`, `SUPPORTED_LOCALES`, `DEFAULT_LOCALE`, `UMAMI_URL` and `UMAMI_WEBSITE_ID`. Visitor
 statistics go to Umami only when both Umami variables are set, and never from share link pages.
 [fgv-archive-deploy][8] runs it.
