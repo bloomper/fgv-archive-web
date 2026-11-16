@@ -8,7 +8,6 @@ import { type ActionResult, toActionResult } from "@/lib/graphql.server";
 import type {
   FileInput,
   ManuscriptInput,
-  NumberInput,
   ShareLinkInput,
   TranspositionInput,
   VersionInput,
@@ -251,74 +250,6 @@ export async function deleteFileAction(id: string) {
   requireId(id);
   return editor(async () => {
     await editing.fileDelete(id);
-    return null;
-  });
-}
-
-// --- Numbers ------------------------------------------------------------------------------------------------------
-
-function cleanNumber(input: NumberInput): NumberInput {
-  const title = input.title.trim();
-
-  if (!title || title.length > 255) {
-    throw new Error("Invalid title");
-  }
-  return {
-    title,
-    originalSong: input.originalSong?.trim() || null,
-    lyricist: input.lyricist?.trim() || null,
-    composer: input.composer?.trim() || null,
-  };
-}
-
-export async function createNumberAction(spexId: string, input: NumberInput) {
-  requireId(spexId);
-  return editor(async () => {
-    await editing.numberCreate(spexId, cleanNumber(input));
-    return null;
-  });
-}
-
-export async function updateNumberAction(id: string, input: NumberInput) {
-  requireId(id);
-  return editor(async () => {
-    await editing.numberUpdate(id, cleanNumber(input));
-    return null;
-  });
-}
-
-export async function deleteNumberAction(id: string) {
-  requireId(id);
-  return editor(async () => {
-    await editing.numberDelete(id);
-    return null;
-  });
-}
-
-export async function pasteNumbersAction(spexId: string, text: string) {
-  requireId(spexId);
-  if (text.length > 50_000) {
-    throw new Error("Too long");
-  }
-  return editor(async () => {
-    await editing.numbersPaste(spexId, text);
-    return null;
-  });
-}
-
-export async function reorderNumbersAction(spexId: string, ids: string[]) {
-  requireId(spexId);
-  requireIds(ids);
-  return editor(async () => {
-    await editing.numbersReorder(spexId, ids);
-    return null;
-  });
-}
-
-export async function mergeNumberAction(id: string, intoId: string) {
-  requireId(id, intoId);
-  return editor(async () => {
-    await editing.numberMerge(id, intoId);
     return null;
   });
 }

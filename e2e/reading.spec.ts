@@ -17,6 +17,8 @@ test.describe("Reading", () => {
     const numbers = page.getByRole("list", { name: "Nummer" });
     await expect(numbers.getByTestId("number-row")).toHaveCount(3);
     await expect(numbers.getByTestId("number-row").nth(2)).toContainText("Arrangemang saknas");
+    // The characters come from Spexipedia
+    await expect(page.getByRole("region", { name: "Roller" })).toContainText("Morgiana");
     await numbers.getByRole("link", { name: "Ouvertyr" }).click();
 
     await expect(page.getByRole("heading", { level: 1, name: "Ouvertyr" })).toBeVisible();

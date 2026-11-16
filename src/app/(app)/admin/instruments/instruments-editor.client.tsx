@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, GitMerge, Pencil, Plus, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,6 +34,10 @@ export type AdminInstrument = {
   abbreviations: string[];
   defaultTransposition: Transposition;
   useCount: number;
+  /** The task in Spexipedia it is, which names it; null for the archive's own. */
+  taskId?: string | null;
+  /** Its task left Spexipedia's instrument categories: kept on material, not offered anew. */
+  retired?: boolean;
 };
 
 type Fields = { nameSv: string; nameEn: string; group: Group; abbreviations: string; transposition: Transposition };
@@ -57,6 +62,7 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
   const dialogs = useDialogs();
   const [order, setOrder] = useServerState(instruments, list => list.map(item => `${item.id}:${item.position}:${item.nameSv}:${item.useCount}`).join("|"));
   const [editing, setEditing] = useState<string | null>(null);
+  const fromSpexipedia = editing !== null && instruments.find(instrument => instrument.id === editing)?.taskId;
   const [fields, setFields] = useState<Fields>(toFields());
   const [pending, startTransition] = useTransition();
 
@@ -109,7 +115,9 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
     <form onSubmit={submit} className="grid gap-3 rounded-md border bg-muted/40 p-3 sm:grid-cols-2" aria-label={t("form")}>
       <div className="space-y-1">
         <Label htmlFor="instrument-sv">{t("nameSv")}</Label>
-        <Input id="instrument-sv" value={fields.nameSv} required maxLength={100} onChange={event => setFields({ ...fields, nameSv: event.target.value })} />
+        <Input id="instrument-sv" value={fields.nameSv} required maxLength={100} onChange={event => setFields({ ...fields, nameSv: event.target.value })}
+               readOnly={Boolean(fromSpexipedia)} aria-describedby={fromSpexipedia ? "instrument-sv-help" : undefined} />
+        {fromSpexipedia && <p id="instrument-sv-help" className="text-xs text-muted-foreground">{t("nameFromSpexipedia")}</p>}
       </div>
       <div className="space-y-1">
         <Label htmlFor="instrument-en">{t("nameEn")}</Label>
@@ -159,7 +167,11 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
                   {editing === instrument.id ? form : (
                     <div className="flex flex-wrap items-center gap-2">
                       <div className="min-w-0 flex-1 basis-48">
-                        <p className="font-medium">{localName(instrument, locale)}</p>
+                        <p className="flex flex-wrap items-center gap-2 font-medium">
+                          {localName(instrument, locale)}
+                          {instrument.taskId && <Badge variant="outline">{t("fromSpexipedia")}</Badge>}
+                          {instrument.retired && <Badge variant="secondary">{t("retired")}</Badge>}
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           {[locale === "en" ? instrument.nameSv : instrument.nameEn,
                             t("defaultIn", { pitch: formatTransposition(instrument.defaultTransposition, locale) ?? "" }),
@@ -176,7 +188,9 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
                                   setFields(toFields(instrument));
                                   setEditing(instrument.id);
                                 }}><Pencil /></Button>
-                        <Button size="icon-sm" variant="ghost" aria-label={t("merge", { name: instrument.nameSv })} onClick={async () => {
+                        <Button size="icon-sm" variant="ghost" disabled={Boolean(instrument.taskId)}
+                                title={instrument.taskId ? t("changeInSpexipedia") : undefined}
+                                aria-label={t("merge", { name: instrument.nameSv })} onClick={async () => {
                           const into = await dialogs.choose({
                             title: t("mergeTitle", { name: localName(instrument, locale) }),
                             items: order.filter(other => other.id !== instrument.id).map(other => ({ id: other.id, label: localName(other, locale) })),
@@ -186,8 +200,8 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
                             run(() => mergeInstrumentAction(instrument.id, into), t("merged"));
                           }
                         }}><GitMerge /></Button>
-                        <Button size="icon-sm" variant="ghost" disabled={instrument.useCount > 0}
-                                title={instrument.useCount > 0 ? t("inUse") : undefined}
+                        <Button size="icon-sm" variant="ghost" disabled={instrument.useCount > 0 || Boolean(instrument.taskId)}
+                                title={instrument.taskId ? t("changeInSpexipedia") : instrument.useCount > 0 ? t("inUse") : undefined}
                                 aria-label={t("delete", { name: instrument.nameSv })} onClick={async () => {
                           if (await dialogs.confirm({ title: t("deleteTitle", { name: localName(instrument, locale) }), confirmLabel: t("deleteButton"), destructive: true })) {
                             run(() => deleteInstrumentAction(instrument.id), t("deleted"));

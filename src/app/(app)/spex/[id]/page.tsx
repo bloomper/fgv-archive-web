@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { Download, FilePlus, ListOrdered, ScrollText } from "lucide-react";
+import { Download, ExternalLink, FilePlus, ScrollText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { VersionBadges } from "@/components/archive/version-meta";
@@ -31,6 +31,9 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
     const t = await getTranslations("SpexPage");
     const locale = await getLocale();
     const editor = isEditor(authz.roles);
+    // Numbers and characters are kept in Spexipedia
+    const acts = new Set(spex.numbers.map(number => number.act)).size;
+    const spexipediaUrl = process.env.SPEXIPEDIA_WEB_URL?.trim().replace(/\/+$/, "") || null;
     const original = spex.original ?? spex;
     // A share link for the spex: the recommended (else newest) published version of each manuscript and arrangement
     const pick = <T extends { id: string; recommended: boolean; published: boolean; trashed: boolean }>(versions: T[]) =>
@@ -112,13 +115,21 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
           )}
         </section>
 
+        {spex.characters.length > 0 && (
+          <section aria-labelledby="characters" className="space-y-2">
+            <h2 id="characters" className="text-lg font-semibold">{t("characters")}</h2>
+            <p className="text-sm">{spex.characters.map(character => character.name).join(", ")}</p>
+          </section>
+        )}
+
         <section aria-labelledby="numbers" className="space-y-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="numbers" className="text-lg font-semibold">{t("numbers")}</h2>
-            {editor && (
-              <Link href={`/spex/${spex.id}/numbers`} className={buttonVariants({ variant: "outline", size: "sm" })}>
-                <ListOrdered /> {t("editNumbers")}
-              </Link>
+            {editor && spexipediaUrl && (
+              <a href={`${spexipediaUrl}/manage/spex/${spex.id}`} target="_blank" rel="noopener noreferrer"
+                 className={buttonVariants({ variant: "outline", size: "sm" })}>
+                <ExternalLink /> {t("editInSpexipedia")}
+              </a>
             )}
           </div>
           {spex.numbersInherited && spex.numbers.length > 0 && (
@@ -133,7 +144,9 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
                 return (
                   <li key={number.id} data-testid="number-row"
                       className="link-row flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2">
-                    <span className="w-6 shrink-0 text-right text-sm tabular-nums text-muted-foreground">{number.position}.</span>
+                    <span className="w-10 shrink-0 text-right text-sm tabular-nums text-muted-foreground">
+                      {acts > 1 ? `${number.act}:${number.position}` : `${number.position}.`}
+                    </span>
                     <div className="min-w-0 flex-1 basis-48">
                       {arrangement
                         ? <Link href={arrangementHref(arrangement.id)} className="row-link font-medium">{number.title}</Link>
@@ -141,6 +154,7 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
                       <p className="text-xs text-muted-foreground">
                         {[number.originalSong, [number.lyricist, number.composer].filter(Boolean).join(" / ")].filter(Boolean).join(" · ")}
                       </p>
+                      {number.retired && <Badge variant="outline">{t("retiredNumber")}</Badge>}
                     </div>
                     {arrangement ? (
                       <span className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">

@@ -8,7 +8,6 @@ import type {
   FileAddInput,
   FileInput,
   ManuscriptInput,
-  NumberInput,
   ShareLinkInput,
   VersionInput,
 } from "@/gql/graphql";
@@ -46,12 +45,6 @@ const FileGuessQuery = graphql(`
         }
     }
 `);
-const NumberCreate = graphql(`mutation NumberCreate($spexId: ID!, $input: NumberInput!) { numberCreate(spexId: $spexId, input: $input) { id } }`);
-const NumberUpdate = graphql(`mutation NumberUpdate($id: ID!, $input: NumberInput!) { numberUpdate(id: $id, input: $input) { id } }`);
-const NumberDelete = graphql(`mutation NumberDelete($id: ID!) { numberDelete(id: $id) }`);
-const NumbersPaste = graphql(`mutation NumbersPaste($spexId: ID!, $text: String!) { numbersPaste(spexId: $spexId, text: $text) { id } }`);
-const NumbersReorder = graphql(`mutation NumbersReorder($spexId: ID!, $ids: [ID!]!) { numbersReorder(spexId: $spexId, ids: $ids) { id } }`);
-const NumberMerge = graphql(`mutation NumberMerge($id: ID!, $intoId: ID!) { numberMerge(id: $id, intoId: $intoId) { id } }`);
 const ShareLinkCreate = graphql(`mutation ShareLinkCreate($input: ShareLinkInput!) { shareLinkCreate(input: $input) { token shareLink { id name expiresAt } } }`);
 const ShareLinkExtend = graphql(`mutation ShareLinkExtend($id: ID!, $months: Int!) { shareLinkExtend(id: $id, months: $months) { id expiresAt } }`);
 const ShareLinkRename = graphql(`mutation ShareLinkRename($id: ID!, $name: String!) { shareLinkRename(id: $id, name: $name) { id name } }`);
@@ -83,12 +76,6 @@ export const fileReplace = (id: string, uploadId: string) => runMutation(FileRep
 export const filesReorder = (versionId: string, ids: string[]) => runMutation(FilesReorder, { versionId, ids });
 export const fileDelete = (id: string) => runMutation(FileDelete, { id });
 export const fileGuess = async (versionId: string, name: string) => (await runQuery(FileGuessQuery, { versionId, name }))?.fileGuess;
-export const numberCreate = (spexId: string, input: NumberInput) => runMutation(NumberCreate, { spexId, input });
-export const numberUpdate = (id: string, input: NumberInput) => runMutation(NumberUpdate, { id, input });
-export const numberDelete = (id: string) => runMutation(NumberDelete, { id });
-export const numbersPaste = (spexId: string, text: string) => runMutation(NumbersPaste, { spexId, text });
-export const numbersReorder = (spexId: string, ids: string[]) => runMutation(NumbersReorder, { spexId, ids });
-export const numberMerge = (id: string, intoId: string) => runMutation(NumberMerge, { id, intoId });
 export const shareLinkCreate = async (input: ShareLinkInput) => (await runMutation(ShareLinkCreate, { input }))?.shareLinkCreate;
 export const shareLinkExtend = (id: string, months: number) => runMutation(ShareLinkExtend, { id, months });
 export const shareLinkRename = (id: string, name: string) => runMutation(ShareLinkRename, { id, name });
