@@ -48,7 +48,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    KEYCLOAK_CLIENT_SECRET=<secret of the fgv-archive client>
    KEYCLOAK_ISSUER=https://auth.fgv.local.nu:8443/auth/realms/fgv
    API_GRAPHQL_ENDPOINT=https://api.archive.fgv.local.nu:8443/api/graphql
-   SPEXREGISTER_WEB_URL=https://register.fgv.local.nu:8443
+   SPEXREGISTER_WEB_URL=http://localhost:3000
    REVIVAL_WEB_URL=http://localhost:3001
    SPEXIFY_WEB_URL=http://localhost:3002
    SPEXFLIX_WEB_URL=http://localhost:3003
