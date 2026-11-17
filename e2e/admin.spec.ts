@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { answerDialog, expect, test } from "./fixtures";
 
 test.describe("Administration", () => {
   test("an admin adds an instrument with its default transposition", async ({ page, loginAs }) => {
@@ -17,6 +17,38 @@ test.describe("Administration", () => {
     await expect(page.getByRole("region", { name: "Träblås" }).getByText(/Clarinet · i B/)).toBeVisible();
     // One in use is merged, not deleted
     await expect(page.getByRole("button", { name: "Radera Trumpet" })).toBeDisabled();
+  });
+
+  test("an admin adds, reorders, retires and merges document kinds", async ({ page, loginAs }) => {
+    await loginAs("admin");
+    await page.goto("/admin/document-kinds");
+    const list = page.getByRole("list", { name: "Dokumenttyper" });
+    await expect(list.getByRole("listitem").first()).toContainText("Manus");
+    await expect(list.getByRole("listitem").first()).toContainText("1 dokument");
+
+    await page.getByRole("button", { name: "Lägg till dokumenttyp" }).click();
+    const form = page.getByRole("form", { name: "Dokumenttyp" });
+    await form.getByLabel("Svenskt namn").fill("Affisch");
+    await form.getByLabel("Engelskt namn").fill("Poster");
+    await form.getByLabel("Alias").fill("affischer\nposters");
+    await form.getByRole("button", { name: "Spara" }).click();
+    await expect(list.getByRole("listitem").last()).toContainText("Poster · affischer, posters · inga dokument");
+
+    await page.getByRole("button", { name: "Flytta upp Affisch" }).click();
+    await expect(list.getByRole("listitem").nth(4)).toContainText("Affisch");
+
+    await page.getByRole("button", { name: "Ta Synopsis ur bruk" }).click();
+    await expect(list.getByRole("listitem").filter({ hasText: "Synopsis" })).toContainText("Ur bruk");
+    await page.getByRole("button", { name: "Ta Synopsis i bruk igen" }).click();
+    await expect(list.getByRole("listitem").filter({ hasText: "Synopsis" })).not.toContainText("Ur bruk");
+
+    await page.getByRole("button", { name: "Slå ihop Spexbok med en annan typ" }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "Övrigt" }).click();
+    await answerDialog(page, "Slå ihop");
+    await expect(list.getByRole("listitem").filter({ hasText: "Spexbok" })).toHaveCount(1);
+    await expect(list.getByRole("listitem").filter({ hasText: "Övrigt" })).toContainText("Spexbok, Spex book, sångbok · 1 dokument");
+    // The menu follows
+    await expect(page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Spexbok", exact: true })).toHaveCount(0);
   });
 
   test("an admin changes the settings and sees storage and jobs", async ({ page, loginAs }) => {
