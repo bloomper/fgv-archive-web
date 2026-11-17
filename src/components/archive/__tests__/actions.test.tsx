@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
   router: { refresh: vi.fn(), push: vi.fn() },
   toast: { success: vi.fn(), error: vi.fn() },
   actions: {
-    createVersionAction: vi.fn(), trashParentAction: vi.fn(), updateManuscriptAction: vi.fn(), updateArrangementAction: vi.fn(),
+    createVersionAction: vi.fn(), trashParentAction: vi.fn(), searchSpexAction: vi.fn(), updateManuscriptAction: vi.fn(), updateArrangementAction: vi.fn(),
     createShareLinkAction: vi.fn(), renameShareLinkAction: vi.fn(), extendShareLinkAction: vi.fn(), revokeShareLinkAction: vi.fn(),
   },
   dialogs: undefined as unknown as ReturnType<typeof makeDialogs>,
@@ -51,6 +51,23 @@ describe("ParentActions", () => {
     await userEvent.click(screen.getByRole("button", { name: "editManuscript" }));
     await userEvent.click(screen.getByRole("button", { name: "cancel" }));
     expect(screen.queryByLabelText("title")).not.toBeInTheDocument();
+  });
+
+  it("changes a document's kind and files it under another spex, but never under none", async () => {
+    mocks.actions.searchSpexAction.mockResolvedValue({ ok: true, data: [{ id: "s2", title: "Nobel", year: 1975 }] });
+    render(<ParentActions kind="MANUSCRIPT" id="m1" trashed={false} spexHref="/spex/s1"
+                          fields={{ title: "Manus", kindId: "k1", spex: { id: "s1", title: "Ali Baba", year: 1985 } }}
+                          kinds={[{ id: "k1", name: "Manus" }, { id: "k2", name: "Program" }]} />);
+    await userEvent.click(screen.getByRole("button", { name: "editManuscript" }));
+    expect(screen.getByText("spexKept")).toBeInTheDocument();
+    await userEvent.selectOptions(screen.getByLabelText("kind"), "k2");
+    await userEvent.click(screen.getByRole("button", { name: "remove" }));
+    expect(screen.getByRole("button", { name: "save" })).toBeDisabled();
+    await userEvent.type(screen.getByLabelText("spex"), "Nobel");
+    await userEvent.click(await screen.findByRole("button", { name: /Nobel 1975/ }));
+    await userEvent.click(screen.getByRole("button", { name: "save" }));
+    await waitFor(() => expect(mocks.actions.updateManuscriptAction)
+      .toHaveBeenCalledWith("m1", { title: "Manus", authors: null, description: null, kindId: "k2", spexId: "s2" }));
   });
 
   it("edits an arrangement and puts it in the trash", async () => {

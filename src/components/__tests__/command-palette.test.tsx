@@ -4,9 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { CommandPalette } from "@/components/command-palette.client";
 
 const push = vi.fn();
+const { track } = vi.hoisted(() => ({ track: vi.fn() }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push, replace: vi.fn(), refresh: vi.fn() }) }));
-vi.mock("@/utils/umami", () => ({ track: vi.fn() }));
+vi.mock("@/utils/umami", () => ({ track }));
 
 const openPalette = async () => {
   const user = userEvent.setup();
@@ -54,6 +55,17 @@ describe("CommandPalette", () => {
     expect(screen.queryByText("Nav.spex")).not.toBeInTheDocument();
     await user.click(screen.getByRole("option", { name: "Nav.trash" }));
     expect(push).toHaveBeenCalledWith("/manage/trash");
+  });
+
+  it("goes to a document kind's page, counted without its id", async () => {
+    render(<CommandPalette roles={["USER"]} documentKinds={[
+      { id: "k1", name: "Program", nameSv: "Program", nameEn: "Programme", retired: false, documentCount: 1 },
+    ]} />);
+    const user = await openPalette();
+
+    await user.click(await screen.findByRole("option", { name: "Program" }));
+    expect(push).toHaveBeenCalledWith("/documents/k1");
+    expect(track).toHaveBeenCalledWith("command-palette", { target: "document-kind" });
   });
 
   it("searches the archive for what was typed", async () => {

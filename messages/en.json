@@ -121,10 +121,10 @@
   },
   "Nav": {
     "home": "Home",
-    "spex": "Browse",
+    "spex": "Spex",
     "search": "Search",
     "manage": "Editing",
-    "newManuscript": "New manuscript",
+    "newManuscript": "New document",
     "missing": "Missing material",
     "shareLinks": "My share links",
     "accessRequests": "Access requests",
@@ -133,6 +133,7 @@
     "admin": "Administration",
     "adminSettings": "Settings",
     "adminInstruments": "Instruments",
+    "adminDocumentKinds": "Document kinds",
     "adminFileRoles": "File roles",
     "adminShareLinks": "All share links",
     "adminStorage": "Storage",
@@ -148,7 +149,6 @@
     "recent": "Recently added and changed",
     "allSpex": "All spex with material",
     "empty": "Nothing is published yet.",
-    "manuscript": "Manuscript",
     "arrangement": "Arrangement"
   },
   "SpexList": {
@@ -165,16 +165,16 @@
     "noneText": "No spex match the filter.",
     "revival": "revival",
     "noMaterial": "No material",
-    "counts": "{manuscripts, plural, one {# manuscript} other {# manuscripts}}, {arrangements, plural, one {# arrangement} other {# arrangements}}"
+    "counts": "{manuscripts, plural, one {# document} other {# documents}}, {arrangements, plural, one {# arrangement} other {# arrangements}}"
   },
   "SpexPage": {
     "revival": "Revival",
     "revivalOf": "Revival of",
     "revivals": "Revivals",
     "downloadParts": "Download parts",
-    "newManuscript": "New manuscript",
-    "manuscripts": "Manuscripts",
-    "noManuscripts": "No manuscript is in the archive yet.",
+    "newManuscript": "New document",
+    "manuscripts": "Documents",
+    "noManuscripts": "No documents in the archive yet.",
     "numbers": "Numbers",
     "editInSpexipedia": "Edit in Spexipedia",
     "retiredNumber": "Removed in Spexipedia",
@@ -244,7 +244,6 @@
     "sent": "The request is sent to the editors"
   },
   "ManuscriptPage": {
-    "manuscript": "Manuscript",
     "trashed": "In the trash",
     "by": "By {authors}",
     "noVersions": "No versions.",
@@ -252,7 +251,16 @@
     "edit": "Edit",
     "filesOf": "Files of {label}",
     "noFiles": "No files yet.",
-    "numbers": "{count, plural, one {# number} other {# numbers}}"
+    "numbers": "{count, plural, one {# number} other {# numbers}}",
+    "own": "FGV's own document"
+  },
+  "DocumentsPage": {
+    "count": "{count, plural, =0 {No documents} one {# document} other {# documents}}",
+    "own": "FGV's own",
+    "none": "No documents of this kind yet.",
+    "new": "New document",
+    "retired": "No longer in use",
+    "trashed": "In the trash"
   },
   "ArrangementPage": {
     "number": "Number {position}",
@@ -278,17 +286,20 @@
     "newVersion": "New version",
     "label": "Label, e.g. Revival 2028",
     "create": "Create",
-    "editManuscript": "Edit manuscript",
+    "editManuscript": "Edit document",
     "editArrangement": "Edit arrangement",
     "toTrash": "Move to trash",
     "restore": "Restore",
-    "trashManuscript": "Move the manuscript to the trash?",
+    "trashManuscript": "Move the document to the trash?",
     "trashArrangement": "Move the arrangement to the trash?",
     "trashText": "All its versions go with it. It can be restored.",
     "trashed": "Moved to the trash",
     "restored": "Restored",
     "title": "Title",
     "authors": "Authors",
+    "kind": "Document kind",
+    "noSpex": "Without a spex it is one of FGV's own documents. Pick a spex to file it under the spex.",
+    "spexKept": "The document can be moved to another spex, but not taken from its spex.",
     "description": "Description",
     "save": "Save",
     "cancel": "Cancel",
@@ -480,7 +491,7 @@
   },
   "SharePage": {
     "sharedBy": "Shared by {name}, valid until {date}",
-    "manuscript": "Manuscript",
+    "manuscript": "Document",
     "arrangement": "Arrangement",
     "number": "Number {position}",
     "downloadVersion": "Download everything",
@@ -553,7 +564,7 @@
     "none": "No hits.",
     "count": "{count, plural, one {# hit} other {# hits}}",
     "spex": "Spex",
-    "manuscripts": "Manuscripts",
+    "manuscripts": "Documents",
     "numbers": "Numbers",
     "arrangements": "Arrangements",
     "versionsInKey": "Versions in {key}",
@@ -562,13 +573,15 @@
     "page": "page {page}"
   },
   "NewManuscript": {
-    "heading": "New manuscript",
-    "text": "A manuscript belongs to an original spex; revivals' rewrites become versions of it. The first version, Original, is made unpublished.",
+    "heading": "New document",
+    "text": "A document, e.g. a manuscript or a programme, belongs to an original spex; revivals' rewrites become versions of it. It can also be one of FGV's own, of no spex, such as a songbook or a jubilee book. The first version, Original, is made unpublished.",
+    "kind": "Document kind",
+    "noSpex": "No spex: one of FGV's own documents.",
     "title": "Title",
-    "titleHint": "Leave empty for the spex' title.",
+    "titleHint": "Leave empty for the spex' title, or the kind's name.",
     "authors": "Authors",
     "description": "Description, e.g. the plot",
-    "create": "Create the manuscript"
+    "create": "Create the document"
   },
   "Missing": {
     "title": "Missing material",
@@ -611,7 +624,7 @@
     "text": "What is here can be restored. An admin empties the trash.",
     "textAdmin": "What is here can be restored until the trash is emptied; then the files are deleted.",
     "none": "The trash is empty.",
-    "manuscripts": "Manuscripts",
+    "manuscripts": "Documents",
     "arrangements": "Arrangements",
     "versionsHeading": "Versions",
     "versions": "{count, plural, one {# version} other {# versions}}",
@@ -672,6 +685,37 @@
     "deleteButton": "Delete",
     "deleted": "Deleted",
     "inUse": "In use; merge it into another instead."
+  },
+  "AdminDocumentKinds": {
+    "title": "Document kinds",
+    "text": "The kinds of documents the archive has, e.g. manuscripts, programmes and synopses, in the order the menu and the pages show them. The import recognises a kind by its names and aliases. A kind is not deleted: it is retired (kept on its documents but not offered for new ones) or merged into another.",
+    "list": "Document kinds",
+    "form": "Document kind",
+    "nameSv": "Swedish name",
+    "nameEn": "English name",
+    "aliases": "Aliases",
+    "aliasesHint": "One per line, e.g. other spellings the file archive uses.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "Saved",
+    "add": "Add a document kind",
+    "reordered": "The order is saved",
+    "documents": "{count, plural, =0 {no documents} one {# document} other {# documents}}",
+    "retired": "Retired",
+    "moveUp": "Move {name} up",
+    "moveDown": "Move {name} down",
+    "edit": "Edit {name}",
+    "retire": "Retire {name}",
+    "retiredDone": "Retired",
+    "restore": "Restore {name}",
+    "restored": "Restored",
+    "lastKind": "The last kind in use cannot be retired.",
+    "merge": "Merge {name} into another kind",
+    "mergeTitle": "Merge {name} into",
+    "mergeConfirm": "Merge {name} into {into}?",
+    "mergeText": "{count, plural, =0 {The kind has no documents.} one {Its document moves to {into}.} other {Its # documents move to {into}.}} Its names become aliases there, and the kind is deleted.",
+    "mergeButton": "Merge",
+    "merged": "Merged"
   },
   "AdminFileRoles": {
     "title": "File roles",
@@ -784,7 +828,7 @@
       "SHARE": "Shared"
     },
     "type": {
-      "MANUSCRIPT": "Manuscript",
+      "MANUSCRIPT": "Document",
       "ARRANGEMENT": "Arrangement",
       "VERSION": "Version",
       "FILE": "File",

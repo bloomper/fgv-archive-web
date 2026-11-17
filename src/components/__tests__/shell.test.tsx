@@ -64,6 +64,20 @@ describe("the shell", () => {
     expect(screen.getByText("nav-user")).toBeInTheDocument();
   });
 
+  it("has an entry per document kind, marked on its page", () => {
+    mocks.pathname = "/documents/k2";
+    render(
+      <TooltipProvider><SidebarProvider>
+        <AppSidebar roles={["USER"]} accountUrl="https://auth/account" documentKinds={[
+          { id: "k1", name: "Manus", nameSv: "Manus", nameEn: "Manuscript", retired: false, documentCount: 2 },
+          { id: "k2", name: "Program", nameSv: "Program", nameEn: "Programme", retired: false, documentCount: 1 },
+        ]} />
+      </SidebarProvider></TooltipProvider>,
+    );
+    expect(screen.getByRole("link", { name: "Manus" })).toHaveAttribute("href", "/documents/k1");
+    expect(screen.getByRole("link", { name: "Program" })).toHaveAttribute("data-active", "true");
+  });
+
   it("has a header with the menu button, search and the command palette", async () => {
     render(<TooltipProvider><SidebarProvider><SiteHeader applications={[]} roles={["USER"]} /></SidebarProvider></TooltipProvider>);
     await userEvent.click(screen.getByRole("button", { name: "showMenu" }));

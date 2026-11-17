@@ -66,7 +66,7 @@ export default async function HomePage() {
                       <span className="block min-w-0 flex-1 space-y-0.5">
                         <span className="block truncate font-medium">{manuscript?.title ?? number?.title}</span>
                         <span className="block truncate text-sm text-muted-foreground">
-                          {[manuscript ? t("manuscript") : t("arrangement"), spexName(spex), version.label].filter(Boolean).join(" · ")}
+                          {[manuscript ? manuscript.kind.name : t("arrangement"), spexName(spex), version.label].filter(Boolean).join(" · ")}
                         </span>
                         <span className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
                           {keys && <span>{keys}</span>}

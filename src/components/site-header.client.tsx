@@ -12,8 +12,13 @@ import { useIsClient } from "@/hooks/use-is-client.client";
 import { HeaderSearch } from "@/components/header-search.client";
 import { CommandPalette } from "@/components/command-palette.client";
 import type { Role } from "@/types/auth";
+import type { DocumentKindBrief } from "@/utils/document-kinds";
 
-export function SiteHeader({ applications, roles }: { applications: Application[]; roles: Role[] }) {
+export function SiteHeader({ applications, roles, documentKinds = [] }: {
+  applications: Application[];
+  roles: Role[];
+  documentKinds?: DocumentKindBrief[];
+}) {
   const isClient = useIsClient();
   const t = useTranslations();
 
@@ -29,7 +34,7 @@ export function SiteHeader({ applications, roles }: { applications: Application[
           {isClient ? (
             <>
               <HeaderSearch />
-              <CommandPalette roles={roles} />
+              <CommandPalette roles={roles} documentKinds={documentKinds} />
               <LanguageToggle />
               <ModeToggle />
             </>

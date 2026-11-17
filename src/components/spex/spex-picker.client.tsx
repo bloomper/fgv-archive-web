@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useId, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CornerDownRight, X } from "lucide-react";
@@ -29,6 +29,8 @@ export function SpexPicker({ value, onChange, originalsOnly = false }: {
   originalsOnly?: boolean;
 }) {
   const t = useTranslations("SpexPicker");
+  // Unique: a page kept alive by Cache Components may have another picker
+  const inputId = useId();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PickedSpex[]>([]);
   const [searching, startSearch] = useTransition();
@@ -67,8 +69,8 @@ export function SpexPicker({ value, onChange, originalsOnly = false }: {
 
   return (
     <div className="space-y-1">
-      <Label htmlFor="spex-search">{t("spex")}</Label>
-      <Input id="spex-search" value={query} placeholder={t("search")} onChange={event => setQuery(event.target.value)} />
+      <Label htmlFor={inputId}>{t("spex")}</Label>
+      <Input id={inputId} value={query} placeholder={t("search")} onChange={event => setQuery(event.target.value)} />
       <p className="text-xs text-muted-foreground">{searching ? t("searching") : t("hint")}</p>
       {results.length > 0 && query.trim().length >= 2 && (
         <ul aria-label={t("results")} className="max-h-72 divide-y overflow-y-auto rounded-md border">

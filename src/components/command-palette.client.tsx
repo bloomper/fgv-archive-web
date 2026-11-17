@@ -14,6 +14,7 @@ import {
   History,
   House,
   KeyRound,
+  Library,
   Link2,
   type LucideIcon,
   Music,
@@ -30,6 +31,8 @@ import { Button } from "@/components/ui/button";
 import type { Role } from "@/types/auth";
 import { isAdmin, isEditor } from "@/utils/auth";
 import { track } from "@/utils/umami";
+import { type DocumentKindBrief, kindIcon } from "@/utils/document-kinds";
+import { documentsHref } from "@/utils/links";
 
 type PaletteEntry = {
   id: string;
@@ -44,7 +47,7 @@ const normalize = (value: string) => value.trim().toLowerCase();
  * Cmd/Ctrl+K: go to any page the sidebar has, as in Spexregister and Nyuppsättning, or search the archive for what was
  * typed. The button is for wide screens; on a phone the sidebar and the header's search do the same.
  */
-export function CommandPalette({ roles }: { roles: Role[] }) {
+export function CommandPalette({ roles, documentKinds = [] }: { roles: Role[]; documentKinds?: DocumentKindBrief[] }) {
   const t = useTranslations();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -67,6 +70,8 @@ export function CommandPalette({ roles }: { roles: Role[] }) {
     const navigationEntries: PaletteEntry[] = [
       { id: "home", label: t("Nav.home"), href: "/", icon: House },
       { id: "spex", label: t("Nav.spex"), href: "/spex", icon: Archive },
+      // The statistics get "document-kind", not the kind's id
+      ...documentKinds.map(kind => ({ id: `document-kind:${kind.id}`, label: kind.name, href: documentsHref(kind.id), icon: kindIcon(kind) })),
       { id: "search", label: t("Nav.search"), href: "/search", icon: Search },
     ];
     const actionEntries: PaletteEntry[] = [];
@@ -90,6 +95,7 @@ export function CommandPalette({ roles }: { roles: Role[] }) {
       navigationEntries.push(
         { id: "admin-settings", label: t("Nav.adminSettings"), href: "/admin/settings", icon: SlidersHorizontal },
         { id: "admin-instruments", label: t("Nav.adminInstruments"), href: "/admin/instruments", icon: Music },
+        { id: "admin-document-kinds", label: t("Nav.adminDocumentKinds"), href: "/admin/document-kinds", icon: Library },
         { id: "admin-file-roles", label: t("Nav.adminFileRoles"), href: "/admin/file-roles", icon: Tags },
         { id: "admin-share-links", label: t("Nav.adminShareLinks"), href: "/admin/share-links", icon: FileText },
         { id: "admin-storage", label: t("Nav.adminStorage"), href: "/admin/storage", icon: HardDrive },
@@ -102,7 +108,7 @@ export function CommandPalette({ roles }: { roles: Role[] }) {
     );
 
     return { navigation: navigationEntries, actions: actionEntries };
-  }, [roles, t]);
+  }, [roles, t, documentKinds]);
 
   const term = normalize(query);
   const matching = (entries: PaletteEntry[]) =>
@@ -111,7 +117,7 @@ export function CommandPalette({ roles }: { roles: Role[] }) {
   const matchingActions = matching(actions);
 
   const go = (id: string, href: string) => {
-    track("command-palette", { target: id });
+    track("command-palette", { target: id.startsWith("document-kind:") ? "document-kind" : id });
     setOpen(false);
     setQuery("");
     router.push(href);

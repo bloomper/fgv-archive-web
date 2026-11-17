@@ -8,6 +8,20 @@ export type Place = { share?: string };
 export const spexHref = (id: string) => `/spex/${id}`;
 export const spexPartsHref = (id: string) => `/spex/${id}/parts`;
 export const manuscriptHref = (id: string) => `/manuscripts/${id}`;
+/** The documents of a kind across every spex, and FGV's own. */
+export const documentsHref = (kindId: string) => `/documents/${kindId}`;
+/** A new document, of a kind or for a spex when given. */
+export function newDocumentHref({ kindId, spexId }: { kindId?: string; spexId?: string } = {}): string {
+  const query = new URLSearchParams();
+
+  if (kindId) {
+    query.set("kind", kindId);
+  }
+  if (spexId) {
+    query.set("spex", spexId);
+  }
+  return `/manage/manuscripts/new${query.size ? `?${query}` : ""}`;
+}
 export const arrangementHref = (id: string) => `/arrangements/${id}`;
 export const versionEditHref = (id: string) => `/versions/${id}/edit`;
 export const versionAnchor = (id: string) => `version-${id}`;

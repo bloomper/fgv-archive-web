@@ -10,7 +10,7 @@ const TROMBONE = uuidOf(206);
 test.describe("Reading", () => {
   test("a user browses from a spex to an arrangement and reads its score", async ({ page, loginAs }) => {
     await loginAs("user");
-    await page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Bläddra", exact: true }).click();
+    await page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Spex", exact: true }).click();
     await page.getByRole("link", { name: /^Ali Baba 1985/ }).click();
 
     await expect(page.getByRole("heading", { level: 1, name: /Ali Baba/ })).toBeVisible();
@@ -175,6 +175,27 @@ test.describe("Reading", () => {
     await expect(page.getByText("Av Anna Författare, Bo Skribent")).toBeVisible();
     await page.getByText("3 nummer").click();
     await expect(page.getByRole("link", { name: "Kärleksduetten" })).toHaveAttribute("href", `/arrangements/${DUETT}`);
+  });
+
+  test("the menu has the document kinds with documents, each listing its documents by spex", async ({ page, loginAs }) => {
+    await loginAs("user");
+
+    const sidebar = page.locator("[data-slot=\"sidebar\"]:visible");
+    await expect(sidebar.getByRole("link", { name: "Manus", exact: true })).toHaveAttribute("href", `/documents/${uuidOf(801)}`);
+    // Kinds without documents are only for editors
+    await expect(sidebar.getByRole("link", { name: "Program", exact: true })).toHaveCount(0);
+    await sidebar.getByRole("link", { name: "Spexbok", exact: true }).click();
+
+    await expect(page.getByRole("heading", { level: 1, name: "Spexbok" })).toBeVisible();
+    const own = page.getByRole("region", { name: "FGV:s egna" });
+    await expect(own.getByText("Sångboksgruppen")).toBeVisible();
+    await own.getByRole("link", { name: "FGV:s sångbok" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "FGV:s sångbok" })).toBeVisible();
+    await expect(page.getByText("FGV:s eget dokument")).toBeVisible();
+
+    await sidebar.getByRole("link", { name: "Manus", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Ali Baba 1985" }).getByRole("link", { name: "Ali Baba", exact: true }))
+      .toHaveAttribute("href", `/manuscripts/${uuidOf(401)}`);
   });
 
   test("a version's own address opens it in its arrangement", async ({ page, loginAs }) => {

@@ -34,6 +34,8 @@ import { isAdmin, isEditor } from "@/utils/auth";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useIsClient } from "@/hooks/use-is-client.client";
+import { type DocumentKindBrief, kindIcon } from "@/utils/document-kinds";
+import { documentsHref } from "@/utils/links";
 
 interface NavItem {
   title: string;
@@ -50,9 +52,11 @@ interface NavSecondaryItem extends Omit<NavItem, "icon"> {
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   roles: Role[];
   accountUrl: string;
+  /** The document kinds for the menu, in order (menuKinds). */
+  documentKinds?: DocumentKindBrief[];
 }
 
-export function AppSidebar({ roles, accountUrl, ...props }: AppSidebarProps) {
+export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: AppSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations();
   const isClient = useIsClient();
@@ -68,6 +72,12 @@ export function AppSidebar({ roles, accountUrl, ...props }: AppSidebarProps) {
     const mainItems: NavItem[] = [
       { title: t("Nav.home"), url: "/", icon: House, isActive: pathname === "/" },
       { title: t("Nav.spex"), url: "/spex", icon: Archive, isActive: pathname.startsWith("/spex") },
+      ...documentKinds.map(kind => ({
+        title: kind.name,
+        url: documentsHref(kind.id),
+        icon: kindIcon(kind),
+        isActive: pathname === documentsHref(kind.id),
+      })),
       { title: t("Nav.search"), url: "/search", icon: Search, isActive: pathname.startsWith("/search") },
     ];
 
@@ -97,6 +107,7 @@ export function AppSidebar({ roles, accountUrl, ...props }: AppSidebarProps) {
         items: [
           { title: t("Nav.adminSettings"), url: "/admin/settings" },
           { title: t("Nav.adminInstruments"), url: "/admin/instruments" },
+          { title: t("Nav.adminDocumentKinds"), url: "/admin/document-kinds" },
           { title: t("Nav.adminFileRoles"), url: "/admin/file-roles" },
           { title: t("Nav.adminShareLinks"), url: "/admin/share-links" },
           { title: t("Nav.adminStorage"), url: "/admin/storage" },
@@ -120,7 +131,7 @@ export function AppSidebar({ roles, accountUrl, ...props }: AppSidebarProps) {
         },
       ],
     };
-  }, [roles, pathname, t]);
+  }, [roles, pathname, t, documentKinds]);
 
   return (
     <Sidebar collapsible="icon"
