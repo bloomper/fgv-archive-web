@@ -18,7 +18,7 @@ const HomeQuery = graphql(`
         years
         recentVersions(limit: 12) {
             ...VersionFields
-            manuscript { id title spex { ...SpexBrief } }
+            manuscript { id title kind { id name } spex { ...SpexBrief } }
             arrangement { id number { id title position spex { ...SpexBrief } } }
         }
     }
@@ -45,6 +45,7 @@ const SpexPageQuery = graphql(`
             revivals { ...SpexBrief }
             manuscripts {
                 id title authors description trashed
+                kind { id name position }
                 versions { ...VersionFields }
             }
             characters { id name }
@@ -77,6 +78,7 @@ const ManuscriptQuery = graphql(`
     query Manuscript($id: ID!) {
         manuscript(id: $id) {
             id spexId title authors description trashed createdAt
+            kind { id name retired }
             spex { ...SpexBrief revivals { ...SpexBrief } }
             versions {
                 ...VersionFields
@@ -155,6 +157,18 @@ const SearchQuery = graphql(`
     }
 `);
 
+const DocumentKindsQuery = graphql(`
+    query DocumentKinds($includeRetired: Boolean!) {
+        documentKinds(includeRetired: $includeRetired) { id name nameSv nameEn aliases position retired documentCount }
+    }
+`);
+
+const KindDocumentsQuery = graphql(`
+    query KindDocuments($kindId: ID!) {
+        documents(kindId: $kindId) { id title authors trashed spex { ...SpexBrief } versions { id } }
+    }
+`);
+
 const InstrumentsQuery = graphql(`
     query Instruments {
         instruments { ...InstrumentBrief abbreviations useCount taskId retired }
@@ -193,6 +207,11 @@ export const getFile = async (id: string) => (await runQuery(FileQuery, { id }))
 export const getFileVersion = async (id: string) => (await runQuery(FileVersionQuery, { id }))?.version ?? null;
 export const search = async (q: string, parts: PartFilter | null, key: KeyInput | null) =>
   runQuery(SearchQuery, { q, parts, key });
+/** The document kinds in order; the retired ones too when asked. */
+export const getDocumentKinds = cache(async (includeRetired: boolean) =>
+  (await runQuery(DocumentKindsQuery, { includeRetired }))?.documentKinds ?? []);
+/** The documents of a kind across every spex, by title, and FGV's own. */
+export const getKindDocuments = async (kindId: string) => (await runQuery(KindDocumentsQuery, { kindId }))?.documents ?? [];
 export const getInstruments = cache(async () => (await runQuery(InstrumentsQuery, {}))?.instruments ?? []);
 export const getFileRoles = cache(async () => (await runQuery(FileRolesQuery, {}))?.fileRoles ?? []);
 export const getMissing = async (categoryId: string | null) => runQuery(MissingQuery, { categoryId });

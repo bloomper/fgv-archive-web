@@ -61,11 +61,31 @@ export async function searchSpexAction(q: string) {
 
 // --- Manuscripts and arrangements ---------------------------------------------------------------------------------
 
-/** Creates a manuscript with its first version; the data is the version's id. */
+/** The given ids must be ids; a document of FGV's own has no spex, and the server picks the first kind when none is given. */
+function documentInput(input: ManuscriptInput): ManuscriptInput {
+  const { spexId, kindId } = input;
+
+  if (spexId) {
+    requireId(spexId);
+  }
+  if (kindId) {
+    requireId(kindId);
+  }
+  return {
+    spexId: spexId || undefined,
+    kindId: kindId || undefined,
+    title: input.title,
+    authors: input.authors,
+    description: input.description,
+  };
+}
+
+/** Creates a document, of a spex or FGV's own, with its first version; the data is its id and the version's. */
 export async function createManuscriptAction(input: ManuscriptInput): Promise<ActionResult<{ id: string; versionId?: string }>> {
-  requireId(input.spexId);
+  const checked = documentInput(input);
+
   return editor(async () => {
-    const created = await editing.manuscriptCreate(input);
+    const created = await editing.manuscriptCreate(checked);
 
     if (!created) {
       throw new Error("Not created");
@@ -74,10 +94,14 @@ export async function createManuscriptAction(input: ManuscriptInput): Promise<Ac
   });
 }
 
+/** New fields for a document; a kind or spex left out stays as it is (the server cannot take a document from its spex). */
 export async function updateManuscriptAction(id: string, input: ManuscriptInput) {
   requireId(id);
+
+  const checked = documentInput(input);
+
   return editor(async () => {
-    await editing.manuscriptUpdate(id, { title: input.title, authors: input.authors, description: input.description });
+    await editing.manuscriptUpdate(id, checked);
     return null;
   });
 }
