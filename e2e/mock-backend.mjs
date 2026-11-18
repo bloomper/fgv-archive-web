@@ -99,6 +99,11 @@ const ROLES = [
   ["Skanning", "Scan"], ["Övrigt", "Other"],
 ].map(([nameSv, nameEn], index) => ({ id: uuidOf(301 + index), nameSv, nameEn }));
 const [MANUSCRIPT_ROLE, SCORE_ROLE, PART_ROLE, SOURCE_ROLE] = ROLES.map(role => role.id);
+const KINDS = [
+  ["Manus", "Manuscript", ["manuskript"]], ["Program", "Programme", []], ["Synopsis", "Synopsis", []],
+  ["Spexbok", "Spex book", ["sångbok"]], ["Övrigt", "Other", []],
+].map(([nameSv, nameEn, aliases], index) => ({ id: uuidOf(801 + index), nameSv, nameEn, aliases }));
+const [MANUS_KIND, , , SPEXBOK_KIND] = KINDS.map(kind => kind.id);
 
 let state;
 
@@ -128,13 +133,16 @@ function resetState() {
     nextId: 1000,
     instruments: INSTRUMENTS.map((instrument, index) => ({ ...instrument, position: index + 1 })),
     roles: ROLES.map((role, index) => ({ ...role, position: index + 1 })),
+    kinds: KINDS.map((kind, index) => ({ ...kind, aliases: [...kind.aliases], position: index + 1, retired: false })),
     numbers: [
       { id: uuidOf(101), spexId: ALI_BABA.id, act: 1, retired: false, position: 1, title: "Ouvertyr", originalSong: null, lyricist: null, composer: "Kalle Kompositör" },
       { id: uuidOf(102), spexId: ALI_BABA.id, act: 1, retired: false, position: 2, title: "Kärleksduetten", originalSong: "Yesterday (The Beatles)", lyricist: "Lotta Lyriker", composer: null },
       { id: uuidOf(103), spexId: ALI_BABA.id, act: 1, retired: false, position: 3, title: "Finalen", originalSong: null, lyricist: null, composer: null },
     ],
     manuscripts: [
-      { id: uuidOf(401), spexId: ALI_BABA.id, title: "Ali Baba", authors: "Anna Författare, Bo Skribent", description: "Rövarna och kungen.", trashedAt: null, createdAt: "2026-10-01T10:00:00Z" },
+      { id: uuidOf(401), spexId: ALI_BABA.id, kindId: MANUS_KIND, title: "Ali Baba", authors: "Anna Författare, Bo Skribent", description: "Rövarna och kungen.", trashedAt: null, createdAt: "2026-10-01T10:00:00Z" },
+      // FGV's own, of no spex
+      { id: uuidOf(402), spexId: null, kindId: SPEXBOK_KIND, title: "FGV:s sångbok", authors: "Sångboksgruppen", description: null, trashedAt: null, createdAt: "2026-10-01T10:00:00Z" },
     ],
     arrangements: [
       { id: uuidOf(411), numberId: uuidOf(101), description: null, trashedAt: null, createdAt: "2026-10-01T10:00:00Z" },
@@ -143,6 +151,7 @@ function resetState() {
     versions: [
       version(501, "MANUSCRIPT", uuidOf(401), "Original 1985", { usedInSpexId: ALI_BABA.id, recommended: true }),
       version(502, "MANUSCRIPT", uuidOf(401), "Utkast 2028", { usedInSpexId: ALI_BABA_2028.id, published: false, publishedAt: null }),
+      version(503, "MANUSCRIPT", uuidOf(402), "Första upplagan", { createdAt: "2026-09-01T10:00:00Z", publishedAt: "2026-09-01T10:00:00Z" }),
       version(511, "ARRANGEMENT", uuidOf(411), "Original", {
         usedInSpexId: ALI_BABA.id, arranger: "Arne Arrangör", key: { tonic: "F", mode: "MAJOR" }, modulations: [{ tonic: "G", mode: "MAJOR" }],
         recommended: true, instrumentation: [{ instrumentId: TRUMPET, count: 2 }, { instrumentId: TROMBONE, count: 1 }, { instrumentId: ALTO, count: 1 }, { instrumentId: FLUTE, count: 1 }],
@@ -213,6 +222,16 @@ const spexById = id => SPEX.find(spex => spex.id === id);
 const instrumentById = id => state.instruments.find(instrument => instrument.id === id);
 const sortedInstruments = () => [...state.instruments].sort((a, b) => a.position - b.position);
 const roleById = id => state.roles.find(role => role.id === id);
+const kindById = id => state.kinds.find(kind => kind.id === id);
+const sortedKinds = () => [...state.kinds].sort((a, b) => a.position - b.position);
+// What the caller sees of a document: users only those with a published version outside the trash
+const visibleDocument = (persona, m) => isEditor(persona)
+  || (!m.trashedAt && state.versions.some(v => v.parentId === m.id && v.published && !v.trashedAt));
+const kindView = (persona, kind) => ({
+  ...kind,
+  name: kind.nameSv,
+  documentCount: state.manuscripts.filter(m => m.kindId === kind.id && !m.trashedAt && visibleDocument(persona, m)).length,
+});
 const numberById = id => state.numbers.find(number => number.id === id);
 const parentOf = v => v.kind === "MANUSCRIPT"
   ? state.manuscripts.find(m => m.id === v.parentId)
@@ -285,7 +304,7 @@ function versionView(persona, v, parts = null) {
     instrumentation: v.instrumentation.map(entry => ({ count: entry.count, instrument: instrumentById(entry.instrumentId) })),
     files: filesOf(persona, v, parts),
     allFiles: filesOf(persona, v, null),
-    manuscript: v.kind === "MANUSCRIPT" ? { ...parent, spex: withFamily(spexById(parent.spexId)) } : null,
+    manuscript: v.kind === "MANUSCRIPT" ? { ...parent, kind: kindView(persona, kindById(parent.kindId)), spex: parent.spexId ? withFamily(spexById(parent.spexId)) : null } : null,
     arrangement: number ? { id: parent.id, number: { ...number, spex: withFamily(spexById(number.spexId)) } } : null,
   };
 }
@@ -303,7 +322,8 @@ function manuscriptView(persona, m) {
   return {
     ...m,
     trashed: Boolean(m.trashedAt),
-    spex: withFamily(spexById(m.spexId)),
+    kind: kindView(persona, kindById(m.kindId)),
+    spex: m.spexId ? withFamily(spexById(m.spexId)) : null,
     versions: state.versions.filter(v => v.parentId === m.id && visibleVersion(persona, v)).sort(versionOrder).map(v => versionView(persona, v)),
   };
 }
@@ -549,6 +569,48 @@ const resolvers = {
     };
   },
   Instruments: () => ({ instruments: sortedInstruments().map(instrument => ({ ...instrument, useCount: state.files.filter(f => f.instrumentIds.includes(instrument.id)).length })) }),
+  DocumentKinds: (persona, { includeRetired }) => ({
+    documentKinds: sortedKinds().filter(kind => includeRetired || !kind.retired).map(kind => kindView(persona, kind)),
+  }),
+  KindDocuments: (persona, { kindId }) => ({
+    documents: state.manuscripts.filter(m => m.kindId === kindId && visibleDocument(persona, m))
+      .map(m => manuscriptView(persona, m)).sort((a, b) => a.title.localeCompare(b.title, "sv")),
+  }),
+  DocumentKindSave: (persona, { id, input }) => {
+    requireAdmin(persona);
+
+    const kind = id ? kindById(id) : { id: newId(), position: state.kinds.length + 1, retired: false };
+
+    Object.assign(kind, { nameSv: input.nameSv, nameEn: input.nameEn, aliases: input.aliases ?? [] });
+    if (!id) {
+      state.kinds.push(kind);
+    }
+    return { documentKindSave: { id: kind.id } };
+  },
+  DocumentKindsReorder: (persona, { ids }) => {
+    requireAdmin(persona);
+    ids.forEach((id, index) => kindById(id).position = index + 1);
+    return { documentKindsReorder: ids.map(id => ({ id })) };
+  },
+  DocumentKindRetire: (persona, { id, retired }) => {
+    requireAdmin(persona);
+    if (retired && state.kinds.filter(kind => !kind.retired && kind.id !== id).length === 0) {
+      throw new GraphQLError("CONFLICT", "Den sista dokumenttypen kan inte tas ur bruk.");
+    }
+    kindById(id).retired = retired;
+    return { documentKindRetire: { id, retired } };
+  },
+  DocumentKindMerge: (persona, { id, intoId }) => {
+    requireAdmin(persona);
+
+    const kind = kindById(id);
+    const into = kindById(intoId);
+
+    state.manuscripts.filter(m => m.kindId === id).forEach(m => m.kindId = intoId);
+    into.aliases = [...new Set([...into.aliases, kind.nameSv, kind.nameEn, ...kind.aliases])];
+    state.kinds = state.kinds.filter(other => other.id !== id);
+    return { documentKindMerge: { id: intoId } };
+  },
   FileRoles: () => ({ fileRoles: [...state.roles].sort((a, b) => a.position - b.position).map(role => ({ ...role, fileCount: state.files.filter(f => f.roleId === role.id).length })) }),
   FileGuess: (persona, { name }) => {
     requireEditor(persona);
@@ -565,7 +627,12 @@ const resolvers = {
   ManuscriptCreate: (persona, { input }) => {
     requireEditor(persona);
 
-    const m = { id: newId(), spexId: input.spexId, title: input.title || spexById(input.spexId).title, authors: input.authors, description: input.description, trashedAt: null, createdAt: new Date().toISOString() };
+    const kindId = input.kindId ?? sortedKinds().find(kind => !kind.retired).id;
+    const spex = input.spexId ? spexById(input.spexId) : null;
+    const m = {
+      id: newId(), spexId: spex?.id ?? null, kindId, title: input.title || spex?.title || kindById(kindId).nameSv, authors: input.authors,
+      description: input.description, trashedAt: null, createdAt: new Date().toISOString(),
+    };
     const v = version(state.nextId++, "MANUSCRIPT", m.id, "Original", { published: false, publishedAt: null, restricted: state.settings.manuscriptRestricted });
 
     state.manuscripts.push(m);
@@ -575,7 +642,16 @@ const resolvers = {
   },
   ManuscriptUpdate: (persona, { id, input }) => {
     requireEditor(persona);
-    Object.assign(state.manuscripts.find(m => m.id === id), { title: input.title, authors: input.authors, description: input.description });
+    const m = state.manuscripts.find(candidate => candidate.id === id);
+
+    Object.assign(m, { title: input.title, authors: input.authors, description: input.description });
+    // A kind or spex left out stays; a document cannot be taken from its spex
+    if (input.kindId) {
+      m.kindId = input.kindId;
+    }
+    if (input.spexId) {
+      m.spexId = input.spexId;
+    }
     return { manuscriptUpdate: { id } };
   },
   ArrangementCreate: (persona, { input }) => {

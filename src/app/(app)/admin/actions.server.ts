@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import * as admin from "@/lib/admin/admin.server";
 import { type ActionResult, toActionResult } from "@/lib/graphql.server";
-import type { FileRoleInput, InstrumentInput, MaintenanceJob, SettingsInput } from "@/gql/graphql";
+import type { DocumentKindInput, FileRoleInput, InstrumentInput, MaintenanceJob, SettingsInput } from "@/gql/graphql";
 import { ID } from "@/utils/filters";
 import { INSTRUMENT_GROUPS, isPitch } from "@/utils/music";
 import { withPolicyAction } from "@/utils/route.server";
@@ -135,6 +135,53 @@ export async function deleteFileRoleAction(id: string) {
   requireId(id);
   return asAdmin(async () => {
     await admin.fileRoleDelete(id);
+    return null;
+  });
+}
+
+function documentKind(input: DocumentKindInput): DocumentKindInput {
+  const aliases = [...new Set((input.aliases ?? []).map(value => value.trim()).filter(Boolean))];
+
+  if (aliases.length > 100 || aliases.some(alias => alias.length > 100)) {
+    throw new Error("Invalid aliases");
+  }
+  return { ...names(input), aliases };
+}
+
+/** A new document kind (no id), or new names and aliases for one. */
+export async function saveDocumentKindAction(id: string | null, input: DocumentKindInput) {
+  if (id !== null) {
+    requireId(id);
+  }
+  return asAdmin(async () => {
+    await admin.documentKindSave(id, documentKind(input));
+    return null;
+  });
+}
+
+export async function reorderDocumentKindsAction(ids: string[]) {
+  requireIds(ids);
+  return asAdmin(async () => {
+    await admin.documentKindsReorder(ids);
+    return null;
+  });
+}
+
+export async function retireDocumentKindAction(id: string, retired: boolean) {
+  requireId(id);
+  return asAdmin(async () => {
+    await admin.documentKindRetire(id, Boolean(retired));
+    return null;
+  });
+}
+
+export async function mergeDocumentKindAction(id: string, intoId: string) {
+  requireId(id, intoId);
+  if (id === intoId) {
+    throw new Error("Invalid ids");
+  }
+  return asAdmin(async () => {
+    await admin.documentKindMerge(id, intoId);
     return null;
   });
 }

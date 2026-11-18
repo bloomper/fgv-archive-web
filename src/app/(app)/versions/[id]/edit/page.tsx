@@ -39,7 +39,7 @@ export default async function VersionEditPage({ params }: { params: Promise<{ id
     const spex = manuscript?.spex ?? number?.spex;
     const base = number?.spex.original ?? spex;
     const family = manuscript
-      ? [manuscript.spex, ...manuscript.spex.revivals]
+      ? manuscript.spex ? [manuscript.spex, ...manuscript.spex.revivals] : []
       : number ? [base!, ...(number.spex.original ? [number.spex] : number.spex.revivals)] : [];
     const title = manuscript?.title ?? number?.title ?? "";
     const parentHref = manuscript ? manuscriptHref(manuscript.id) : arrangementHref(version.parentId);

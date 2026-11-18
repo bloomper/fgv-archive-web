@@ -8,16 +8,16 @@ import { FileList } from "@/components/archive/file-list";
 import { VersionBadges, VersionFacts } from "@/components/archive/version-meta";
 import { AccessRequest } from "@/components/archive/access-request.client";
 import { ParentActions } from "@/components/archive/parent-actions.client";
-import { getManuscript } from "@/lib/archive/archive.server";
+import { getDocumentKinds, getManuscript } from "@/lib/archive/archive.server";
 import { isEditor } from "@/utils/auth";
 import { ID } from "@/utils/filters";
-import { arrangementHref, spexHref, spexName, versionAnchor, versionEditHref, versionZipHref } from "@/utils/links";
+import { arrangementHref, documentsHref, spexHref, spexName, versionAnchor, versionEditHref, versionZipHref } from "@/utils/links";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 import { DataEmpty } from "@/components/data-empty";
 
 /**
- * A manuscript: its versions, the recommended one first, each with its files and the numbers of the spex it was used
+ * A document of any kind, of a spex or FGV's own: its versions, the recommended one first, each with its files and the numbers of the spex it was used
  * in, linked to their arrangements.
  */
 export default async function ManuscriptPage({ params }: { params: Promise<{ id: string }> }) {
@@ -31,13 +31,29 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
 
     const t = await getTranslations("ManuscriptPage");
     const editor = isEditor(authz.roles);
+    const { spex, kind } = manuscript;
+    // Editors may change the kind: to one still offered, or keep a retired one
+    const kinds = editor
+      ? (await getDocumentKinds(true)).filter(candidate => !candidate.retired || candidate.id === kind.id)
+        .map(({ id, name }) => ({ id, name }))
+      : [];
 
     return (
       <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
         <header className="space-y-2">
           <p className="text-sm">
-            <Link href={spexHref(manuscript.spex.id)} className="text-primary hover:text-primary/80">{spexName(manuscript.spex)}</Link>
-            <span className="text-muted-foreground"> · {t("manuscript")}</span>
+            {spex ? (
+              <>
+                <Link href={spexHref(spex.id)} className="text-primary hover:text-primary/80">{spexName(spex)}</Link>
+                <span className="text-muted-foreground"> · </span>
+                <Link href={documentsHref(kind.id)} className="text-muted-foreground hover:text-primary">{kind.name}</Link>
+              </>
+            ) : (
+              <>
+                <Link href={documentsHref(kind.id)} className="text-primary hover:text-primary/80">{kind.name}</Link>
+                <span className="text-muted-foreground"> · {t("own")}</span>
+              </>
+            )}
           </p>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {manuscript.title} {manuscript.trashed && <Badge variant="destructive">{t("trashed")}</Badge>}
@@ -45,8 +61,13 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
           {manuscript.authors && <p className="text-muted-foreground">{t("by", { authors: manuscript.authors })}</p>}
           {manuscript.description && <p className="max-w-4xl whitespace-pre-line text-pretty">{manuscript.description}</p>}
           {editor && (
-            <ParentActions kind="MANUSCRIPT" id={manuscript.id} trashed={manuscript.trashed} spexHref={spexHref(manuscript.spex.id)}
-                           fields={{ title: manuscript.title, authors: manuscript.authors, description: manuscript.description }} />
+            <ParentActions kind="MANUSCRIPT" id={manuscript.id} trashed={manuscript.trashed}
+                           spexHref={spex ? spexHref(spex.id) : documentsHref(kind.id)}
+                           fields={{
+                             title: manuscript.title, authors: manuscript.authors, description: manuscript.description,
+                             kindId: kind.id, spex: spex ? { id: spex.id, title: spex.title, year: spex.year, revival: spex.revival, categoryName: spex.categoryName } : null,
+                           }}
+                           kinds={kinds} />
           )}
         </header>
 

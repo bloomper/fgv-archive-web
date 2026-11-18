@@ -15,6 +15,8 @@ import { DialogsProvider } from "@/components/dialogs.client";
 import { requireUser } from "@/utils/auth.server";
 import { hasAccess } from "@/utils/auth";
 import { Umami } from "@/components/umami";
+import { getDocumentKinds } from "@/lib/archive/archive.server";
+import { menuKinds } from "@/utils/document-kinds";
 
 export const instant = false;
 
@@ -87,15 +89,21 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   const accountUrl = `${(process.env.KEYCLOAK_ISSUER ?? "").replace(/\/$/, "")}/account`;
-  const applications = await getApplications();
+  const [applications, allKinds] = await Promise.all([
+    getApplications(),
+    // The menu has an entry per document kind; without them the pages still work
+    getDocumentKinds(true).catch(() => []),
+  ]);
+  const documentKinds = menuKinds(allKinds, roles)
+    .map(({ id, name, nameSv, nameEn, aliases, retired, documentCount }) => ({ id, name, nameSv, nameEn, aliases, retired, documentCount }));
 
   return (
     <div className="[--header-height:calc(--spacing(14))]">
       <DialogsProvider>
         <SidebarProvider className="flex flex-col">
-          <SiteHeader applications={applications} roles={roles} />
+          <SiteHeader applications={applications} roles={roles} documentKinds={documentKinds} />
           <div className="flex flex-1">
-            <AppSidebar roles={roles} accountUrl={accountUrl} />
+            <AppSidebar roles={roles} accountUrl={accountUrl} documentKinds={documentKinds} />
             <SidebarInset className="min-w-0">
               {children}
             </SidebarInset>

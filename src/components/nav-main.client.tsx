@@ -35,7 +35,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-          <NavMainItem key={item.title} item={item} pathname={pathname} />
+          <NavMainItem key={item.url} item={item} pathname={pathname} />
         ))}
       </SidebarMenu>
     </SidebarGroup>

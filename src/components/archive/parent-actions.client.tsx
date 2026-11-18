@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { type PickedSpex, SpexPicker } from "@/components/spex/spex-picker.client";
 import { useDialogs } from "@/components/dialogs.client";
 import { useServerState } from "@/hooks/use-server-state.client";
 import {
@@ -22,16 +24,27 @@ import { versionEditHref } from "@/utils/links";
 type Kind = "MANUSCRIPT" | "ARRANGEMENT";
 
 /**
- * An editor's actions on a manuscript or an arrangement: a new version, editing its fields, and the trash, which takes
- * its versions with it.
+ * An editor's actions on a document or an arrangement: a new version, editing its fields, and the trash, which takes
+ * its versions with it. A document's kind can be changed, and it can be filed under a spex, or another one; the server
+ * cannot take it from its spex, so one with a spex keeps one.
  */
-export function ParentActions({ kind, id, trashed, fields, spexHref }: {
+export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] }: {
   kind: Kind;
   id: string;
   trashed: boolean;
-  fields: { title?: string; authors?: string | null; description?: string | null };
+  fields: {
+    title?: string;
+    authors?: string | null;
+    description?: string | null;
+    /** A document's kind. */
+    kindId?: string;
+    /** A document's spex; null for FGV's own. */
+    spex?: PickedSpex | null;
+  };
   /** Where to go once it is in the trash. */
   spexHref: string;
+  /** The kinds a document may be given. */
+  kinds?: { id: string; name: string }[];
 }) {
   const t = useTranslations("ParentActions");
   const router = useRouter();
@@ -40,6 +53,10 @@ export function ParentActions({ kind, id, trashed, fields, spexHref }: {
   const [title, setTitle] = useServerState(fields.title ?? "");
   const [authors, setAuthors] = useServerState(fields.authors ?? "");
   const [description, setDescription] = useServerState(fields.description ?? "");
+  const [kindId, setKindId] = useServerState(fields.kindId ?? "");
+  const [spex, setSpex] = useServerState(fields.spex ?? null, value => value?.id ?? null);
+  // A document with a spex cannot be made FGV's own again
+  const spexMissing = Boolean(fields.spex) && !spex;
   const [pending, startTransition] = useTransition();
 
   const newVersion = async () => {
@@ -85,7 +102,11 @@ export function ParentActions({ kind, id, trashed, fields, spexHref }: {
 
   const save = () => startTransition(async () => {
     const result = kind === "MANUSCRIPT"
-      ? await updateManuscriptAction(id, { title, authors: authors || null, description: description || null })
+      ? await updateManuscriptAction(id, {
+        title, authors: authors || null, description: description || null,
+        kindId: kindId && kindId !== fields.kindId ? kindId : undefined,
+        spexId: spex && spex.id !== fields.spex?.id ? spex.id : undefined,
+      })
       : await updateArrangementAction(id, description || null);
 
     if (result.ok) {
@@ -123,6 +144,18 @@ export function ParentActions({ kind, id, trashed, fields, spexHref }: {
                 <Label htmlFor="parent-authors">{t("authors")}</Label>
                 <Input id="parent-authors" value={authors} maxLength={500} onChange={event => setAuthors(event.target.value)} />
               </div>
+              {kinds.length > 0 && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="parent-kind">{t("kind")}</Label>
+                  <NativeSelect id="parent-kind" value={kindId} className="w-full" onChange={event => setKindId(event.target.value)}>
+                    {kinds.map(option => <NativeSelectOption key={option.id} value={option.id}>{option.name}</NativeSelectOption>)}
+                  </NativeSelect>
+                </div>
+              )}
+              <div className="space-y-1">
+                <SpexPicker value={spex} onChange={setSpex} originalsOnly />
+                <p className="text-xs text-muted-foreground">{fields.spex ? t("spexKept") : t("noSpex")}</p>
+              </div>
             </>
           )}
           <div className="space-y-1.5">
@@ -131,7 +164,7 @@ export function ParentActions({ kind, id, trashed, fields, spexHref }: {
                       onChange={event => setDescription(event.target.value)} />
           </div>
           <div className="flex gap-2">
-            <Button type="submit" size="sm" disabled={pending}>{t("save")}</Button>
+            <Button type="submit" size="sm" disabled={pending || spexMissing}>{t("save")}</Button>
             <Button type="button" size="sm" variant="outline" onClick={() => setEditing(false)}>{t("cancel")}</Button>
           </div>
         </form>

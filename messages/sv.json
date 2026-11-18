@@ -121,10 +121,10 @@
   },
   "Nav": {
     "home": "Hem",
-    "spex": "Bläddra",
+    "spex": "Spex",
     "search": "Sök",
     "manage": "Redigera",
-    "newManuscript": "Nytt manus",
+    "newManuscript": "Nytt dokument",
     "missing": "Saknat material",
     "shareLinks": "Mina delningslänkar",
     "accessRequests": "Åtkomstförfrågningar",
@@ -133,6 +133,7 @@
     "admin": "Administration",
     "adminSettings": "Inställningar",
     "adminInstruments": "Instrument",
+    "adminDocumentKinds": "Dokumenttyper",
     "adminFileRoles": "Filroller",
     "adminShareLinks": "Alla delningslänkar",
     "adminStorage": "Lagring",
@@ -148,7 +149,6 @@
     "recent": "Senast tillagt och ändrat",
     "allSpex": "Alla spex med material",
     "empty": "Inget är publicerat ännu.",
-    "manuscript": "Manus",
     "arrangement": "Arrangemang"
   },
   "SpexList": {
@@ -165,16 +165,16 @@
     "noneText": "Inga spex matchar filtret.",
     "revival": "nyuppsättning",
     "noMaterial": "Inget material",
-    "counts": "{manuscripts, plural, one {# manus} other {# manus}}, {arrangements, plural, one {# arrangemang} other {# arrangemang}}"
+    "counts": "{manuscripts, plural, one {# dokument} other {# dokument}}, {arrangements, plural, one {# arrangemang} other {# arrangemang}}"
   },
   "SpexPage": {
     "revival": "Nyuppsättning",
     "revivalOf": "Nyuppsättning av",
     "revivals": "Nyuppsättningar",
     "downloadParts": "Ladda ner stämmor",
-    "newManuscript": "Nytt manus",
-    "manuscripts": "Manus",
-    "noManuscripts": "Inget manus finns i arkivet ännu.",
+    "newManuscript": "Nytt dokument",
+    "manuscripts": "Dokument",
+    "noManuscripts": "Inga dokument finns i arkivet ännu.",
     "numbers": "Nummer",
     "editInSpexipedia": "Redigera i Spexipedia",
     "retiredNumber": "Borttaget i Spexipedia",
@@ -244,7 +244,6 @@
     "sent": "Förfrågan är skickad till redaktörerna"
   },
   "ManuscriptPage": {
-    "manuscript": "Manus",
     "trashed": "I papperskorgen",
     "by": "Av {authors}",
     "noVersions": "Inga versioner.",
@@ -252,7 +251,16 @@
     "edit": "Redigera",
     "filesOf": "Filer i {label}",
     "noFiles": "Inga filer ännu.",
-    "numbers": "{count, plural, one {# nummer} other {# nummer}}"
+    "numbers": "{count, plural, one {# nummer} other {# nummer}}",
+    "own": "FGV:s eget dokument"
+  },
+  "DocumentsPage": {
+    "count": "{count, plural, =0 {Inga dokument} one {# dokument} other {# dokument}}",
+    "own": "FGV:s egna",
+    "none": "Inga dokument av den här typen ännu.",
+    "new": "Nytt dokument",
+    "retired": "Används inte längre",
+    "trashed": "I papperskorgen"
   },
   "ArrangementPage": {
     "number": "Nummer {position}",
@@ -278,17 +286,20 @@
     "newVersion": "Ny version",
     "label": "Benämning, t.ex. Nyuppsättning 2028",
     "create": "Skapa",
-    "editManuscript": "Redigera manus",
+    "editManuscript": "Redigera dokument",
     "editArrangement": "Redigera arrangemang",
     "toTrash": "Lägg i papperskorgen",
     "restore": "Återställ",
-    "trashManuscript": "Lägga manuset i papperskorgen?",
+    "trashManuscript": "Lägga dokumentet i papperskorgen?",
     "trashArrangement": "Lägga arrangemanget i papperskorgen?",
     "trashText": "Alla versioner följer med. Det går att återställa.",
     "trashed": "Lagt i papperskorgen",
     "restored": "Återställt",
     "title": "Titel",
     "authors": "Författare",
+    "kind": "Dokumenttyp",
+    "noSpex": "Utan spex är det ett av FGV:s egna dokument. Välj ett spex för att lägga det under spexet.",
+    "spexKept": "Dokumentet kan flyttas till ett annat spex, men inte tas från sitt spex.",
     "description": "Beskrivning",
     "save": "Spara",
     "cancel": "Avbryt",
@@ -480,7 +491,7 @@
   },
   "SharePage": {
     "sharedBy": "Delat av {name}, giltigt till {date}",
-    "manuscript": "Manus",
+    "manuscript": "Dokument",
     "arrangement": "Arrangemang",
     "number": "Nummer {position}",
     "downloadVersion": "Ladda ner allt",
@@ -553,7 +564,7 @@
     "none": "Inga träffar.",
     "count": "{count, plural, one {# träff} other {# träffar}}",
     "spex": "Spex",
-    "manuscripts": "Manus",
+    "manuscripts": "Dokument",
     "numbers": "Nummer",
     "arrangements": "Arrangemang",
     "versionsInKey": "Versioner i {key}",
@@ -562,13 +573,15 @@
     "page": "sida {page}"
   },
   "NewManuscript": {
-    "heading": "Nytt manus",
-    "text": "Ett manus hör till ett originalspex; nyuppsättningarnas omskrivningar blir versioner av det. Den första versionen, Original, skapas opublicerad.",
+    "heading": "Nytt dokument",
+    "text": "Ett dokument, t.ex. ett manus eller ett program, hör till ett originalspex; nyuppsättningarnas omskrivningar blir versioner av det. Det kan också vara ett av FGV:s egna, utan spex, som en sångbok eller en jubileumsskrift. Den första versionen, Original, skapas opublicerad.",
+    "kind": "Dokumenttyp",
+    "noSpex": "Inget spex: ett av FGV:s egna dokument.",
     "title": "Titel",
-    "titleHint": "Lämna tomt för spexets titel.",
+    "titleHint": "Lämna tomt för spexets titel, eller dokumenttypens namn.",
     "authors": "Författare",
     "description": "Beskrivning, t.ex. handlingen",
-    "create": "Skapa manus"
+    "create": "Skapa dokument"
   },
   "Missing": {
     "title": "Saknat material",
@@ -611,7 +624,7 @@
     "text": "Det som ligger här kan återställas. En administratör tömmer papperskorgen.",
     "textAdmin": "Det som ligger här kan återställas tills papperskorgen töms; då raderas filerna.",
     "none": "Papperskorgen är tom.",
-    "manuscripts": "Manus",
+    "manuscripts": "Dokument",
     "arrangements": "Arrangemang",
     "versionsHeading": "Versioner",
     "versions": "{count, plural, one {# version} other {# versioner}}",
@@ -672,6 +685,37 @@
     "deleteButton": "Radera",
     "deleted": "Raderat",
     "inUse": "Används; slå ihop det med ett annat i stället."
+  },
+  "AdminDocumentKinds": {
+    "title": "Dokumenttyper",
+    "text": "Vilka slags dokument arkivet har, t.ex. manus, program och synopsis, i den ordning menyn och sidorna visar dem. Importen känner igen en typ på dess namn och alias. En typ tas inte bort: den tas ur bruk (finns kvar på sina dokument men erbjuds inte för nya) eller slås ihop med en annan.",
+    "list": "Dokumenttyper",
+    "form": "Dokumenttyp",
+    "nameSv": "Svenskt namn",
+    "nameEn": "Engelskt namn",
+    "aliases": "Alias",
+    "aliasesHint": "Ett per rad, t.ex. andra stavningar som filarkivet använder.",
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "saved": "Sparat",
+    "add": "Lägg till dokumenttyp",
+    "reordered": "Ordningen är sparad",
+    "documents": "{count, plural, =0 {inga dokument} one {# dokument} other {# dokument}}",
+    "retired": "Ur bruk",
+    "moveUp": "Flytta upp {name}",
+    "moveDown": "Flytta ner {name}",
+    "edit": "Redigera {name}",
+    "retire": "Ta {name} ur bruk",
+    "retiredDone": "Tagen ur bruk",
+    "restore": "Ta {name} i bruk igen",
+    "restored": "I bruk igen",
+    "lastKind": "Den sista typen i bruk kan inte tas ur bruk.",
+    "merge": "Slå ihop {name} med en annan typ",
+    "mergeTitle": "Slå ihop {name} med",
+    "mergeConfirm": "Slå ihop {name} med {into}?",
+    "mergeText": "{count, plural, =0 {Typen har inga dokument.} one {Dess dokument flyttas till {into}.} other {Dess # dokument flyttas till {into}.}} Namnen blir alias där, och typen tas bort.",
+    "mergeButton": "Slå ihop",
+    "merged": "Ihopslagna"
   },
   "AdminFileRoles": {
     "title": "Filroller",
@@ -784,7 +828,7 @@
       "SHARE": "Delad"
     },
     "type": {
-      "MANUSCRIPT": "Manus",
+      "MANUSCRIPT": "Dokument",
       "ARRANGEMENT": "Arrangemang",
       "VERSION": "Version",
       "FILE": "Fil",

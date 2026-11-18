@@ -171,10 +171,36 @@ test.describe("Editing", () => {
   test("an editor creates a manuscript and lands on its first version", async ({ page, loginAs }) => {
     await loginAs("editor");
     await page.goto(`/manage/manuscripts/new?spex=${uuidOf(13)}`);
+    // The first kind by default
+    await expect(page.getByLabel("Dokumenttyp")).toHaveValue(uuidOf(801));
     await page.getByLabel("Författare").fill("Nina Nobel");
-    await page.getByRole("button", { name: "Skapa manus" }).click();
+    await page.getByRole("button", { name: "Skapa dokument" }).click();
 
     await expect(page.getByRole("heading", { level: 1, name: /Redigera Original/ })).toBeVisible();
     await expect(page.getByText("Opublicerad").first()).toBeVisible();
+  });
+
+  test("an editor creates a document of FGV's own, then changes its kind and files it under a spex", async ({ page, loginAs }) => {
+    await loginAs("editor");
+    await page.goto(`/manage/manuscripts/new?kind=${uuidOf(802)}`);
+    await expect(page.getByLabel("Dokumenttyp")).toHaveValue(uuidOf(802));
+    await expect(page.getByText("Inget spex: ett av FGV:s egna dokument.")).toBeVisible();
+    await page.getByLabel("Titel").fill("Jubileumsskrift");
+    await page.getByRole("button", { name: "Skapa dokument" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: /Redigera Original/ })).toBeVisible();
+
+    await page.getByRole("link", { name: "← Jubileumsskrift" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Jubileumsskrift" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Program", exact: true }).last()).toHaveAttribute("href", `/documents/${uuidOf(802)}`);
+    await expect(page.getByText("FGV:s eget dokument")).toBeVisible();
+
+    await page.getByRole("button", { name: "Redigera dokument" }).click();
+    await page.getByRole("combobox", { name: "Dokumenttyp" }).selectOption({ label: "Synopsis" });
+    await page.getByRole("textbox", { name: "Spex", exact: true }).fill("Nobel");
+    await page.getByRole("list", { name: "Sökträffar" }).getByRole("button", { name: /Nobel 1975/ }).click();
+    await page.getByRole("button", { name: "Spara" }).click();
+
+    await expect(page.getByRole("main").getByRole("link", { name: "Nobel 1975" })).toHaveAttribute("href", `/spex/${uuidOf(13)}`);
+    await expect(page.getByRole("main").getByRole("link", { name: "Synopsis", exact: true })).toBeVisible();
   });
 });

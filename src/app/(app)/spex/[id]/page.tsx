@@ -10,13 +10,13 @@ import { getMe, getSpexPage } from "@/lib/archive/archive.server";
 import { ShareLinkButton } from "@/components/archive/share-link-dialog.client";
 import { isEditor } from "@/utils/auth";
 import { ID } from "@/utils/filters";
-import { arrangementHref, manuscriptHref, spexHref, spexName, spexPartsHref, versionAnchor } from "@/utils/links";
+import { arrangementHref, manuscriptHref, newDocumentHref, spexHref, spexName, spexPartsHref, versionAnchor } from "@/utils/links";
 import { formatKey } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 
 /**
- * A spex with its revivals, its manuscripts and their versions, and its numbers in the order of the show with their
+ * A spex with its revivals, its documents by kind and their versions, and its numbers in the order of the show with their
  * arrangements; numbers without one are marked.
  */
 export default async function SpexPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,6 +43,10 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
       ...spex.manuscripts.map(manuscript => pick(manuscript.versions)),
       ...spex.numbers.map(number => number.arrangement && pick(number.arrangement.versions)),
     ].filter((id): id is string => Boolean(id));
+    // Documents by kind, in the kinds' order
+    const kinds = [...new Map(spex.manuscripts.map(manuscript => [manuscript.kind.id, manuscript.kind])).values()]
+      .sort((a, b) => a.position - b.position)
+      .map(kind => ({ kind, documents: spex.manuscripts.filter(manuscript => manuscript.kind.id === kind.id) }));
     const maxMonths = editor ? (await getMe())?.settings.maxShareLinkMonths ?? 24 : 24;
 
     return (
@@ -76,7 +80,7 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
               </Link>
             )}
             {editor && (
-              <Link href={`/manage/manuscripts/new?spex=${original.id}`}
+              <Link href={newDocumentHref({ spexId: original.id })}
                     className={buttonVariants({ variant: "outline", size: "sm" })}>
                 <FilePlus /> {t("newManuscript")}
               </Link>
@@ -88,11 +92,16 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
           </div>
         </header>
 
-        <section aria-labelledby="manuscripts" className="space-y-3">
-          <h2 id="manuscripts" className="text-lg font-semibold">{t("manuscripts")}</h2>
-          {spex.manuscripts.length === 0 ? <p className="text-sm text-muted-foreground">{t("noManuscripts")}</p> : (
+        {kinds.length === 0 ? (
+          <section aria-labelledby="documents" className="space-y-3">
+            <h2 id="documents" className="text-lg font-semibold">{t("manuscripts")}</h2>
+            <p className="text-sm text-muted-foreground">{t("noManuscripts")}</p>
+          </section>
+        ) : kinds.map(({ kind, documents }) => (
+          <section key={kind.id} aria-labelledby={`kind-${kind.id}`} className="space-y-3">
+            <h2 id={`kind-${kind.id}`} className="text-lg font-semibold">{kind.name}</h2>
             <ul className="space-y-3">
-              {spex.manuscripts.map(manuscript => (
+              {documents.map(manuscript => (
                 <li key={manuscript.id} className="link-row rounded-lg border bg-card p-3">
                   <Link href={manuscriptHref(manuscript.id)} className="row-link flex items-center gap-2 font-medium">
                     <ScrollText className="size-4 text-primary" aria-hidden /> {manuscript.title}
@@ -112,8 +121,8 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
                 </li>
               ))}
             </ul>
-          )}
-        </section>
+          </section>
+        ))}
 
         {spex.characters.length > 0 && (
           <section aria-labelledby="characters" className="space-y-2">
