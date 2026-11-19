@@ -13,7 +13,7 @@ const SharedViewDocument = graphql(`
             spex { id title year categoryName }
             instruments { ...InstrumentBrief }
             versions {
-                id kind title label numberPosition originalSong lyricist composer authors arranger tempo duration date notes
+                id kind title label numberPosition originalSong authors arranger tempo duration date notes
                 spex { id title year categoryName }
                 usedIn { id title year categoryName }
                 key { tonic mode }

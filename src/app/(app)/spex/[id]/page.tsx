@@ -161,7 +161,7 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
                         ? <Link href={arrangementHref(arrangement.id)} className="row-link font-medium">{number.title}</Link>
                         : <span className="font-medium">{number.title}</span>}
                       <p className="text-xs text-muted-foreground">
-                        {[number.originalSong, [number.lyricist, number.composer].filter(Boolean).join(" / ")].filter(Boolean).join(" · ")}
+                        {number.originalSong}
                       </p>
                       {number.retired && <Badge variant="outline">{t("retiredNumber")}</Badge>}
                     </div>

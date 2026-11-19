@@ -6,6 +6,7 @@ import { searchSpex } from "@/lib/archive/archive.server";
 import { trashEmpty } from "@/lib/admin/admin.server";
 import { type ActionResult, toActionResult } from "@/lib/graphql.server";
 import type {
+  BookSongInput,
   FileInput,
   ManuscriptInput,
   ShareLinkInput,
@@ -77,6 +78,8 @@ function documentInput(input: ManuscriptInput): ManuscriptInput {
     title: input.title,
     authors: input.authors,
     description: input.description,
+    volume: input.volume ?? undefined,
+    publishedYear: input.publishedYear ?? undefined,
   };
 }
 
@@ -116,6 +119,29 @@ export async function createArrangementAction(numberId: string): Promise<ActionR
     }
     return { id: created.id, versionId: created.versions[0]?.id };
   });
+}
+
+/** A book's songs in the book's order: numbers from Spexipedia (of any spex) or free titles (spec 4.7). */
+export async function setBookSongsAction(id: string, songs: BookSongInput[]) {
+  requireId(id);
+  songs.forEach(song => song.numberId && requireId(song.numberId));
+  if (songs.length > 1000) {
+    throw new Error("Too many songs");
+  }
+  return editor(async () => {
+    await editing.bookSongsSet(id, songs.map(song => ({
+      numberId: song.numberId || null,
+      title: song.numberId ? null : song.title?.trim().slice(0, 255) || null,
+      textOnly: Boolean(song.textOnly),
+    })));
+    return null;
+  });
+}
+
+/** The numbers of a spex, for adding them to a book. */
+export async function spexNumbersAction(spexId: string) {
+  requireId(spexId);
+  return editor(async () => await editing.spexNumbersForBook(spexId));
 }
 
 export async function updateArrangementAction(id: string, description: string | null) {

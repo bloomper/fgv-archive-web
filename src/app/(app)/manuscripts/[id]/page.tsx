@@ -8,6 +8,7 @@ import { FileList } from "@/components/archive/file-list";
 import { VersionBadges, VersionFacts } from "@/components/archive/version-meta";
 import { AccessRequest } from "@/components/archive/access-request.client";
 import { ParentActions } from "@/components/archive/parent-actions.client";
+import { BookSongsEditor } from "@/components/archive/book-songs-editor.client";
 import { getDocumentKinds, getManuscript } from "@/lib/archive/archive.server";
 import { isEditor } from "@/utils/auth";
 import { ID } from "@/utils/filters";
@@ -35,7 +36,7 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
     // Editors may change the kind: to one still offered, or keep a retired one
     const kinds = editor
       ? (await getDocumentKinds(true)).filter(candidate => !candidate.retired || candidate.id === kind.id)
-        .map(({ id, name }) => ({ id, name }))
+        .map(({ id, name, book }) => ({ id, name, book }))
       : [];
 
     return (
@@ -59,17 +60,53 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
             {manuscript.title} {manuscript.trashed && <Badge variant="destructive">{t("trashed")}</Badge>}
           </h1>
           {manuscript.authors && <p className="text-muted-foreground">{t("by", { authors: manuscript.authors })}</p>}
+          {manuscript.book && (manuscript.volume || manuscript.publishedYear) && (
+            <p className="text-muted-foreground">
+              {[manuscript.volume && t("volume", { volume: manuscript.volume }), manuscript.publishedYear].filter(Boolean).join(" · ")}
+            </p>
+          )}
           {manuscript.description && <p className="max-w-4xl whitespace-pre-line text-pretty">{manuscript.description}</p>}
           {editor && (
             <ParentActions kind="MANUSCRIPT" id={manuscript.id} trashed={manuscript.trashed}
                            spexHref={spex ? spexHref(spex.id) : documentsHref(kind.id)}
                            fields={{
                              title: manuscript.title, authors: manuscript.authors, description: manuscript.description,
-                             kindId: kind.id, spex: spex ? { id: spex.id, title: spex.title, year: spex.year, revival: spex.revival, categoryName: spex.categoryName } : null,
+                             kindId: kind.id, volume: manuscript.volume, publishedYear: manuscript.publishedYear,
+                             spex: spex ? { id: spex.id, title: spex.title, year: spex.year, revival: spex.revival, categoryName: spex.categoryName } : null,
                            }}
                            kinds={kinds} />
           )}
         </header>
+
+        {manuscript.book && (
+          <section aria-labelledby="book-songs" className="space-y-3">
+            <h2 id="book-songs" className="text-lg font-semibold">{t("songs", { count: manuscript.songs.length })}</h2>
+            {manuscript.songs.length === 0 ? <p className="text-sm text-muted-foreground">{t("noSongs")}</p> : (
+              <ol className="grid gap-x-6 gap-y-0.5 text-sm sm:grid-cols-2">
+                {manuscript.songs.map(song => (
+                  <li key={song.position}>
+                    <span className="tabular-nums text-muted-foreground">{song.position}. </span>
+                    {song.number ? (
+                      <>
+                        {song.number.title}
+                        <span className="text-muted-foreground"> · {spexName(song.number.spex)}</span>
+                      </>
+                    ) : song.title}
+                    {song.textOnly && <span className="text-muted-foreground"> ({t("textOnly")})</span>}
+                  </li>
+                ))}
+              </ol>
+            )}
+            {editor && (
+              <BookSongsEditor bookId={manuscript.id} songs={manuscript.songs.map(song => ({
+                numberId: song.number?.id ?? song.numberId ?? null,
+                label: song.number ? `${song.number.title} (${spexName(song.number.spex)})` : song.title ?? "",
+                title: song.title ?? null,
+                textOnly: song.textOnly,
+              }))} />
+            )}
+          </section>
+        )}
 
         {manuscript.versions.length === 0 && <DataEmpty title={t("noVersions")} description={null} />}
 

@@ -50,7 +50,7 @@ const SpexPageQuery = graphql(`
             }
             characters { id name }
             numbers {
-                id spexId act position title originalSong lyricist composer retired
+                id spexId act position title originalSong retired
                 arrangement {
                     id trashed
                     versions { id label published restricted recommended trashed key { tonic mode } usedIn { ...SpexBrief } }
@@ -77,8 +77,9 @@ const SpexArrangementsQuery = graphql(`
 const ManuscriptQuery = graphql(`
     query Manuscript($id: ID!) {
         manuscript(id: $id) {
-            id spexId title authors description trashed createdAt
-            kind { id name retired }
+            id spexId title authors description trashed createdAt book volume publishedYear
+            kind { id name retired book }
+            songs { position numberId title textOnly number { id title position spex { ...SpexBrief } } }
             spex { ...SpexBrief revivals { ...SpexBrief } }
             versions {
                 ...VersionFields
@@ -93,7 +94,7 @@ const ArrangementQuery = graphql(`
     query Arrangement($id: ID!, $parts: PartFilter) {
         arrangement(id: $id) {
             id numberId description trashed createdAt
-            number { id spexId position title originalSong lyricist composer spex { ...SpexBrief original { ...SpexBrief } revivals { ...SpexBrief } } }
+            number { id spexId position title originalSong spex { ...SpexBrief original { ...SpexBrief } revivals { ...SpexBrief } } }
             versions {
                 ...VersionFields
                 files(parts: $parts) { ...FileFields }
@@ -137,7 +138,7 @@ const SearchQuery = graphql(`
         search(q: $q, parts: $parts, key: $key) {
             spex { ...SpexBrief }
             manuscripts { id title authors spex { ...SpexBrief } }
-            numbers { id title position originalSong lyricist composer spex { ...SpexBrief } arrangement { id } }
+            numbers { id title position originalSong spex { ...SpexBrief } arrangement { id } }
             arrangements { id description number { id title position spex { ...SpexBrief } } }
             versions {
                 id label key { tonic mode } modulations { tonic mode } arranger
@@ -159,7 +160,7 @@ const SearchQuery = graphql(`
 
 const DocumentKindsQuery = graphql(`
     query DocumentKinds($includeRetired: Boolean!) {
-        documentKinds(includeRetired: $includeRetired) { id name nameSv nameEn aliases position retired documentCount }
+        documentKinds(includeRetired: $includeRetired) { id name nameSv nameEn aliases position retired documentCount book }
     }
 `);
 

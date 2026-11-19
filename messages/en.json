@@ -252,7 +252,11 @@
     "filesOf": "Files of {label}",
     "noFiles": "No files yet.",
     "numbers": "{count, plural, one {# number} other {# numbers}}",
-    "own": "FGV's own document"
+    "own": "FGV's own document",
+    "volume": "Volume {volume}",
+    "songs": "Songs ({count})",
+    "noSongs": "No songs entered yet.",
+    "textOnly": "words only"
   },
   "DocumentsPage": {
     "count": "{count, plural, =0 {No documents} one {# document} other {# documents}}",
@@ -266,8 +270,6 @@
     "number": "Number {position}",
     "trashed": "In the trash",
     "melody": "Melody: {song}",
-    "lyricist": "Lyrics: {name}",
-    "composer": "Music: {name}",
     "versions": "Versions",
     "key": "Key",
     "instrumentation": "Instrumentation",
@@ -303,7 +305,9 @@
     "description": "Description",
     "save": "Save",
     "cancel": "Cancel",
-    "saved": "Saved"
+    "saved": "Saved",
+    "volume": "Volume",
+    "publishedYear": "Published"
   },
   "VersionEdit": {
     "title": "Edit {label}",
@@ -715,7 +719,9 @@
     "mergeConfirm": "Merge {name} into {into}?",
     "mergeText": "{count, plural, =0 {The kind has no documents.} one {Its document moves to {into}.} other {Its # documents move to {into}.}} Its names become aliases there, and the kind is deleted.",
     "mergeButton": "Merge",
-    "merged": "Merged"
+    "merged": "Merged",
+    "book": "Books: the documents have a volume, a year and a song list",
+    "bookBadge": "Book"
   },
   "AdminFileRoles": {
     "title": "File roles",
@@ -862,5 +868,22 @@
     "search": "Search",
     "searchFor": "Search the archive for “{query}”",
     "create": "Create"
+  },
+  "BookSongs": {
+    "editTitle": "The songs of the book",
+    "help": "In the book's order: numbers from Spexipedia, of any spex, or free titles. A number that is missing is added in Spexipedia first.",
+    "freeTitle": "free title",
+    "textOnly": "Words only",
+    "textOnlyOf": "Only the words of {title}",
+    "moveUp": "Move {title} up",
+    "moveDown": "Move {title} down",
+    "remove": "Remove {title}",
+    "number": "Number",
+    "noNumbers": "The spex has no numbers",
+    "pickNumber": "Pick a number",
+    "add": "Add",
+    "freeTitleLabel": "Free title",
+    "save": "Save the songs",
+    "saved": "The songs are saved"
   }
 }

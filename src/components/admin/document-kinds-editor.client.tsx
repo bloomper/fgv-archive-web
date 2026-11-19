@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useDialogs } from "@/components/dialogs.client";
 import { useServerState } from "@/hooks/use-server-state.client";
 import type { ActionResult } from "@/lib/graphql.server";
@@ -31,14 +32,17 @@ export type AdminDocumentKind = {
   position: number;
   retired: boolean;
   documentCount: number;
+  /** Whether its documents are books with a song list (spec 4.7). */
+  book: boolean;
 };
 
-type Fields = { nameSv: string; nameEn: string; aliases: string };
+type Fields = { nameSv: string; nameEn: string; aliases: string; book: boolean };
 
 const toFields = (kind?: AdminDocumentKind): Fields => ({
   nameSv: kind?.nameSv ?? "",
   nameEn: kind?.nameEn ?? "",
   aliases: kind?.aliases.join("\n") ?? "",
+  book: kind?.book ?? false,
 });
 
 /**
@@ -52,7 +56,7 @@ export function DocumentKindsEditor({ kinds }: { kinds: AdminDocumentKind[] }) {
   const router = useRouter();
   const dialogs = useDialogs();
   const [order, setOrder] = useServerState(kinds, list => list
-    .map(kind => `${kind.id}:${kind.position}:${kind.nameSv}:${kind.nameEn}:${kind.aliases.join(",")}:${kind.retired}:${kind.documentCount}`).join("|"));
+    .map(kind => `${kind.id}:${kind.position}:${kind.nameSv}:${kind.nameEn}:${kind.aliases.join(",")}:${kind.retired}:${kind.documentCount}:${kind.book}`).join("|"));
   const [editing, setEditing] = useState<string | null>(null);
   const [fields, setFields] = useState<Fields>(toFields());
   const [pending, startTransition] = useTransition();
@@ -99,7 +103,7 @@ export function DocumentKindsEditor({ kinds }: { kinds: AdminDocumentKind[] }) {
     event.preventDefault();
 
     const id = editing;
-    const input = { nameSv: fields.nameSv, nameEn: fields.nameEn, aliases: parseAliases(fields.aliases) };
+    const input = { nameSv: fields.nameSv, nameEn: fields.nameEn, aliases: parseAliases(fields.aliases), book: fields.book };
 
     setEditing(null);
     run(() => saveDocumentKindAction(id && id !== "new" ? id : null, input), t("saved"));
@@ -121,6 +125,10 @@ export function DocumentKindsEditor({ kinds }: { kinds: AdminDocumentKind[] }) {
                   onChange={event => setFields({ ...fields, aliases: event.target.value })} />
         <p id="kind-aliases-help" className="text-xs text-muted-foreground">{t("aliasesHint")}</p>
       </div>
+      <label className="flex items-center gap-2 text-sm sm:col-span-2">
+        <Checkbox checked={fields.book} onCheckedChange={checked => setFields({ ...fields, book: checked === true })} />
+        {t("book")}
+      </label>
       <div className="flex gap-2 sm:col-span-2">
         <Button type="submit" size="sm" disabled={pending}>{t("save")}</Button>
         <Button type="button" size="sm" variant="outline" onClick={() => setEditing(null)}>{t("cancel")}</Button>
@@ -144,6 +152,7 @@ export function DocumentKindsEditor({ kinds }: { kinds: AdminDocumentKind[] }) {
                     <p className="flex flex-wrap items-center gap-2 font-medium">
                       {name}
                       {kind.retired && <Badge variant="secondary">{t("retired")}</Badge>}
+                      {kind.book && <Badge variant="outline">{t("bookBadge")}</Badge>}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {[locale === "en" ? kind.nameSv : kind.nameEn, kind.aliases.join(", "),

@@ -252,7 +252,11 @@
     "filesOf": "Filer i {label}",
     "noFiles": "Inga filer ännu.",
     "numbers": "{count, plural, one {# nummer} other {# nummer}}",
-    "own": "FGV:s eget dokument"
+    "own": "FGV:s eget dokument",
+    "volume": "Del {volume}",
+    "songs": "Sånger ({count})",
+    "noSongs": "Inga sånger inlagda än.",
+    "textOnly": "bara text"
   },
   "DocumentsPage": {
     "count": "{count, plural, =0 {Inga dokument} one {# dokument} other {# dokument}}",
@@ -266,8 +270,6 @@
     "number": "Nummer {position}",
     "trashed": "I papperskorgen",
     "melody": "Melodi: {song}",
-    "lyricist": "Text: {name}",
-    "composer": "Musik: {name}",
     "versions": "Versioner",
     "key": "Tonart",
     "instrumentation": "Besättning",
@@ -303,7 +305,9 @@
     "description": "Beskrivning",
     "save": "Spara",
     "cancel": "Avbryt",
-    "saved": "Sparat"
+    "saved": "Sparat",
+    "volume": "Del",
+    "publishedYear": "Utgiven"
   },
   "VersionEdit": {
     "title": "Redigera {label}",
@@ -715,7 +719,9 @@
     "mergeConfirm": "Slå ihop {name} med {into}?",
     "mergeText": "{count, plural, =0 {Typen har inga dokument.} one {Dess dokument flyttas till {into}.} other {Dess # dokument flyttas till {into}.}} Namnen blir alias där, och typen tas bort.",
     "mergeButton": "Slå ihop",
-    "merged": "Ihopslagna"
+    "merged": "Ihopslagna",
+    "book": "Böcker: dokumenten har del, år och sånglista",
+    "bookBadge": "Bok"
   },
   "AdminFileRoles": {
     "title": "Filroller",
@@ -862,5 +868,22 @@
     "search": "Sök",
     "searchFor": "Sök i arkivet efter ”{query}”",
     "create": "Skapa"
+  },
+  "BookSongs": {
+    "editTitle": "Sångerna i boken",
+    "help": "I bokens ordning: nummer ur Spexipedia, från vilket spex som helst, eller fria titlar. Saknas ett nummer läggs det in i Spexipedia först.",
+    "freeTitle": "fri titel",
+    "textOnly": "Bara text",
+    "textOnlyOf": "Bara texten till {title}",
+    "moveUp": "Flytta upp {title}",
+    "moveDown": "Flytta ned {title}",
+    "remove": "Ta bort {title}",
+    "number": "Nummer",
+    "noNumbers": "Spexet har inga nummer",
+    "pickNumber": "Välj nummer",
+    "add": "Lägg till",
+    "freeTitleLabel": "Fri titel",
+    "save": "Spara sångerna",
+    "saved": "Sångerna är sparade"
   }
 }

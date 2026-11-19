@@ -5,6 +5,7 @@ import { runMutation, runQuery } from "@/lib/graphql.server";
 import type {
   AccessRequestInput,
   ArrangementInput,
+  BookSongInput,
   FileAddInput,
   FileInput,
   ManuscriptInput,
@@ -54,6 +55,17 @@ const AccessRequestCreate = graphql(`mutation AccessRequestCreate($input: Access
 
 export const manuscriptCreate = async (input: ManuscriptInput) => (await runMutation(ManuscriptCreate, { input }))?.manuscriptCreate;
 export const manuscriptUpdate = (id: string, input: ManuscriptInput) => runMutation(ManuscriptUpdate, { id, input });
+
+const BookSongsSet = graphql(`mutation BookSongsSet($id: ID!, $songs: [BookSongInput!]!) { bookSongsSet(id: $id, songs: $songs) { id } }`);
+const SpexNumbersForBook = graphql(`
+    query SpexNumbersForBook($id: ID!) { spex(id: $id) { id numbers { id act position title retired } } }
+`);
+
+/** A book's songs, in the book's order (spec 4.7). */
+export const bookSongsSet = (id: string, songs: BookSongInput[]) => runMutation(BookSongsSet, { id, songs });
+/** The numbers of a spex, to add to a book. */
+export const spexNumbersForBook = async (spexId: string) =>
+  ((await runQuery(SpexNumbersForBook, { id: spexId }))?.spex?.numbers ?? []).filter(number => !number.retired);
 export const manuscriptTrash = (id: string) => runMutation(ManuscriptTrash, { id });
 export const manuscriptRestore = (id: string) => runMutation(ManuscriptRestore, { id });
 export const manuscriptDelete = (id: string) => runMutation(ManuscriptDelete, { id });
