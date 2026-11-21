@@ -4,9 +4,9 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
-export default function AppError({ error, reset }: {
+export default function AppError({ error, retry }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
   const t = useTranslations();
 
@@ -24,7 +24,7 @@ export default function AppError({ error, reset }: {
           {t("Error.text")}
         </p>
         <div className="flex justify-center gap-2 pt-2">
-          <Button onClick={() => reset()}>{t("Error.retry")}</Button>
+          <Button onClick={() => retry()}>{t("Error.retry")}</Button>
           <Button variant="outline" nativeButton={false}
                   render={<a href="/api/auth/login" />}>{t("Common.login")}</Button>
         </div>
