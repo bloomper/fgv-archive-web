@@ -6,6 +6,7 @@ import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 import { RefreshWhileRunning } from "./refresh-while-running.client";
 import { RunJobButton } from "./run-job-button.client";
+import { SpexipediaSyncStatus } from "./spexipedia-sync-status";
 
 /**
  * The scheduled maintenance jobs, with their schedules and latest runs, and a button to run each now.
@@ -46,6 +47,7 @@ export default async function MaintenancePage() {
             </li>
           ))}
         </ul>
+        <SpexipediaSyncStatus />
       </div>
     );
   });

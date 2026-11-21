@@ -25,6 +25,7 @@ type Documents = {
     "mutation TrashEmpty { trashEmpty }": typeof types.TrashEmptyDocument,
     "\n    mutation SettingsUpdate($input: SettingsInput!) { settingsUpdate(input: $input) { maxUploadMb } }\n": typeof types.SettingsUpdateDocument,
     "mutation MaintenanceJobRun($job: MaintenanceJob!) { maintenanceJobRun(job: $job) }": typeof types.MaintenanceJobRunDocument,
+    "\n    query SpexipediaSync { spexipediaSync { lastPulledAt lastSuccess lastError skipped { sequence kind id change error skippedAt } } }\n": typeof types.SpexipediaSyncDocument,
     "mutation InstrumentCreate($input: InstrumentInput!) { instrumentCreate(input: $input) { id } }": typeof types.InstrumentCreateDocument,
     "mutation InstrumentUpdate($id: ID!, $input: InstrumentInput!) { instrumentUpdate(id: $id, input: $input) { id } }": typeof types.InstrumentUpdateDocument,
     "mutation InstrumentsReorder($ids: [ID!]!) { instrumentsReorder(ids: $ids) { id } }": typeof types.InstrumentsReorderDocument,
@@ -106,6 +107,7 @@ const documents: Documents = {
     "mutation TrashEmpty { trashEmpty }": types.TrashEmptyDocument,
     "\n    mutation SettingsUpdate($input: SettingsInput!) { settingsUpdate(input: $input) { maxUploadMb } }\n": types.SettingsUpdateDocument,
     "mutation MaintenanceJobRun($job: MaintenanceJob!) { maintenanceJobRun(job: $job) }": types.MaintenanceJobRunDocument,
+    "\n    query SpexipediaSync { spexipediaSync { lastPulledAt lastSuccess lastError skipped { sequence kind id change error skippedAt } } }\n": types.SpexipediaSyncDocument,
     "mutation InstrumentCreate($input: InstrumentInput!) { instrumentCreate(input: $input) { id } }": types.InstrumentCreateDocument,
     "mutation InstrumentUpdate($id: ID!, $input: InstrumentInput!) { instrumentUpdate(id: $id, input: $input) { id } }": types.InstrumentUpdateDocument,
     "mutation InstrumentsReorder($ids: [ID!]!) { instrumentsReorder(ids: $ids) { id } }": types.InstrumentsReorderDocument,
@@ -234,6 +236,10 @@ export function graphql(source: "\n    mutation SettingsUpdate($input: SettingsI
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation MaintenanceJobRun($job: MaintenanceJob!) { maintenanceJobRun(job: $job) }"): (typeof documents)["mutation MaintenanceJobRun($job: MaintenanceJob!) { maintenanceJobRun(job: $job) }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SpexipediaSync { spexipediaSync { lastPulledAt lastSuccess lastError skipped { sequence kind id change error skippedAt } } }\n"): (typeof documents)["\n    query SpexipediaSync { spexipediaSync { lastPulledAt lastSuccess lastError skipped { sequence kind id change error skippedAt } } }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
