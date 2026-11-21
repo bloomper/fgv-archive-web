@@ -23,6 +23,21 @@ const contributorData = [
     nickName: "Colgate",
     image: "https://gravatar.com/avatar/5e07c325b41e9551493953c3b6eb37b71d93141c3bad22556487cd9a3989510b?s=200",
   },
+  {
+    name: "Fredrik Bonde",
+    nickName: "Faxe",
+    image: "https://fgv.nu/wp-content/uploads/2019/09/Faxe.jpg",
+  },
+  {
+    name: "Alexander Nilsson",
+    nickName: "Minnet",
+    image: "https://lh3.googleusercontent.com/a-/ALV-UjValcmsFsvTq4pj9PtCJ2xgSmmo0Cg58_47JeygCwq84CzEiGg=s480-p-k-rw-no",
+  },
+  {
+    name: "Emil Reinfeldt",
+    nickName: "Ministern",
+    image: "https://gravatar.com/avatar/ea11d8104bc579a900cdd80be8457a8c47c3fd4e87de9eb02bf0a35666c6ddf3?s=200",
+  }
 ];
 
 export function AboutPage({ feedbackEmail }: { feedbackEmail: string }) {

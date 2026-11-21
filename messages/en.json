@@ -767,6 +767,17 @@
     "runNow": "Run now",
     "started": "{job} has started. It runs in the background.",
     "alreadyRunning": "{job} is already running.",
+    "sync": {
+      "title": "Changes from Spexipedia",
+      "text": "Spex, categories and other base data are copied from Spexipedia's change feed every five minutes.",
+      "lastSuccess": "Last pulled without errors",
+      "never": "Never",
+      "lastError": "Latest error",
+      "noneSkipped": "No changes have been skipped.",
+      "skipped": "{count, plural, one {# change has been skipped} other {# changes have been skipped}}",
+      "skippedText": "A change that fails five pulls in a row is skipped, so that the ones after it are not held up. The copy lacks it until the record is changed again in Spexipedia.",
+      "change": "{change} of {kind}, skipped {at}"
+    },
     "jobs": {
       "SPEX_REFRESH": {
         "title": "Spex refresh",

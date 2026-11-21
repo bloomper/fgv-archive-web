@@ -67,6 +67,9 @@ const SettingsUpdateMutation = graphql(`
     mutation SettingsUpdate($input: SettingsInput!) { settingsUpdate(input: $input) { maxUploadMb } }
 `);
 const MaintenanceJobRunMutation = graphql(`mutation MaintenanceJobRun($job: MaintenanceJob!) { maintenanceJobRun(job: $job) }`);
+const SpexipediaSyncQuery = graphql(`
+    query SpexipediaSync { spexipediaSync { lastPulledAt lastSuccess lastError skipped { sequence kind id change error skippedAt } } }
+`);
 const InstrumentCreate = graphql(`mutation InstrumentCreate($input: InstrumentInput!) { instrumentCreate(input: $input) { id } }`);
 const InstrumentUpdate = graphql(`mutation InstrumentUpdate($id: ID!, $input: InstrumentInput!) { instrumentUpdate(id: $id, input: $input) { id } }`);
 const InstrumentsReorder = graphql(`mutation InstrumentsReorder($ids: [ID!]!) { instrumentsReorder(ids: $ids) { id } }`);
@@ -90,6 +93,7 @@ export const getStorage = async () => (await runQuery(StorageQuery, {}))?.storag
 export const getShareLinks = async (all: boolean) => (await runQuery(ShareLinksQuery, { all }))?.shareLinks ?? [];
 export const getAccessRequests = async (handled: boolean | null) => (await runQuery(AccessRequestsQuery, { handled }))?.accessRequests ?? [];
 export const getMaintenanceJobs = async () => (await runQuery(MaintenanceJobsQuery, {}))?.maintenanceJobs ?? [];
+export const getSpexipediaSync = async () => (await runQuery(SpexipediaSyncQuery, {}))?.spexipediaSync;
 export const trashEmpty = () => runMutation(TrashEmptyMutation, {});
 export const settingsUpdate = (input: SettingsInput) => runMutation(SettingsUpdateMutation, { input });
 export const maintenanceJobRun = async (job: MaintenanceJob) => Boolean((await runMutation(MaintenanceJobRunMutation, { job }))?.maintenanceJobRun);

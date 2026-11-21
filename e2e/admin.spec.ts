@@ -62,6 +62,7 @@ test.describe("Administration", () => {
     await expect(page.getByText("12,5 MB")).toBeVisible();
     await page.goto("/admin/maintenance");
     await expect(page.getByRole("heading", { name: "Text och förhandsvisningar" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Ändringar från Spexipedia" }).getByText("1 ändring har hoppats över")).toBeVisible();
   });
 
   test("an admin sees everyone's share links and the trash", async ({ page, loginAs }) => {

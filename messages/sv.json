@@ -767,6 +767,17 @@
     "runNow": "Kör nu",
     "started": "{job} har startat. Det körs i bakgrunden.",
     "alreadyRunning": "{job} körs redan.",
+    "sync": {
+      "title": "Ändringar från Spexipedia",
+      "text": "Spex, kategorier och andra basdata kopieras från Spexipedias ändringsflöde var femte minut.",
+      "lastSuccess": "Senast hämtat utan fel",
+      "never": "Aldrig",
+      "lastError": "Senaste fel",
+      "noneSkipped": "Inga ändringar har hoppats över.",
+      "skipped": "{count, plural, one {# ändring har hoppats över} other {# ändringar har hoppats över}}",
+      "skippedText": "En ändring som misslyckas fem hämtningar i rad hoppas över, så att de som kommer efter inte fastnar. Kopian saknar den tills posten ändras igen i Spexipedia.",
+      "change": "{change} av {kind}, överhoppad {at}"
+    },
     "jobs": {
       "SPEX_REFRESH": {
         "title": "Uppdatering av spex",
