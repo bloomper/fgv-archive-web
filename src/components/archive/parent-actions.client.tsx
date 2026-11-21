@@ -40,11 +40,14 @@ export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] 
     kindId?: string;
     /** A document's spex; null for FGV's own. */
     spex?: PickedSpex | null;
+    /** A book's number in its series and year (spec 4.7). */
+    volume?: number | null;
+    publishedYear?: string | null;
   };
   /** Where to go once it is in the trash. */
   spexHref: string;
-  /** The kinds a document may be given. */
-  kinds?: { id: string; name: string }[];
+  /** The kinds a document may be given; a book kind gives it a volume, a year and songs. */
+  kinds?: { id: string; name: string; book?: boolean }[];
 }) {
   const t = useTranslations("ParentActions");
   const router = useRouter();
@@ -54,6 +57,9 @@ export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] 
   const [authors, setAuthors] = useServerState(fields.authors ?? "");
   const [description, setDescription] = useServerState(fields.description ?? "");
   const [kindId, setKindId] = useServerState(fields.kindId ?? "");
+  const [volume, setVolume] = useServerState(fields.volume ? String(fields.volume) : "");
+  const [publishedYear, setPublishedYear] = useServerState(fields.publishedYear ?? "");
+  const book = kinds.find(option => option.id === kindId)?.book ?? false;
   const [spex, setSpex] = useServerState(fields.spex ?? null, value => value?.id ?? null);
   // A document with a spex cannot be made FGV's own again
   const spexMissing = Boolean(fields.spex) && !spex;
@@ -106,6 +112,9 @@ export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] 
         title, authors: authors || null, description: description || null,
         kindId: kindId && kindId !== fields.kindId ? kindId : undefined,
         spexId: spex && spex.id !== fields.spex?.id ? spex.id : undefined,
+        // Only a book has a volume and a year
+        volume: book ? (volume ? Number(volume) : null) : undefined,
+        publishedYear: book ? publishedYear.trim() || null : undefined,
       })
       : await updateArrangementAction(id, description || null);
 
@@ -150,6 +159,19 @@ export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] 
                   <NativeSelect id="parent-kind" value={kindId} className="w-full" onChange={event => setKindId(event.target.value)}>
                     {kinds.map(option => <NativeSelectOption key={option.id} value={option.id}>{option.name}</NativeSelectOption>)}
                   </NativeSelect>
+                </div>
+              )}
+              {book && (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="parent-volume">{t("volume")}</Label>
+                    <Input id="parent-volume" type="number" min={1} value={volume} onChange={event => setVolume(event.target.value)} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="parent-published">{t("publishedYear")}</Label>
+                    <Input id="parent-published" value={publishedYear} maxLength={10} placeholder="1975"
+                           pattern="\d{4}(-\d{2}(-\d{2})?)?" onChange={event => setPublishedYear(event.target.value)} />
+                  </div>
                 </div>
               )}
               <div className="space-y-1">

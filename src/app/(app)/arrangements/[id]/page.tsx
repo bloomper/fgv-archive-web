@@ -72,9 +72,8 @@ export default async function ArrangementPage({ params, searchParams }: {
             {number.title} {arrangement.trashed && <Badge variant="destructive">{t("trashed")}</Badge>}
           </h1>
           <p className="text-muted-foreground">
-            {[number.originalSong ? t("melody", { song: number.originalSong }) : null,
-              number.lyricist ? t("lyricist", { name: number.lyricist }) : null,
-              number.composer ? t("composer", { name: number.composer }) : null].filter(Boolean).join(" · ")}
+            {/* The number's credits are Spexipedia's (fgv-infra-deploy docs/data-ownership.md) */}
+            {number.originalSong ? t("melody", { song: number.originalSong }) : null}
           </p>
           {arrangement.description && <p className="max-w-4xl whitespace-pre-line text-pretty">{arrangement.description}</p>}
           {editor && (

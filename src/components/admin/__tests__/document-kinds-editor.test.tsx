@@ -20,9 +20,9 @@ vi.mock("@/app/(app)/admin/actions.server", () => mocks.actions);
 vi.mock("@/components/dialogs.client", () => ({ useDialogs: () => mocks.dialogs }));
 
 const kinds = [
-  { id: "k1", nameSv: "Manus", nameEn: "Manuscript", aliases: ["manuskript"], position: 1, retired: false, documentCount: 3 },
-  { id: "k2", nameSv: "Program", nameEn: "Programme", aliases: [], position: 2, retired: false, documentCount: 0 },
-  { id: "k3", nameSv: "Gammal", nameEn: "Old", aliases: [], position: 3, retired: true, documentCount: 1 },
+  { id: "k1", nameSv: "Manus", nameEn: "Manuscript", aliases: ["manuskript"], position: 1, retired: false, documentCount: 3, book: false },
+  { id: "k2", nameSv: "Program", nameEn: "Programme", aliases: [], position: 2, retired: false, documentCount: 0, book: false },
+  { id: "k3", nameSv: "Gammal", nameEn: "Old", aliases: [], position: 3, retired: true, documentCount: 1, book: false },
 ];
 
 beforeEach(() => {
@@ -49,14 +49,14 @@ describe("DocumentKindsEditor", () => {
     await userEvent.type(screen.getByLabelText("aliases"), "affischer{enter}{enter}posters");
     await userEvent.click(screen.getByRole("button", { name: "save" }));
     await waitFor(() => expect(mocks.actions.saveDocumentKindAction)
-      .toHaveBeenCalledWith(null, { nameSv: "Affisch", nameEn: "Poster", aliases: ["affischer", "posters"] }));
+      .toHaveBeenCalledWith(null, { nameSv: "Affisch", nameEn: "Poster", aliases: ["affischer", "posters"], book: false }));
 
     await userEvent.click(screen.getByRole("button", { name: "edit:{\"name\":\"Program\"}" }));
     await userEvent.clear(screen.getByLabelText("nameSv"));
     await userEvent.type(screen.getByLabelText("nameSv"), "Programblad");
     await userEvent.click(screen.getByRole("button", { name: "save" }));
     await waitFor(() => expect(mocks.actions.saveDocumentKindAction)
-      .toHaveBeenLastCalledWith("k2", { nameSv: "Programblad", nameEn: "Programme", aliases: [] }));
+      .toHaveBeenLastCalledWith("k2", { nameSv: "Programblad", nameEn: "Programme", aliases: [], book: false }));
 
     await userEvent.click(screen.getByRole("button", { name: "edit:{\"name\":\"Manus\"}" }));
     await userEvent.click(screen.getByRole("button", { name: "cancel" }));

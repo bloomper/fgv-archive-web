@@ -145,7 +145,7 @@ function documentKind(input: DocumentKindInput): DocumentKindInput {
   if (aliases.length > 100 || aliases.some(alias => alias.length > 100)) {
     throw new Error("Invalid aliases");
   }
-  return { ...names(input), aliases };
+  return { ...names(input), aliases, book: input.book ?? undefined };
 }
 
 /** A new document kind (no id), or new names and aliases for one. */

@@ -94,7 +94,7 @@ export default async function SharePage({ params, searchParams }: {
               </h2>
               {(version.authors || version.originalSong) && (
                 <p className="text-sm text-muted-foreground">
-                  {[version.authors, version.originalSong, [version.lyricist, version.composer].filter(Boolean).join(" / ")].filter(Boolean).join(" · ")}
+                  {[version.authors, version.originalSong].filter(Boolean).join(" · ")}
                 </p>
               )}
             </div>
