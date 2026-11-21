@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 
-export default function GlobalError({ error, reset }: {
+export default function GlobalError({ error, retry }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
   useEffect(() => {
     console.error(error);
@@ -43,7 +43,7 @@ export default function GlobalError({ error, reset }: {
         An unexpected error occurred. Try again, or sign in to continue.
       </p>
       <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
-        <button type="button" onClick={() => reset()} style={buttonStyle}>
+        <button type="button" onClick={() => retry()} style={buttonStyle}>
           Try again
         </button>
         <a href="/api/auth/login" style={buttonStyle}>
