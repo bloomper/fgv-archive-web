@@ -6,6 +6,7 @@ import {
   Archive,
   Drama,
   House,
+  Library,
   type LucideIcon,
   Pencil,
   Search,
@@ -32,20 +33,25 @@ import { LogoText } from "@/components/logo-text";
 import { Role } from "@/types/auth";
 import { isAdmin, isEditor } from "@/utils/auth";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useIsClient } from "@/hooks/use-is-client.client";
 import { type DocumentKindBrief, kindIcon } from "@/utils/document-kinds";
 import { documentsHref } from "@/utils/links";
 
-interface NavItem {
+interface NavLink {
   title: string;
   url: string;
   icon?: LucideIcon;
   isActive?: boolean;
-  items?: NavItem[];
+  items?: NavLink[];
 }
 
-interface NavSecondaryItem extends Omit<NavItem, "icon"> {
+/** A group without an address only opens and closes its entries. */
+interface NavItem extends Omit<NavLink, "url"> {
+  url?: string;
+}
+
+interface NavSecondaryItem extends Omit<NavLink, "icon"> {
   icon: LucideIcon;
 }
 
@@ -59,6 +65,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: AppSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations();
+  const locale = useLocale();
   const isClient = useIsClient();
   const { isMobile, setOpenMobile } = useSidebar();
 
@@ -73,18 +80,24 @@ export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: 
       { title: t("Nav.home"), url: "/", icon: House, isActive: pathname === "/" },
       { title: t("Nav.search"), url: "/search", icon: Search, isActive: pathname.startsWith("/search") },
       { title: t("Nav.spex"), url: "/spex", icon: Archive, isActive: pathname.startsWith("/spex") },
-      ...documentKinds.map(kind => ({
-        title: kind.name,
-        url: documentsHref(kind.id),
-        icon: kindIcon(kind),
-        isActive: pathname === documentsHref(kind.id),
-      })),
     ];
+
+    const kindItems = documentKinds
+      .map(kind => ({ title: kind.name, url: documentsHref(kind.id), icon: kindIcon(kind) }))
+      .sort((a, b) => a.title.localeCompare(b.title, locale));
+
+    if (kindItems.length > 0) {
+      mainItems.push({
+        title: t("Nav.documents"),
+        icon: Library,
+        isActive: pathname.startsWith("/documents/"),
+        items: kindItems,
+      });
+    }
 
     if (isEditor(roles)) {
       mainItems.push({
         title: t("Nav.manage"),
-        url: "/manage/missing",
         icon: Pencil,
         isActive: pathname.startsWith("/manage"),
         items: [
@@ -101,7 +114,6 @@ export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: 
     if (isAdmin(roles)) {
       mainItems.push({
         title: t("Nav.admin"),
-        url: "/admin/settings",
         icon: Settings,
         isActive: pathname.startsWith("/admin/"),
         items: [
@@ -131,7 +143,7 @@ export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: 
         },
       ],
     };
-  }, [roles, pathname, t, documentKinds]);
+  }, [roles, pathname, t, locale, documentKinds]);
 
   return (
     <Sidebar collapsible="icon"

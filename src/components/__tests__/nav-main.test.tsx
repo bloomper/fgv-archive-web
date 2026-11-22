@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { NavMain } from "@/components/nav-main.client";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -85,5 +86,24 @@ describe("NavMain", () => {
     rerender(tree());
 
     expect(toggle()).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("opens and closes a group without an address from its title", async () => {
+    render(
+      <TooltipProvider>
+        <SidebarProvider>
+          <NavMain items={[{ title: "Dokument", items: [{ title: "Manus", url: "/documents/k1" }] }]} />
+        </SidebarProvider>
+      </TooltipProvider>,
+    );
+    const group = screen.getByRole("button", { name: "Dokument" });
+
+    expect(screen.queryByRole("link", { name: "Dokument" })).not.toBeInTheDocument();
+    expect(group).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(group);
+    expect(group).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: "Manus" })).toHaveAttribute("href", "/documents/k1");
+    await userEvent.click(group);
+    expect(group).toHaveAttribute("aria-expanded", "false");
   });
 });

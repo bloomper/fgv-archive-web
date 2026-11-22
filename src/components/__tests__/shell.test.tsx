@@ -64,18 +64,24 @@ describe("the shell", () => {
     expect(screen.getByText("nav-user")).toBeInTheDocument();
   });
 
-  it("has an entry per document kind, marked on its page", () => {
+  it("groups the document kinds under one entry, alphabetically, marking the kind on its page", () => {
     mocks.pathname = "/documents/k2";
     render(
       <TooltipProvider><SidebarProvider>
         <AppSidebar roles={["USER"]} accountUrl="https://auth/account" documentKinds={[
-          { id: "k1", name: "Manus", nameSv: "Manus", nameEn: "Manuscript", retired: false, documentCount: 2 },
+          { id: "k3", name: "Övrigt", nameSv: "Övrigt", nameEn: "Other", retired: false, documentCount: 1 },
           { id: "k2", name: "Program", nameSv: "Program", nameEn: "Programme", retired: false, documentCount: 1 },
+          { id: "k1", name: "Manus", nameSv: "Manus", nameEn: "Manuscript", retired: false, documentCount: 2 },
         ]} />
       </SidebarProvider></TooltipProvider>,
     );
+    expect(screen.queryByRole("link", { name: "Nav.documents" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Nav.documents" })).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("link", { name: "Manus" })).toHaveAttribute("href", "/documents/k1");
     expect(screen.getByRole("link", { name: "Program" })).toHaveAttribute("data-active", "true");
+    // In alphabetical order, Ö last in Swedish
+    const kinds = screen.getAllByRole("link").map(link => link.textContent).filter(name => ["Manus", "Program", "Övrigt"].includes(name ?? ""));
+    expect(kinds).toEqual(["Manus", "Program", "Övrigt"]);
   });
 
   it("has a header with the menu button, search and the command palette", async () => {
