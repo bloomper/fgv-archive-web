@@ -121,6 +121,7 @@
   },
   "Nav": {
     "home": "Home",
+    "documents": "Documents",
     "spex": "Spex",
     "search": "Search",
     "manage": "Editing",

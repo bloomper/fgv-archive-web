@@ -181,6 +181,8 @@ test.describe("Reading", () => {
     await loginAs("user");
 
     const sidebar = page.locator("[data-slot=\"sidebar\"]:visible");
+    // The kinds are grouped under one entry, which only opens and closes them
+    await sidebar.getByRole("button", { name: "Dokument", exact: true }).click();
     await expect(sidebar.getByRole("link", { name: "Manus", exact: true })).toHaveAttribute("href", `/documents/${uuidOf(801)}`);
     // Kinds without documents are only for editors
     await expect(sidebar.getByRole("link", { name: "Program", exact: true })).toHaveCount(0);
