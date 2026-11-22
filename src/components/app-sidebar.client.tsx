@@ -71,6 +71,7 @@ export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: 
   const navigation = useMemo((): { main: NavItem[]; secondary: NavSecondaryItem[] } => {
     const mainItems: NavItem[] = [
       { title: t("Nav.home"), url: "/", icon: House, isActive: pathname === "/" },
+      { title: t("Nav.search"), url: "/search", icon: Search, isActive: pathname.startsWith("/search") },
       { title: t("Nav.spex"), url: "/spex", icon: Archive, isActive: pathname.startsWith("/spex") },
       ...documentKinds.map(kind => ({
         title: kind.name,
@@ -78,7 +79,6 @@ export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: 
         icon: kindIcon(kind),
         isActive: pathname === documentsHref(kind.id),
       })),
-      { title: t("Nav.search"), url: "/search", icon: Search, isActive: pathname.startsWith("/search") },
     ];
 
     if (isEditor(roles)) {
