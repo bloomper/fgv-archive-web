@@ -32,8 +32,7 @@ function Calendar({
       )}
       captionLayout={captionLayout}
       formatters={{
-        // Month names from the calendar's locale prop, not the browser's language.
-        formatMonthDropdown: (date, dateLib) => dateLib ? dateLib.format(date, "LLL") : date.toLocaleString("default", { month: "short" }),
+        formatMonthDropdown: (date) => date.toLocaleString("default", { month: "short" }),
         ...formatters,
       }}
       classNames={{
