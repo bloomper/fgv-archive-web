@@ -8,6 +8,7 @@ import type { AbstractIntlMessages } from "use-intl/core";
 import { ThemeProvider } from "@/components/theme-provider.client";
 import { Toaster } from "@/components/ui/sonner.client";
 import { ConsentManager } from "@/components/consent-manager.client";
+import { FormValidation } from "@/components/form-validation.client";
 
 type LocaleContextValue = {
   locale: string;
@@ -64,6 +65,7 @@ export default function Provider({
           <ConsentManager>
             {children}
             <Toaster />
+            <FormValidation />
           </ConsentManager>
         </ThemeProvider>
       </LocaleContext.Provider>

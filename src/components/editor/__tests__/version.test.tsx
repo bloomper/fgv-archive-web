@@ -36,11 +36,12 @@ const spex = [{ id: "s1", title: "Nobel", year: 1975, revival: false }, { id: "s
 
 describe("VersionForm", () => {
   it("saves an arrangement's fields and instrumentation", async () => {
-    render(<VersionForm version={arrangement} spex={spex} instruments={instruments} />);
+    render(<VersionForm version={{ ...arrangement, date: "2001-02-01" }} spex={spex} instruments={instruments} />);
     await userEvent.clear(screen.getByLabelText("label"));
     await userEvent.type(screen.getByLabelText("label"), "Ny");
     await userEvent.selectOptions(screen.getByLabelText("usedIn"), "s2");
-    await userEvent.type(screen.getByLabelText("date"), "2001-02-14");
+    await userEvent.click(screen.getByLabelText("date"));
+    await userEvent.click(await screen.findByRole("button", { name: /14 februari 2001/ }));
     await userEvent.type(screen.getByLabelText("tempo"), "Allegro");
     await userEvent.type(screen.getByLabelText("duration"), "3:20");
     await userEvent.type(screen.getByLabelText("notes"), " Anteckning ");
