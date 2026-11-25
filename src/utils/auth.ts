@@ -2,6 +2,16 @@ import { AccessTokenClaims, type Role } from "@/types/auth";
 
 export const CLIENT_ID = "fgv-archive";
 
+/**
+ * Set for a minute when the app has asked Keycloak whether the user is already logged in to another FGV application.
+ */
+export const SSO_CHECKED_COOKIE = "sso_checked";
+
+/**
+ * The page a request is for, which the proxy hands to the layout so that a silent login can come back to it.
+ */
+export const RETURN_TO_HEADER = "x-fgv-return-to";
+
 export const hasAccess = (roles: Role[]) => roles.includes("USER");
 /** Editors upload and edit; admins can do everything editors can. */
 export const isEditor = (roles: Role[]) => hasAccess(roles) && (roles.includes("EDITOR") || roles.includes("ADMIN"));
@@ -83,4 +93,14 @@ export function loginHref(path: string | null | undefined): string {
   const back = returnPath(path ?? null);
 
   return back === "/" ? "/api/auth/login" : `/api/auth/login?returnTo=${encodeURIComponent(back)}`;
+}
+
+/**
+ * The address that asks Keycloak, without showing it, whether the user is logged in to another FGV application, and
+ * comes back to the path either way.
+ */
+export function silentLoginHref(path: string | null | undefined): string {
+  const back = returnPath(path ?? null);
+
+  return back === "/" ? "/api/auth/login?silent=1" : `/api/auth/login?silent=1&returnTo=${encodeURIComponent(back)}`;
 }

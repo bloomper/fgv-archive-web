@@ -61,6 +61,12 @@ describe("proxy", () => {
     expect(response.headers.getSetCookie()).toEqual([]);
   });
 
+  it("tells the layout which page was asked for, so that a silent login can come back to it", async () => {
+    const response = await proxy(request("/versions/x?page=2", { cookie: "", headers: { "x-fgv-return-to": "//evil.example" } }));
+
+    expect(response.headers.get("x-middleware-request-x-fgv-return-to")).toBe("/versions/x?page=2");
+  });
+
   it("skips speculative prefetches and anonymous requests", async () => {
     await proxy(request("/spex", { headers: { "next-router-prefetch": "1" } }));
     await proxy(request("/spex", { cookie: "" }));

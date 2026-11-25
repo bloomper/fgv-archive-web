@@ -1,4 +1,5 @@
 import * as React from "react";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AppSidebar } from "@/components/app-sidebar.client";
@@ -13,7 +14,7 @@ import { ModeToggle } from "@/components/mode-toggle.client";
 import { LanguageToggle } from "@/components/language-toggle.client";
 import { DialogsProvider } from "@/components/dialogs.client";
 import { requireUser } from "@/utils/auth.server";
-import { hasAccess } from "@/utils/auth";
+import { hasAccess, RETURN_TO_HEADER, silentLoginHref, SSO_CHECKED_COOKIE } from "@/utils/auth";
 import { Umami } from "@/components/umami";
 import { getDocumentKinds } from "@/lib/archive/archive.server";
 import { menuKinds } from "@/utils/document-kinds";
@@ -25,6 +26,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const t = await getTranslations();
 
   if (!session) {
+    // Someone logged in to another FGV application gets in without pressing the login button
+    if (!(await cookies()).has(SSO_CHECKED_COOKIE)) {
+      redirect(silentLoginHref((await headers()).get(RETURN_TO_HEADER)));
+    }
+
     return (
       <div className="min-h-dvh bg-background flex flex-col">
         <header className="px-4 py-2">
