@@ -1,14 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { contentSecurityPolicy, isReaderPath } from "@/utils/csp";
+import { RETURN_TO_HEADER } from "@/utils/auth";
 
 const AUTH_BASE_PATH = "/api/auth";
 const ACCOUNT_COOKIE = "account_data";
 
 /**
- * Refreshes the account cookie, and gives every page its Content Security Policy.
+ * Refreshes the account cookie, tells the layout which page was asked for, and gives every page its Content Security
+ * Policy.
  */
 export async function proxy(request: NextRequest) {
+  request.headers.set(RETURN_TO_HEADER, `${request.nextUrl.pathname}${request.nextUrl.search}`);
+
   const result = await refresh(request);
 
   if (!request.nextUrl.pathname.startsWith("/api/")) {
@@ -19,7 +23,7 @@ export async function proxy(request: NextRequest) {
 }
 
 async function refresh(request: NextRequest): Promise<NextResponse> {
-  const response = NextResponse.next();
+  const response = NextResponse.next({ request: { headers: request.headers } });
 
   const { pathname } = request.nextUrl;
 

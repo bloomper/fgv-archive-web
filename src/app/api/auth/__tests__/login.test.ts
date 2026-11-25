@@ -71,4 +71,41 @@ describe("logging in", () => {
 
     await expect(loginError(request("/api/auth/login-error?error=access_denied"))).rejects.toThrow("redirect:/login-error");
   });
+
+  it("asks Keycloak silently, once a minute, whether the user is logged in elsewhere, and comes back to the page", async () => {
+    signInSocial.mockResolvedValue({ url: "https://auth.test/authorize" });
+
+    await expect(login(request("/api/auth/login?silent=1&returnTo=%2Fversions%2Fx", "locale=en"))).rejects.toThrow("redirect:https://auth.test/authorize");
+    const { body } = signInSocial.mock.calls[0][0];
+    expect(body.additionalParams).toEqual({ ui_locales: "en", prompt: "none" });
+    expect(body.callbackURL).toBe("/versions/x");
+    expect(body.errorCallbackURL).toBe("/api/auth/login-error?silent=1&returnTo=%2Fversions%2Fx");
+    expect(store.set).toHaveBeenCalledWith("sso_checked", "1", expect.objectContaining({ path: "/", maxAge: 60, secure: true }));
+  });
+
+  it("shows Keycloak's login page when the user presses the button", async () => {
+    signInSocial.mockResolvedValue({ url: "https://auth.test/authorize" });
+
+    await expect(login(request("/api/auth/login"))).rejects.toThrow("redirect:");
+    expect(signInSocial.mock.calls[0][0].body.additionalParams).not.toHaveProperty("prompt");
+    expect(signInSocial.mock.calls[0][0].body).not.toHaveProperty("errorCallbackURL");
+    expect(store.set).not.toHaveBeenCalled();
+  });
+
+  it("goes quietly back to the page when a silent login finds no session, but never to another site", async () => {
+    await expect(loginError(request("/api/auth/login-error?silent=1&returnTo=%2Fversions%2Fx&error=login_required"))).rejects.toThrow(/^redirect:\/versions\/x$/);
+    await expect(loginError(request("/api/auth/login-error?silent=1&returnTo=%2F%2Fevil.example&error=interaction_required"))).rejects.toThrow(/^redirect:\/$/);
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it("goes back to the page but logs it when a silent login fails otherwise", async () => {
+    await expect(loginError(request("/api/auth/login-error?silent=1&error=server_error"))).rejects.toThrow(/^redirect:\/$/);
+    expect(console.warn).toHaveBeenCalled();
+  });
+
+  it("shows the error page when a session is missing after the login button", async () => {
+    store.has.mockReturnValue(false);
+
+    await expect(loginError(request("/api/auth/login-error?error=login_required"))).rejects.toThrow("redirect:/login-error");
+  });
 });
