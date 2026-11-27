@@ -18,7 +18,12 @@ describe("RunJobButton", () => {
 
   it("starts the job and refreshes", async () => {
     vi.mocked(runMaintenanceJobAction).mockResolvedValue({ ok: true, data: true });
-    render(<RunJobButton job="SPEX_REFRESH" running={false} />);
+    render(
+      <RunJobButton
+        job="SPEX_REFRESH"
+        running={false}
+      />
+    );
 
     await userEvent.click(screen.getByRole("button"));
 
@@ -29,7 +34,12 @@ describe("RunJobButton", () => {
 
   it("says when the job is already running", async () => {
     vi.mocked(runMaintenanceJobAction).mockResolvedValue({ ok: true, data: false });
-    render(<RunJobButton job="UPLOAD_CLEANUP" running={false} />);
+    render(
+      <RunJobButton
+        job="UPLOAD_CLEANUP"
+        running={false}
+      />
+    );
 
     await userEvent.click(screen.getByRole("button"));
 
@@ -39,7 +49,12 @@ describe("RunJobButton", () => {
 
   it("shows the error", async () => {
     vi.mocked(runMaintenanceJobAction).mockResolvedValue({ ok: false, code: "FORBIDDEN", message: "Nope" });
-    render(<RunJobButton job="SPEX_REFRESH" running={false} />);
+    render(
+      <RunJobButton
+        job="SPEX_REFRESH"
+        running={false}
+      />
+    );
 
     await userEvent.click(screen.getByRole("button"));
 
@@ -47,7 +62,12 @@ describe("RunJobButton", () => {
   });
 
   it("is disabled while the job runs", () => {
-    render(<RunJobButton job="SPEX_REFRESH" running />);
+    render(
+      <RunJobButton
+        job="SPEX_REFRESH"
+        running
+      />
+    );
 
     expect(screen.getByRole("button")).toBeDisabled();
   });

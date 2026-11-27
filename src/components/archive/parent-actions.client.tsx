@@ -28,7 +28,14 @@ type Kind = "MANUSCRIPT" | "ARRANGEMENT";
  * its versions with it. A document's kind can be changed, and it can be filed under a spex, or another one; the server
  * cannot take it from its spex, so one with a spex keeps one.
  */
-export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] }: {
+export function ParentActions({
+  kind,
+  id,
+  trashed,
+  fields,
+  spexHref,
+  kinds = [],
+}: {
   kind: Kind;
   id: string;
   trashed: boolean;
@@ -59,14 +66,19 @@ export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] 
   const [kindId, setKindId] = useServerState(fields.kindId ?? "");
   const [volume, setVolume] = useServerState(fields.volume ? String(fields.volume) : "");
   const [publishedYear, setPublishedYear] = useServerState(fields.publishedYear ?? "");
-  const book = kinds.find(option => option.id === kindId)?.book ?? false;
-  const [spex, setSpex] = useServerState(fields.spex ?? null, value => value?.id ?? null);
+  const book = kinds.find((option) => option.id === kindId)?.book ?? false;
+  const [spex, setSpex] = useServerState(fields.spex ?? null, (value) => value?.id ?? null);
   // A document with a spex cannot be made FGV's own again
   const spexMissing = Boolean(fields.spex) && !spex;
   const [pending, startTransition] = useTransition();
 
   const newVersion = async () => {
-    const label = await dialogs.prompt({ title: t("newVersion"), label: t("label"), confirmLabel: t("create"), maxLength: 200 });
+    const label = await dialogs.prompt({
+      title: t("newVersion"),
+      label: t("label"),
+      confirmLabel: t("create"),
+      maxLength: 200,
+    });
 
     if (label) {
       startTransition(async () => {
@@ -82,12 +94,15 @@ export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] 
   };
 
   const trash = async () => {
-    if (!trashed && !await dialogs.confirm({
-      title: kind === "MANUSCRIPT" ? t("trashManuscript") : t("trashArrangement"),
-      description: t("trashText"),
-      confirmLabel: t("toTrash"),
-      destructive: true,
-    })) {
+    if (
+      !trashed &&
+      !(await dialogs.confirm({
+        title: kind === "MANUSCRIPT" ? t("trashManuscript") : t("trashArrangement"),
+        description: t("trashText"),
+        confirmLabel: t("toTrash"),
+        destructive: true,
+      }))
+    ) {
       return;
     }
     startTransition(async () => {
@@ -106,58 +121,112 @@ export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] 
     });
   };
 
-  const save = () => startTransition(async () => {
-    const result = kind === "MANUSCRIPT"
-      ? await updateManuscriptAction(id, {
-        title, authors: authors || null, description: description || null,
-        kindId: kindId && kindId !== fields.kindId ? kindId : undefined,
-        spexId: spex && spex.id !== fields.spex?.id ? spex.id : undefined,
-        // Only a book has a volume and a year
-        volume: book ? (volume ? Number(volume) : null) : undefined,
-        publishedYear: book ? publishedYear.trim() || null : undefined,
-      })
-      : await updateArrangementAction(id, description || null);
+  const save = () =>
+    startTransition(async () => {
+      const result =
+        kind === "MANUSCRIPT"
+          ? await updateManuscriptAction(id, {
+              title,
+              authors: authors || null,
+              description: description || null,
+              kindId: kindId && kindId !== fields.kindId ? kindId : undefined,
+              spexId: spex && spex.id !== fields.spex?.id ? spex.id : undefined,
+              // Only a book has a volume and a year
+              volume: book ? (volume ? Number(volume) : null) : undefined,
+              publishedYear: book ? publishedYear.trim() || null : undefined,
+            })
+          : await updateArrangementAction(id, description || null);
 
-    if (result.ok) {
-      toast.success(t("saved"));
-      setEditing(false);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
-  });
+      if (result.ok) {
+        toast.success(t("saved"));
+        setEditing(false);
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    });
 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
-        <Button size="sm" onClick={newVersion} disabled={pending || trashed}><Plus /> {t("newVersion")}</Button>
-        <Button size="sm" variant="outline" onClick={() => setEditing(open => !open)} aria-expanded={editing}>
+        <Button
+          size="sm"
+          onClick={newVersion}
+          disabled={pending || trashed}
+        >
+          <Plus /> {t("newVersion")}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setEditing((open) => !open)}
+          aria-expanded={editing}
+        >
           <Pencil /> {kind === "MANUSCRIPT" ? t("editManuscript") : t("editArrangement")}
         </Button>
-        <Button size="sm" variant="outline" onClick={trash} disabled={pending}>
-          {trashed ? <><Undo2 /> {t("restore")}</> : <><Trash2 /> {t("toTrash")}</>}
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={trash}
+          disabled={pending}
+        >
+          {trashed ? (
+            <>
+              <Undo2 /> {t("restore")}
+            </>
+          ) : (
+            <>
+              <Trash2 /> {t("toTrash")}
+            </>
+          )}
         </Button>
       </div>
       {editing && (
-        <form className="grid max-w-2xl gap-3 rounded-lg border p-3" onSubmit={event => {
-          event.preventDefault();
-          save();
-        }}>
+        <form
+          className="grid max-w-2xl gap-3 rounded-lg border p-3"
+          onSubmit={(event) => {
+            event.preventDefault();
+            save();
+          }}
+        >
           {kind === "MANUSCRIPT" && (
             <>
               <div className="space-y-1.5">
                 <Label htmlFor="parent-title">{t("title")}</Label>
-                <Input id="parent-title" value={title} required maxLength={255} onChange={event => setTitle(event.target.value)} />
+                <Input
+                  id="parent-title"
+                  value={title}
+                  required
+                  maxLength={255}
+                  onChange={(event) => setTitle(event.target.value)}
+                />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="parent-authors">{t("authors")}</Label>
-                <Input id="parent-authors" value={authors} maxLength={500} onChange={event => setAuthors(event.target.value)} />
+                <Input
+                  id="parent-authors"
+                  value={authors}
+                  maxLength={500}
+                  onChange={(event) => setAuthors(event.target.value)}
+                />
               </div>
               {kinds.length > 0 && (
                 <div className="space-y-1.5">
                   <Label htmlFor="parent-kind">{t("kind")}</Label>
-                  <NativeSelect id="parent-kind" value={kindId} className="w-full" onChange={event => setKindId(event.target.value)}>
-                    {kinds.map(option => <NativeSelectOption key={option.id} value={option.id}>{option.name}</NativeSelectOption>)}
+                  <NativeSelect
+                    id="parent-kind"
+                    value={kindId}
+                    className="w-full"
+                    onChange={(event) => setKindId(event.target.value)}
+                  >
+                    {kinds.map((option) => (
+                      <NativeSelectOption
+                        key={option.id}
+                        value={option.id}
+                      >
+                        {option.name}
+                      </NativeSelectOption>
+                    ))}
                   </NativeSelect>
                 </div>
               )}
@@ -165,29 +234,63 @@ export function ParentActions({ kind, id, trashed, fields, spexHref, kinds = [] 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
                     <Label htmlFor="parent-volume">{t("volume")}</Label>
-                    <Input id="parent-volume" type="number" min={1} value={volume} onChange={event => setVolume(event.target.value)} />
+                    <Input
+                      id="parent-volume"
+                      type="number"
+                      min={1}
+                      value={volume}
+                      onChange={(event) => setVolume(event.target.value)}
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="parent-published">{t("publishedYear")}</Label>
-                    <Input id="parent-published" value={publishedYear} maxLength={10} placeholder="1975"
-                           pattern="\d{4}(-\d{2}(-\d{2})?)?" onChange={event => setPublishedYear(event.target.value)} />
+                    <Input
+                      id="parent-published"
+                      value={publishedYear}
+                      maxLength={10}
+                      placeholder="1975"
+                      pattern="\d{4}(-\d{2}(-\d{2})?)?"
+                      onChange={(event) => setPublishedYear(event.target.value)}
+                    />
                   </div>
                 </div>
               )}
               <div className="space-y-1">
-                <SpexPicker value={spex} onChange={setSpex} originalsOnly />
-                <p className="text-xs text-muted-foreground">{fields.spex ? t("spexKept") : t("noSpex")}</p>
+                <SpexPicker
+                  value={spex}
+                  onChange={setSpex}
+                  originalsOnly
+                />
+                <p className="text-muted-foreground text-xs">{fields.spex ? t("spexKept") : t("noSpex")}</p>
               </div>
             </>
           )}
           <div className="space-y-1.5">
             <Label htmlFor="parent-description">{t("description")}</Label>
-            <Textarea id="parent-description" value={description} rows={4} maxLength={10000}
-                      onChange={event => setDescription(event.target.value)} />
+            <Textarea
+              id="parent-description"
+              value={description}
+              rows={4}
+              maxLength={10000}
+              onChange={(event) => setDescription(event.target.value)}
+            />
           </div>
           <div className="flex gap-2">
-            <Button type="submit" size="sm" disabled={pending || spexMissing}>{t("save")}</Button>
-            <Button type="button" size="sm" variant="outline" onClick={() => setEditing(false)}>{t("cancel")}</Button>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={pending || spexMissing}
+            >
+              {t("save")}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setEditing(false)}
+            >
+              {t("cancel")}
+            </Button>
           </div>
         </form>
       )}

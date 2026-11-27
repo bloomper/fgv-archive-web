@@ -32,7 +32,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     }
 
     return (
-      <div className="min-h-dvh bg-background flex flex-col">
+      <div className="bg-background flex min-h-dvh flex-col">
         <header className="px-4 py-2">
           <div className="flex w-full flex-nowrap items-center justify-between gap-3">
             <div className="flex min-w-0 items-center justify-start gap-3">
@@ -40,13 +40,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 href="https://www.fgv.nu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 flex-nowrap"
+                className="flex flex-nowrap items-center gap-3"
               >
                 <div className="flex aspect-square size-10 items-center justify-center rounded-lg">
                   <Logo />
                 </div>
                 <div className="min-w-0 overflow-hidden">
-                  <LogoText className="h-10 w-auto text-foreground" />
+                  <LogoText className="text-foreground h-10 w-auto" />
                 </div>
               </a>
             </div>
@@ -58,22 +58,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </header>
 
-        <main className="flex-1 flex items-center">
+        <main className="flex flex-1 items-center">
           <div className="mx-auto w-full max-w-5xl px-4 py-10">
             <div className="space-y-4 text-center">
               <div className="mx-auto flex justify-center">
-                <div className="h-20 w-20 text-foreground sm:h-24 sm:w-24">
+                <div className="text-foreground h-20 w-20 sm:h-24 sm:w-24">
                   <LogoHome />
                 </div>
               </div>
 
-              <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
-                {t("Home.title")}
-              </h1>
+              <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">{t("Home.title")}</h1>
 
-              <p className="mx-auto mt-3 max-w-prose text-sm text-muted-foreground">
-                {t("Home.mustBeLoggedIn")}
-              </p>
+              <p className="text-muted-foreground mx-auto mt-3 max-w-prose text-sm">{t("Home.mustBeLoggedIn")}</p>
 
               <div className="pt-2">
                 <React.Suspense>
@@ -100,19 +96,34 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     // The menu has an entry per document kind; without them the pages still work
     getDocumentKinds(true).catch(() => []),
   ]);
-  const documentKinds = menuKinds(allKinds, roles)
-    .map(({ id, name, nameSv, nameEn, aliases, retired, documentCount }) => ({ id, name, nameSv, nameEn, aliases, retired, documentCount }));
+  const documentKinds = menuKinds(allKinds, roles).map(
+    ({ id, name, nameSv, nameEn, aliases, retired, documentCount }) => ({
+      id,
+      name,
+      nameSv,
+      nameEn,
+      aliases,
+      retired,
+      documentCount,
+    })
+  );
 
   return (
     <div className="[--header-height:calc(--spacing(14))]">
       <DialogsProvider>
         <SidebarProvider className="flex flex-col">
-          <SiteHeader applications={applications} roles={roles} documentKinds={documentKinds} />
+          <SiteHeader
+            applications={applications}
+            roles={roles}
+            documentKinds={documentKinds}
+          />
           <div className="flex flex-1">
-            <AppSidebar roles={roles} accountUrl={accountUrl} documentKinds={documentKinds} />
-            <SidebarInset className="min-w-0">
-              {children}
-            </SidebarInset>
+            <AppSidebar
+              roles={roles}
+              accountUrl={accountUrl}
+              documentKinds={documentKinds}
+            />
+            <SidebarInset className="min-w-0">{children}</SidebarInset>
           </div>
         </SidebarProvider>
       </DialogsProvider>

@@ -6,6 +6,17 @@ export default async function LoginErrorPage() {
   const t = await getTranslations();
 
   return (
-    <StatusPage title={t("LoginError.title")} text={t("LoginError.text")} actions={<Button nativeButton={false} render={<a href="/api/auth/login" />}>{t("LoginError.retry")}</Button>} />
+    <StatusPage
+      title={t("LoginError.title")}
+      text={t("LoginError.text")}
+      actions={
+        <Button
+          nativeButton={false}
+          render={<a href="/api/auth/login" />}
+        >
+          {t("LoginError.retry")}
+        </Button>
+      }
+    />
   );
 }

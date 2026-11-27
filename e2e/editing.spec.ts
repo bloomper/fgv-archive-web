@@ -10,7 +10,9 @@ test.describe("Editing", () => {
     await loginAs("editor");
     await page.goto(`/versions/${VERSION}/edit`);
     await hydrated(page, "[data-testid=file-input]");
-    await page.getByTestId("file-input").setInputFiles({ name: "Trumpet 2.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 test") });
+    await page
+      .getByTestId("file-input")
+      .setInputFiles({ name: "Trumpet 2.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 test") });
 
     const upload = page.getByTestId("pending-upload");
     await expect(upload.getByText("Uppladdad")).toBeVisible();
@@ -27,16 +29,27 @@ test.describe("Editing", () => {
     await expect(page.getByTestId("managed-file").filter({ hasText: "Trumpet 2" })).toBeVisible();
 
     const { fileAdds } = await mock.state();
-    expect(fileAdds).toEqual([expect.objectContaining({
-      versionId: VERSION, title: "Trumpet 2", instrumentIds: [TRUMPET, FLUTE], desk: "2", transposition: { pitch: "C", octave: 0 },
-    })]);
+    expect(fileAdds).toEqual([
+      expect.objectContaining({
+        versionId: VERSION,
+        title: "Trumpet 2",
+        instrumentIds: [TRUMPET, FLUTE],
+        desk: "2",
+        transposition: { pitch: "C", octave: 0 },
+      }),
+    ]);
   });
 
-  test("a new part's transposition follows its first instrument until the editor picks one", async ({ page, loginAs }) => {
+  test("a new part's transposition follows its first instrument until the editor picks one", async ({
+    page,
+    loginAs,
+  }) => {
     await loginAs("editor");
     await page.goto(`/versions/${VERSION}/edit`);
     await hydrated(page, "[data-testid=file-input]");
-    await page.getByTestId("file-input").setInputFiles({ name: "Okänd.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") });
+    await page
+      .getByTestId("file-input")
+      .setInputFiles({ name: "Okänd.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") });
 
     const upload = page.getByTestId("pending-upload");
     await expect(upload.getByText("Uppladdad")).toBeVisible();
@@ -57,10 +70,15 @@ test.describe("Editing", () => {
     await expect(page.getByText("Sparat")).toBeVisible();
 
     const { fileUpdates } = await mock.state();
-    expect(fileUpdates).toEqual([{
-      id: uuidOf(614),
-      input: expect.objectContaining({ instrumentIds: [uuidOf(206), uuidOf(207)], transposition: { pitch: "B_FLAT", octave: -1 } }),
-    }]);
+    expect(fileUpdates).toEqual([
+      {
+        id: uuidOf(614),
+        input: expect.objectContaining({
+          instrumentIds: [uuidOf(206), uuidOf(207)],
+          transposition: { pitch: "B_FLAT", octave: -1 },
+        }),
+      },
+    ]);
   });
 
   test("an editor sets a version's key with modulations", async ({ page, loginAs }) => {
@@ -74,7 +92,9 @@ test.describe("Editing", () => {
     await expect(page.getByText("Sparat")).toBeVisible();
 
     await page.goto(`/arrangements/${uuidOf(411)}`);
-    await expect(page.getByTestId("version-card").filter({ hasText: "Transponerad till D" })).toContainText("Ess-dur → F-dur");
+    await expect(page.getByTestId("version-card").filter({ hasText: "Transponerad till D" })).toContainText(
+      "Ess-dur → F-dur"
+    );
   });
 
   test("an editor shares a version and sees the address once", async ({ page, loginAs, mock }) => {
@@ -143,7 +163,11 @@ test.describe("Editing", () => {
     await expect(page.getByText("Inga hanterade förfrågningar.")).toBeVisible();
   });
 
-  test("an editor answers an access request with a share link for the requested files", async ({ page, loginAs, mock }) => {
+  test("an editor answers an access request with a share link for the requested files", async ({
+    page,
+    loginAs,
+    mock,
+  }) => {
     await loginAs("user");
     await page.goto(`/arrangements/${uuidOf(412)}`);
     await page.getByRole("button", { name: "Be om åtkomst" }).click();
@@ -159,7 +183,10 @@ test.describe("Editing", () => {
     await expect(dialog.getByLabel("Vem är den till?")).toHaveValue("Ulla Användare, åtkomstförfrågan");
     await dialog.getByRole("button", { name: "Skapa länken" }).click();
     await expect(dialog.getByLabel("Delningslänkens adress")).toHaveValue(/\/share\/e2e-/);
-    await expect(dialog.getByRole("link", { name: "Mejla länken till Ulla Användare" })).toHaveAttribute("href", /^mailto:/);
+    await expect(dialog.getByRole("link", { name: "Mejla länken till Ulla Användare" })).toHaveAttribute(
+      "href",
+      /^mailto:/
+    );
     await dialog.getByRole("button", { name: "Klar" }).click();
     await expect(page.getByText("Inga öppna förfrågningar.")).toBeVisible();
 
@@ -180,7 +207,10 @@ test.describe("Editing", () => {
     await expect(page.getByText("Opublicerad").first()).toBeVisible();
   });
 
-  test("an editor creates a document of FGV's own, then changes its kind and files it under a spex", async ({ page, loginAs }) => {
+  test("an editor creates a document of FGV's own, then changes its kind and files it under a spex", async ({
+    page,
+    loginAs,
+  }) => {
     await loginAs("editor");
     await page.goto(`/manage/manuscripts/new?kind=${uuidOf(802)}`);
     await expect(page.getByLabel("Dokumenttyp")).toHaveValue(uuidOf(802));
@@ -191,16 +221,25 @@ test.describe("Editing", () => {
 
     await page.getByRole("link", { name: "← Jubileumsskrift" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Jubileumsskrift" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Program", exact: true }).last()).toHaveAttribute("href", `/documents/${uuidOf(802)}`);
+    await expect(page.getByRole("link", { name: "Program", exact: true }).last()).toHaveAttribute(
+      "href",
+      `/documents/${uuidOf(802)}`
+    );
     await expect(page.getByText("FGV:s eget dokument")).toBeVisible();
 
     await page.getByRole("button", { name: "Redigera dokument" }).click();
     await page.getByRole("combobox", { name: "Dokumenttyp" }).selectOption({ label: "Synopsis" });
     await page.getByRole("textbox", { name: "Spex", exact: true }).fill("Nobel");
-    await page.getByRole("list", { name: "Sökträffar" }).getByRole("button", { name: /Nobel 1975/ }).click();
+    await page
+      .getByRole("list", { name: "Sökträffar" })
+      .getByRole("button", { name: /Nobel 1975/ })
+      .click();
     await page.getByRole("button", { name: "Spara" }).click();
 
-    await expect(page.getByRole("main").getByRole("link", { name: "Nobel 1975" })).toHaveAttribute("href", `/spex/${uuidOf(13)}`);
+    await expect(page.getByRole("main").getByRole("link", { name: "Nobel 1975" })).toHaveAttribute(
+      "href",
+      `/spex/${uuidOf(13)}`
+    );
     await expect(page.getByRole("main").getByRole("link", { name: "Synopsis", exact: true })).toBeVisible();
   });
 });

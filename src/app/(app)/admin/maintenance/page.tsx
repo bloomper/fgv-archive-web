@@ -18,17 +18,26 @@ export default async function MaintenancePage() {
     const jobs = await getMaintenanceJobs();
 
     return (
-      <Page variant="content" className="max-w-2xl">
-        <PageHeader title={t("title")} description={t("text")}/>
-        <RefreshWhileRunning running={jobs.some(job => job.running)} />
+      <Page
+        variant="content"
+        className="max-w-2xl"
+      >
+        <PageHeader
+          title={t("title")}
+          description={t("text")}
+        />
+        <RefreshWhileRunning running={jobs.some((job) => job.running)} />
         <ul className="space-y-4">
-          {jobs.map(job => (
-            <li key={job.job} className="space-y-3 rounded-lg border p-4">
+          {jobs.map((job) => (
+            <li
+              key={job.job}
+              className="space-y-3 rounded-lg border p-4"
+            >
               <div className="flex items-start justify-between gap-2">
                 <h2 className="font-medium">{t(`jobs.${job.job}.title`)}</h2>
                 {job.running && <Badge variant="secondary">{t("running")}</Badge>}
               </div>
-              <p className="text-sm text-muted-foreground">{t(`jobs.${job.job}.description`)}</p>
+              <p className="text-muted-foreground text-sm">{t(`jobs.${job.job}.description`)}</p>
               <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
                 <dt className="text-muted-foreground">{t("schedule")}</dt>
                 <dd>{job.schedule ? <code className="text-xs">{job.schedule}</code> : t("notScheduled")}</dd>
@@ -43,7 +52,10 @@ export default async function MaintenancePage() {
                         : t("startedAt", { at: formatInstant(job.lastStartedAt) ?? "" })}
                 </dd>
               </dl>
-              <RunJobButton job={job.job} running={job.running} />
+              <RunJobButton
+                job={job.job}
+                running={job.running}
+              />
             </li>
           ))}
         </ul>

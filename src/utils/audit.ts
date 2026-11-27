@@ -3,7 +3,17 @@
  * filter as it travels in the address.
  */
 
-export const AUDIT_ACTIONS = ["CREATE", "UPDATE", "PUBLISH", "UNPUBLISH", "TRASH", "RESTORE", "DELETE", "SHARE", "REVOKE"] as const;
+export const AUDIT_ACTIONS = [
+  "CREATE",
+  "UPDATE",
+  "PUBLISH",
+  "UNPUBLISH",
+  "TRASH",
+  "RESTORE",
+  "DELETE",
+  "SHARE",
+  "REVOKE",
+] as const;
 
 export type AuditSearch = {
   type?: string;
@@ -12,7 +22,7 @@ export type AuditSearch = {
   from?: string;
   to?: string;
   q?: string;
-  entity?: string
+  entity?: string;
 };
 
 const SEARCH_KEYS = ["type", "action", "actor", "from", "to", "q", "entity"] as const;
@@ -59,7 +69,9 @@ export function startOfDay(day: string | undefined, plusDays = 0): string | null
     hourCycle: "h23",
   }).format(noon);
   const offsetHours = Number(local) - 12;
-  const midnight = new Date(Date.UTC(noon.getUTCFullYear(), noon.getUTCMonth(), noon.getUTCDate()) - offsetHours * 3600_000);
+  const midnight = new Date(
+    Date.UTC(noon.getUTCFullYear(), noon.getUTCMonth(), noon.getUTCDate()) - offsetHours * 3600_000
+  );
 
   return midnight.toISOString();
 }
@@ -132,7 +144,7 @@ export function toAuditRows(
   linkOf: (entityType: string, entityId: string) => string | null,
   withHistory: boolean
 ): AuditRow[] {
-  return entries.map(entry => ({
+  return entries.map((entry) => ({
     id: entry.id,
     at: entry.at,
     actorName: entry.actorName ?? null,

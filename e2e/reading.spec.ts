@@ -10,7 +10,7 @@ const TROMBONE = uuidOf(206);
 test.describe("Reading", () => {
   test("a user browses from a spex to an arrangement and reads its score", async ({ page, loginAs }) => {
     await loginAs("user");
-    await page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Spex", exact: true }).click();
+    await page.locator('[data-slot="sidebar"]:visible').getByRole("link", { name: "Spex", exact: true }).click();
     await page.getByRole("link", { name: /^Ali Baba 1985/ }).click();
 
     await expect(page.getByRole("heading", { level: 1, name: /Ali Baba/ })).toBeVisible();
@@ -30,11 +30,19 @@ test.describe("Reading", () => {
     // Parts by instrument, with their transpositions: B♭ is "B" in Swedish
     const original = page.locator(`section#version-${uuidOf(511)}`);
     await expect(original.getByRole("region", { name: "Trumpet" }).getByText("i B", { exact: true })).toHaveCount(1);
-    await expect(original.getByRole("region", { name: "Altsaxofon" }).getByText("i Ess", { exact: true })).toBeVisible();
+    await expect(
+      original.getByRole("region", { name: "Altsaxofon" }).getByText("i Ess", { exact: true })
+    ).toBeVisible();
     // A part for alto or tenor saxophone is listed under both
     await expect(original.getByRole("region", { name: "Tenorsaxofon" }).getByText("Alt- eller tenorsax")).toBeVisible();
-    await expect(original.getByRole("link", { name: "Alla stämmor (5)" })).toHaveAttribute("href", `/api/versions/${uuidOf(511)}/parts/zip`);
-    await expect(original.getByRole("link", { name: "Ladda ner versionen" })).toHaveAttribute("href", `/api/versions/${uuidOf(511)}/zip`);
+    await expect(original.getByRole("link", { name: "Alla stämmor (5)" })).toHaveAttribute(
+      "href",
+      `/api/versions/${uuidOf(511)}/parts/zip`
+    );
+    await expect(original.getByRole("link", { name: "Ladda ner versionen" })).toHaveAttribute(
+      "href",
+      `/api/versions/${uuidOf(511)}/zip`
+    );
 
     await original.getByRole("link", { name: "Läs Ouvertyr partitur" }).click();
     await expect(page).toHaveURL(new RegExp(`/files/${uuidOf(611)}`));
@@ -52,7 +60,10 @@ test.describe("Reading", () => {
     await reader.getByRole("button", { name: "Nästa sida" }).first().click();
     await expect(reader.getByLabel("Sida", { exact: true })).toHaveValue("3");
     await expect(reader.getByRole("img", { name: "Sida 3" })).toBeVisible();
-    await expect(reader.getByRole("link", { name: "Ladda ner" })).toHaveAttribute("href", `/api/files/${uuidOf(611)}?download=true`);
+    await expect(reader.getByRole("link", { name: "Ladda ner" })).toHaveAttribute(
+      "href",
+      `/api/files/${uuidOf(611)}?download=true`
+    );
   });
 
   test("the file route passes byte ranges on, for pdf.js", async ({ page, loginAs }) => {
@@ -80,8 +91,10 @@ test.describe("Reading", () => {
     await expect(original.getByTestId("instrument-group")).toHaveCount(2);
     await expect(original.getByText("3 stämmor matchar")).toBeVisible();
     await expect(original.getByText("Alt- eller tenorsax")).toHaveCount(0);
-    await expect(original.getByRole("link", { name: "Valda stämmor (3)" }))
-      .toHaveAttribute("href", `/api/versions/${uuidOf(511)}/parts/zip?instrumentIds=${TRUMPET},${TROMBONE}`);
+    await expect(original.getByRole("link", { name: "Valda stämmor (3)" })).toHaveAttribute(
+      "href",
+      `/api/versions/${uuidOf(511)}/parts/zip?instrumentIds=${TRUMPET},${TROMBONE}`
+    );
 
     // By transposition too: only the trumpet part written in B♭ ("B")
     await filter.getByRole("button", { name: "Stämd i B", exact: true }).click();
@@ -96,8 +109,10 @@ test.describe("Reading", () => {
     await page.getByRole("link", { name: "Ladda ner stämmor" }).click();
     await page.getByTestId("part-filter").getByRole("button", { name: "Trumpet" }).click();
 
-    await expect(page.getByRole("link", { name: "Ladda ner stämmor: Trumpet" }))
-      .toHaveAttribute("href", `/api/spex/${ALI_BABA}/parts/zip?instrumentIds=${TRUMPET}`);
+    await expect(page.getByRole("link", { name: "Ladda ner stämmor: Trumpet" })).toHaveAttribute(
+      "href",
+      `/api/spex/${ALI_BABA}/parts/zip?instrumentIds=${TRUMPET}`
+    );
     await expect(page.getByText("2 stämmor")).toBeVisible();
   });
 
@@ -119,7 +134,9 @@ test.describe("Reading", () => {
     await expect(version.getByRole("button", { name: "Förfrågan skickad" })).toBeDisabled();
 
     const { accessRequests } = await mock.state();
-    expect(accessRequests).toEqual([expect.objectContaining({ reason: "Vi sätter upp spexet 2028.", fileIds: [uuidOf(631), uuidOf(632)] })]);
+    expect(accessRequests).toEqual([
+      expect.objectContaining({ reason: "Vi sätter upp spexet 2028.", fileIds: [uuidOf(631), uuidOf(632)] }),
+    ]);
   });
 
   test("an editor opens restricted files", async ({ page, loginAs }) => {
@@ -136,12 +153,18 @@ test.describe("Reading", () => {
 
     const hits = page.getByTestId("text-hit");
     await expect(hits.first()).toContainText("sida 2");
-    await expect(hits.getByRole("link", { name: "Ali Baba manus" })).toHaveAttribute("href", `/files/${uuidOf(601)}?page=2`);
+    await expect(hits.getByRole("link", { name: "Ali Baba manus" })).toHaveAttribute(
+      "href",
+      `/files/${uuidOf(601)}?page=2`
+    );
     // A restricted file of another user is not among the hits
     await expect(hits.filter({ hasText: "Kärleksduetten" })).toHaveCount(0);
   });
 
-  test("an empty search explains itself, and a too short word is pointed out at the field", async ({ page, loginAs }) => {
+  test("an empty search explains itself, and a too short word is pointed out at the field", async ({
+    page,
+    loginAs,
+  }) => {
     await loginAs("user");
     await page.goto("/search");
     await expect(page.getByText("Vad letar du efter?")).toBeVisible();
@@ -177,13 +200,19 @@ test.describe("Reading", () => {
     await expect(page.getByRole("link", { name: "Kärleksduetten" })).toHaveAttribute("href", `/arrangements/${DUETT}`);
   });
 
-  test("the menu has the document kinds with documents, each listing its documents by spex", async ({ page, loginAs }) => {
+  test("the menu has the document kinds with documents, each listing its documents by spex", async ({
+    page,
+    loginAs,
+  }) => {
     await loginAs("user");
 
-    const sidebar = page.locator("[data-slot=\"sidebar\"]:visible");
+    const sidebar = page.locator('[data-slot="sidebar"]:visible');
     // The kinds are grouped under one entry, which only opens and closes them
     await sidebar.getByRole("button", { name: "Dokument", exact: true }).click();
-    await expect(sidebar.getByRole("link", { name: "Manus", exact: true })).toHaveAttribute("href", `/documents/${uuidOf(801)}`);
+    await expect(sidebar.getByRole("link", { name: "Manus", exact: true })).toHaveAttribute(
+      "href",
+      `/documents/${uuidOf(801)}`
+    );
     // Kinds without documents are only for editors
     await expect(sidebar.getByRole("link", { name: "Program", exact: true })).toHaveCount(0);
     await sidebar.getByRole("link", { name: "Spexbok", exact: true }).click();
@@ -196,8 +225,9 @@ test.describe("Reading", () => {
     await expect(page.getByText("FGV:s eget dokument")).toBeVisible();
 
     await sidebar.getByRole("link", { name: "Manus", exact: true }).click();
-    await expect(page.getByRole("region", { name: "Ali Baba 1985" }).getByRole("link", { name: "Ali Baba", exact: true }))
-      .toHaveAttribute("href", `/manuscripts/${uuidOf(401)}`);
+    await expect(
+      page.getByRole("region", { name: "Ali Baba 1985" }).getByRole("link", { name: "Ali Baba", exact: true })
+    ).toHaveAttribute("href", `/manuscripts/${uuidOf(401)}`);
   });
 
   test("a version's own address opens it in its arrangement", async ({ page, loginAs }) => {
@@ -219,14 +249,14 @@ test.describe("Reading", () => {
     // new one, not ask the old one (pdf.js threw "Cannot read properties of null (reading 'sendWithPromise')")
     const errors: string[] = [];
 
-    page.on("pageerror", error => errors.push(error.message));
+    page.on("pageerror", (error) => errors.push(error.message));
     await loginAs("user");
     await page.goto(`/files/${uuidOf(611)}`);
     const reader = page.getByTestId("pdf-reader");
     await expect(reader.getByRole("img", { name: "Sida 1" })).toBeVisible();
 
     for (let round = 0; round < 2; round++) {
-      await page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Sök", exact: true }).click();
+      await page.locator('[data-slot="sidebar"]:visible').getByRole("link", { name: "Sök", exact: true }).click();
       await expect(page).toHaveURL(/\/search/);
       await page.goBack();
       await reader.getByRole("img", { name: "Sida 3" }).scrollIntoViewIfNeeded();

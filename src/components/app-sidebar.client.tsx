@@ -2,17 +2,7 @@
 
 import * as React from "react";
 import { useMemo } from "react";
-import {
-  Archive,
-  Drama,
-  House,
-  Library,
-  type LucideIcon,
-  Pencil,
-  Search,
-  Settings,
-  Wrench,
-} from "lucide-react";
+import { Archive, Drama, House, Library, type LucideIcon, Pencil, Search, Settings, Wrench } from "lucide-react";
 
 import { NavMain } from "@bloomper/fgv-web-ui/shell/nav-main";
 import { NavSecondary, SidebarBrand } from "@bloomper/fgv-web-ui/shell/sidebar-parts";
@@ -71,7 +61,7 @@ export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: 
     ];
 
     const kindItems = documentKinds
-      .map(kind => ({ title: kind.name, url: documentsHref(kind.id), icon: kindIcon(kind) }))
+      .map((kind) => ({ title: kind.name, url: documentsHref(kind.id), icon: kindIcon(kind) }))
       .sort((a, b) => a.title.localeCompare(b.title, locale));
 
     if (kindItems.length > 0) {
@@ -134,32 +124,36 @@ export function AppSidebar({ roles, accountUrl, documentKinds = [], ...props }: 
   }, [roles, pathname, t, locale, documentKinds]);
 
   return (
-    <Sidebar collapsible="icon"
-             className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
-             {...props}
+    <Sidebar
+      collapsible="icon"
+      className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
+      {...props}
     >
       <SidebarBrand />
       <SidebarContent onClickCapture={closeOnNavigate}>
         {isClient ? (
           <>
             <NavMain items={navigation.main} />
-            <NavSecondary items={navigation.secondary} className="mt-auto" />
+            <NavSecondary
+              items={navigation.secondary}
+              className="mt-auto"
+            />
           </>
         ) : (
           <div className="flex flex-col gap-2 p-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-3 px-2 py-1.5">
-                <div className="size-4 shrink-0 animate-pulse rounded bg-sidebar-accent/50" />
-                <div
-                  className="h-3 w-24 animate-pulse rounded bg-sidebar-accent/50 group-data-[collapsible=icon]:hidden" />
+              <div
+                key={i}
+                className="flex items-center gap-3 px-2 py-1.5"
+              >
+                <div className="bg-sidebar-accent/50 size-4 shrink-0 animate-pulse rounded" />
+                <div className="bg-sidebar-accent/50 h-3 w-24 animate-pulse rounded group-data-[collapsible=icon]:hidden" />
               </div>
             ))}
           </div>
         )}
       </SidebarContent>
-      <SidebarFooter onClickCapture={closeOnNavigate}>
-        {isClient && <NavUser accountUrl={accountUrl} />}
-      </SidebarFooter>
+      <SidebarFooter onClickCapture={closeOnNavigate}>{isClient && <NavUser accountUrl={accountUrl} />}</SidebarFooter>
     </Sidebar>
   );
 }

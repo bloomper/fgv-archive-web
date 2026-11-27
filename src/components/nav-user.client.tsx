@@ -68,8 +68,11 @@ export function NavUser({ accountUrl }: { accountUrl: string }) {
             }
           >
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
-                           onLoadingStatusChange={handleAvatarStatus} />
+              <AvatarImage
+                src={avatarSrc}
+                alt={user?.name ?? ""}
+                onLoadingStatusChange={handleAvatarStatus}
+              />
               <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -88,8 +91,11 @@ export function NavUser({ accountUrl }: { accountUrl: string }) {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
-                                 onLoadingStatusChange={handleAvatarStatus} />
+                    <AvatarImage
+                      src={avatarSrc}
+                      alt={user?.name ?? ""}
+                      onLoadingStatusChange={handleAvatarStatus}
+                    />
                     <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -118,17 +124,12 @@ export function NavUser({ accountUrl }: { accountUrl: string }) {
             <DropdownMenuItem
               className="flex items-center gap-2"
               onClick={async () => {
-                const themeParam =
-                  theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
+                const themeParam = theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
 
                 const { data } = await signOut({ disableRedirect: true });
 
                 toast.message(t("Common.loggedOut"));
-                window.location.assign(
-                  data?.url
-                    ? appendLogoutParams(data.url, locale, themeParam)
-                    : "/",
-                );
+                window.location.assign(data?.url ? appendLogoutParams(data.url, locale, themeParam) : "/");
               }}
             >
               <LogOut className="h-4 w-4" />

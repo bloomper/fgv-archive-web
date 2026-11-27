@@ -11,8 +11,8 @@ export type AccessTokenClaims = {
     };
     [resource: string]:
       | {
-      roles?: string[];
-    }
+          roles?: string[];
+        }
       | undefined;
   };
 };

@@ -31,41 +31,82 @@ export default async function AccessRequestsPage({ searchParams }: { searchParam
     });
 
     return (
-      <Page variant="content" className="max-w-4xl">
-        <PageHeader title={t("title")} description={t("text")}/>
-        <LinkTabs label={t("filter")} items={[tab("open"), tab("handled"), tab("all")]} />
+      <Page
+        variant="content"
+        className="max-w-4xl"
+      >
+        <PageHeader
+          title={t("title")}
+          description={t("text")}
+        />
+        <LinkTabs
+          label={t("filter")}
+          items={[tab("open"), tab("handled"), tab("all")]}
+        />
         {requests.length === 0 ? (
-          <p className="text-muted-foreground">{show === "open" ? t("noneOpen") : show === "handled" ? t("noneHandled") : t("none")}</p>
+          <p className="text-muted-foreground">
+            {show === "open" ? t("noneOpen") : show === "handled" ? t("noneHandled") : t("none")}
+          </p>
         ) : (
           <ul className="space-y-3">
-            {requests.map(request => (
-              <li key={request.id} className="space-y-2 rounded-lg border bg-card p-3" data-testid="access-request">
+            {requests.map((request) => (
+              <li
+                key={request.id}
+                className="bg-card space-y-2 rounded-lg border p-3"
+                data-testid="access-request"
+              >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <p className="font-medium">
                     {request.userName ?? "–"}
                     {request.userEmail && (
-                      <a href={`mailto:${request.userEmail}`} className="ml-2 text-sm font-normal text-link hover:text-link/80">{request.userEmail}</a>
+                      <a
+                        href={`mailto:${request.userEmail}`}
+                        className="text-link hover:text-link/80 ml-2 text-sm font-normal"
+                      >
+                        {request.userEmail}
+                      </a>
                     )}
                   </p>
                   <span className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground tabular-nums">{formatInstant(request.createdAt)}</span>
-                    <ShareRequestButton id={request.id} name={request.userName ?? null} email={request.userEmail ?? null}
-                                        fileIds={request.files.map(file => file.id)} handled={Boolean(request.handledAt)}
-                                        maxMonths={maxMonths} />
-                    <HandleButton id={request.id} handled={Boolean(request.handledAt)} name={request.userName ?? ""} />
+                    <span className="text-muted-foreground text-xs tabular-nums">
+                      {formatInstant(request.createdAt)}
+                    </span>
+                    <ShareRequestButton
+                      id={request.id}
+                      name={request.userName ?? null}
+                      email={request.userEmail ?? null}
+                      fileIds={request.files.map((file) => file.id)}
+                      handled={Boolean(request.handledAt)}
+                      maxMonths={maxMonths}
+                    />
+                    <HandleButton
+                      id={request.id}
+                      handled={Boolean(request.handledAt)}
+                      name={request.userName ?? ""}
+                    />
                   </span>
                 </div>
-                <p className="whitespace-pre-line text-sm">{request.reason}</p>
+                <p className="text-sm whitespace-pre-line">{request.reason}</p>
                 <ul className="flex flex-wrap gap-2 text-sm">
-                  {request.files.map(file => (
+                  {request.files.map((file) => (
                     <li key={file.id}>
-                      <Link href={fileHref(file.id)} className="text-link hover:text-link/80">{file.title}</Link>
-                      {" "}<Link href={`/versions/${file.versionId}/edit`} className="text-xs text-muted-foreground hover:text-link">({t("version")})</Link>
+                      <Link
+                        href={fileHref(file.id)}
+                        className="text-link hover:text-link/80"
+                      >
+                        {file.title}
+                      </Link>{" "}
+                      <Link
+                        href={`/versions/${file.versionId}/edit`}
+                        className="text-muted-foreground hover:text-link text-xs"
+                      >
+                        ({t("version")})
+                      </Link>
                     </li>
                   ))}
                 </ul>
                 {request.handledAt && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {t("handledBy", { date: formatDate(request.handledAt) ?? "", name: request.handledByName ?? "–" })}
                   </p>
                 )}

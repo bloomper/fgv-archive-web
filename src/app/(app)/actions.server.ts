@@ -10,7 +10,7 @@ import { withPolicyAction } from "@/utils/route.server";
  * Asks the editors by email for access to restricted files, with the user's reason.
  */
 export async function accessRequestAction(fileIds: string[], reason: string): Promise<ActionResult<null>> {
-  if (fileIds.length === 0 || fileIds.length > 200 || !fileIds.every(id => ID.test(id))) {
+  if (fileIds.length === 0 || fileIds.length > 200 || !fileIds.every((id) => ID.test(id))) {
     throw new Error("Invalid files");
   }
 
@@ -19,8 +19,10 @@ export async function accessRequestAction(fileIds: string[], reason: string): Pr
   if (!text || text.length > 2000) {
     throw new Error("Invalid reason");
   }
-  return withPolicyAction(Policies.app.requireAccess, () => toActionResult(async () => {
-    await accessRequestCreate({ fileIds, reason: text });
-    return null;
-  }));
+  return withPolicyAction(Policies.app.requireAccess, () =>
+    toActionResult(async () => {
+      await accessRequestCreate({ fileIds, reason: text });
+      return null;
+    })
+  );
 }

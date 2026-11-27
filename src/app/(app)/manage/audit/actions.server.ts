@@ -14,7 +14,7 @@ const MAX_PAGE = 10_000;
  * A further page of the change log, for "Load more": the same filter as the page, the person only for admins.
  */
 export async function loadAuditPage(search: AuditSearch, page: number, size: number): Promise<AuditPage> {
-  return withPolicyAction(Policies.editor.requireEditor, async authz => {
+  return withPolicyAction(Policies.editor.requireEditor, async (authz) => {
     if (!Number.isInteger(page) || page < 0 || page > MAX_PAGE || !Number.isInteger(size) || size < 1 || size > 50) {
       throw new Error("Invalid page");
     }

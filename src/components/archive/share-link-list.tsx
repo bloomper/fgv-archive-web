@@ -20,59 +20,102 @@ export async function ShareLinkList({ all }: { all: boolean }) {
   const maxMonths = me?.settings.maxShareLinkMonths ?? 24;
 
   if (links.length === 0) {
-    return <DataEmpty title={t("none")} description={null} />;
+    return (
+      <DataEmpty
+        title={t("none")}
+        description={null}
+      />
+    );
   }
   return (
     <ul className="space-y-3">
-      {links.map(link => (
-        <li key={link.id} className="space-y-2 rounded-lg border bg-card p-3" data-testid="share-link">
+      {links.map((link) => (
+        <li
+          key={link.id}
+          className="bg-card space-y-2 rounded-lg border p-3"
+          data-testid="share-link"
+        >
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <p className="flex flex-wrap items-center gap-2 font-medium">
                 {link.name}
-                <Badge variant={link.status === "VALID" ? "default" : link.status === "REVOKED" ? "destructive" : "secondary"}>
+                <Badge
+                  variant={
+                    link.status === "VALID" ? "default" : link.status === "REVOKED" ? "destructive" : "secondary"
+                  }
+                >
                   {t(`status.${link.status}`)}
                 </Badge>
               </p>
-              <p className="text-xs text-muted-foreground">
-                {[all ? t("by", { name: link.createdByName ?? link.createdById }) : null,
+              <p className="text-muted-foreground text-xs">
+                {[
+                  all ? t("by", { name: link.createdByName ?? link.createdById }) : null,
                   t("created", { date: formatDate(link.createdAt) ?? "" }),
-                  link.revokedAt ? t("revokedAt", { date: formatDate(link.revokedAt) ?? "", name: link.revokedByName ?? "" })
+                  link.revokedAt
+                    ? t("revokedAt", { date: formatDate(link.revokedAt) ?? "", name: link.revokedByName ?? "" })
                     : t("expires", { date: formatDate(link.expiresAt) ?? "" }),
-                  t("downloads", { count: link.downloadCount })].filter(Boolean).join(" · ")}
+                  t("downloads", { count: link.downloadCount }),
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
               </p>
             </div>
-            <ShareLinkActions id={link.id} name={link.name} revoked={link.status === "REVOKED"} maxMonths={maxMonths} />
+            <ShareLinkActions
+              id={link.id}
+              name={link.name}
+              revoked={link.status === "REVOKED"}
+              maxMonths={maxMonths}
+            />
           </div>
           <ul className="space-y-0.5 text-sm">
             {link.spex && (
               <li>
-                <Link href={spexHref(link.spex.id)} className="text-link hover:text-link/80">{spexName(link.spex)}</Link>
-                {": "}{[...link.instruments.map(instrument => localName(instrument, locale)),
-                  ...link.transpositions.map(pitch => noteName(pitch, locale))].join(", ")}
+                <Link
+                  href={spexHref(link.spex.id)}
+                  className="text-link hover:text-link/80"
+                >
+                  {spexName(link.spex)}
+                </Link>
+                {": "}
+                {[
+                  ...link.instruments.map((instrument) => localName(instrument, locale)),
+                  ...link.transpositions.map((pitch) => noteName(pitch, locale)),
+                ].join(", ")}
               </li>
             )}
-            {link.versions.map(version => (
+            {link.versions.map((version) => (
               <li key={version.id}>
-                <Link href={versionHref({ ...version, parentId: version.manuscript?.id ?? version.arrangement?.id ?? "" })}
-                      className="text-link hover:text-link/80">
+                <Link
+                  href={versionHref({ ...version, parentId: version.manuscript?.id ?? version.arrangement?.id ?? "" })}
+                  className="text-link hover:text-link/80"
+                >
                   {version.manuscript?.title ?? version.arrangement?.number.title}
                 </Link>
                 <span className="text-muted-foreground"> · {version.label}</span>
               </li>
             ))}
-            {link.files.map(file => (
-              <li key={file.id}><Link href={fileHref(file.id)} className="text-link hover:text-link/80">{file.title}</Link></li>
+            {link.files.map((file) => (
+              <li key={file.id}>
+                <Link
+                  href={fileHref(file.id)}
+                  className="text-link hover:text-link/80"
+                >
+                  {file.title}
+                </Link>
+              </li>
             ))}
           </ul>
           {link.downloads.length > 0 && (
             <details className="text-sm">
-              <summary className="cursor-pointer text-muted-foreground">{t("perFile")}</summary>
+              <summary className="text-muted-foreground cursor-pointer">{t("perFile")}</summary>
               <ul className="mt-1 space-y-0.5">
-                {link.downloads.map(download => (
-                  <li key={download.file.id} className="flex justify-between gap-2">
+                {link.downloads.map((download) => (
+                  <li
+                    key={download.file.id}
+                    className="flex justify-between gap-2"
+                  >
                     <span>{download.file.title}</span>
-                    <span className="tabular-nums text-muted-foreground">{download.count}</span>
+                    <span className="text-muted-foreground tabular-nums">{download.count}</span>
                   </li>
                 ))}
               </ul>

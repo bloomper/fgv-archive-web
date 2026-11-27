@@ -18,7 +18,10 @@ import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
  * A file: a PDF in the reader, at the page asked for (`?page=`), or the file's details and download; a lock and
  * "Ask for access" when the user may not open it.
  */
-export default async function FilePage({ params, searchParams }: {
+export default async function FilePage({
+  params,
+  searchParams,
+}: {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ page?: string }>;
 }) {
@@ -42,26 +45,44 @@ export default async function FilePage({ params, searchParams }: {
       return (
         <>
           <CollapseSidebarOnTablet />
-          <PdfReader src={fileRawHref(file.id)} title={file.title} subtitle={subtitle} downloadHref={fileDownloadHref(file.id)}
-                     backHref={back} backLabel={t("back", { title: parentTitle })}
-                     initialPage={Number.isInteger(page) && page > 0 ? page : 1} />
+          <PdfReader
+            src={fileRawHref(file.id)}
+            title={file.title}
+            subtitle={subtitle}
+            downloadHref={fileDownloadHref(file.id)}
+            backHref={back}
+            backLabel={t("back", { title: parentTitle })}
+            initialPage={Number.isInteger(page) && page > 0 ? page : 1}
+          />
         </>
       );
     }
 
     return (
       <Page className="max-w-3xl">
-        <Link href={back} className="w-fit text-sm text-link hover:text-link/80">← {subtitle}</Link>
-        <PageHeader title={file.title}/>
+        <Link
+          href={back}
+          className="text-link hover:text-link/80 w-fit text-sm"
+        >
+          ← {subtitle}
+        </Link>
+        <PageHeader title={file.title} />
         <FileList files={[file]} />
         {file.canOpen ? (
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">{t("notReadable")}</p>
-            <a href={fileDownloadHref(file.id)} download data-umami-event="file-download" className={buttonVariants()}>
+            <p className="text-muted-foreground text-sm">{t("notReadable")}</p>
+            <a
+              href={fileDownloadHref(file.id)}
+              download
+              data-umami-event="file-download"
+              className={buttonVariants()}
+            >
               <Download /> {t("download")}
             </a>
           </div>
-        ) : <AccessRequest files={[{ id: file.id, title: file.title }]} />}
+        ) : (
+          <AccessRequest files={[{ id: file.id, title: file.title }]} />
+        )}
       </Page>
     );
   });

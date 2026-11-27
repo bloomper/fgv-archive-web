@@ -34,7 +34,7 @@ export const auth = betterAuth({
           userInfoUrl: endpoint("userinfo"),
           endSessionEndpoint: endpoint("logout"),
           mapProfileToUser: async (profile: GenericOAuthUserInfo) => ({
-            image: profile.image ?? await resolveGravatarImage(profile.email),
+            image: profile.image ?? (await resolveGravatarImage(profile.email)),
           }),
         },
       ],

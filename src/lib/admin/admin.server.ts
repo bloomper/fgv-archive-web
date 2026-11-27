@@ -2,7 +2,14 @@ import "server-only";
 
 import { graphql } from "@/gql";
 import { runMutation, runQuery } from "@/lib/graphql.server";
-import type { AuditFilter, DocumentKindInput, FileRoleInput, InstrumentInput, MaintenanceJob, SettingsInput } from "@/gql/graphql";
+import type {
+  AuditFilter,
+  DocumentKindInput,
+  FileRoleInput,
+  InstrumentInput,
+  MaintenanceJob,
+  SettingsInput,
+} from "@/gql/graphql";
 
 const TrashQuery = graphql(`
     query Trash {
@@ -66,23 +73,45 @@ const TrashEmptyMutation = graphql(`mutation TrashEmpty { trashEmpty }`);
 const SettingsUpdateMutation = graphql(`
     mutation SettingsUpdate($input: SettingsInput!) { settingsUpdate(input: $input) { maxUploadMb } }
 `);
-const MaintenanceJobRunMutation = graphql(`mutation MaintenanceJobRun($job: MaintenanceJob!) { maintenanceJobRun(job: $job) }`);
+const MaintenanceJobRunMutation = graphql(
+  `mutation MaintenanceJobRun($job: MaintenanceJob!) { maintenanceJobRun(job: $job) }`
+);
 const SpexipediaSyncQuery = graphql(`
     query SpexipediaSync { spexipediaSync { lastPulledAt lastSuccess lastError skipped { sequence kind id change error skippedAt } } }
 `);
-const InstrumentCreate = graphql(`mutation InstrumentCreate($input: InstrumentInput!) { instrumentCreate(input: $input) { id } }`);
-const InstrumentUpdate = graphql(`mutation InstrumentUpdate($id: ID!, $input: InstrumentInput!) { instrumentUpdate(id: $id, input: $input) { id } }`);
-const InstrumentsReorder = graphql(`mutation InstrumentsReorder($ids: [ID!]!) { instrumentsReorder(ids: $ids) { id } }`);
+const InstrumentCreate = graphql(
+  `mutation InstrumentCreate($input: InstrumentInput!) { instrumentCreate(input: $input) { id } }`
+);
+const InstrumentUpdate = graphql(
+  `mutation InstrumentUpdate($id: ID!, $input: InstrumentInput!) { instrumentUpdate(id: $id, input: $input) { id } }`
+);
+const InstrumentsReorder = graphql(
+  `mutation InstrumentsReorder($ids: [ID!]!) { instrumentsReorder(ids: $ids) { id } }`
+);
 const InstrumentDelete = graphql(`mutation InstrumentDelete($id: ID!) { instrumentDelete(id: $id) }`);
-const InstrumentMerge = graphql(`mutation InstrumentMerge($id: ID!, $intoId: ID!) { instrumentMerge(id: $id, intoId: $intoId) { id } }`);
-const FileRoleCreate = graphql(`mutation FileRoleCreate($input: FileRoleInput!) { fileRoleCreate(input: $input) { id } }`);
-const FileRoleUpdate = graphql(`mutation FileRoleUpdate($id: ID!, $input: FileRoleInput!) { fileRoleUpdate(id: $id, input: $input) { id } }`);
+const InstrumentMerge = graphql(
+  `mutation InstrumentMerge($id: ID!, $intoId: ID!) { instrumentMerge(id: $id, intoId: $intoId) { id } }`
+);
+const FileRoleCreate = graphql(
+  `mutation FileRoleCreate($input: FileRoleInput!) { fileRoleCreate(input: $input) { id } }`
+);
+const FileRoleUpdate = graphql(
+  `mutation FileRoleUpdate($id: ID!, $input: FileRoleInput!) { fileRoleUpdate(id: $id, input: $input) { id } }`
+);
 const FileRolesReorder = graphql(`mutation FileRolesReorder($ids: [ID!]!) { fileRolesReorder(ids: $ids) { id } }`);
 const FileRoleDelete = graphql(`mutation FileRoleDelete($id: ID!) { fileRoleDelete(id: $id) }`);
-const DocumentKindSave = graphql(`mutation DocumentKindSave($id: ID, $input: DocumentKindInput!) { documentKindSave(id: $id, input: $input) { id } }`);
-const DocumentKindsReorder = graphql(`mutation DocumentKindsReorder($ids: [ID!]!) { documentKindsReorder(ids: $ids) { id } }`);
-const DocumentKindRetire = graphql(`mutation DocumentKindRetire($id: ID!, $retired: Boolean!) { documentKindRetire(id: $id, retired: $retired) { id retired } }`);
-const DocumentKindMerge = graphql(`mutation DocumentKindMerge($id: ID!, $intoId: ID!) { documentKindMerge(id: $id, intoId: $intoId) { id } }`);
+const DocumentKindSave = graphql(
+  `mutation DocumentKindSave($id: ID, $input: DocumentKindInput!) { documentKindSave(id: $id, input: $input) { id } }`
+);
+const DocumentKindsReorder = graphql(
+  `mutation DocumentKindsReorder($ids: [ID!]!) { documentKindsReorder(ids: $ids) { id } }`
+);
+const DocumentKindRetire = graphql(
+  `mutation DocumentKindRetire($id: ID!, $retired: Boolean!) { documentKindRetire(id: $id, retired: $retired) { id retired } }`
+);
+const DocumentKindMerge = graphql(
+  `mutation DocumentKindMerge($id: ID!, $intoId: ID!) { documentKindMerge(id: $id, intoId: $intoId) { id } }`
+);
 
 export const getTrash = async () => (await runQuery(TrashQuery, {}))?.trash;
 export const getAuditLog = async (page: number, size: number, filter: AuditFilter = {}) =>
@@ -91,12 +120,14 @@ export const getAuditActors = async () => (await runQuery(AuditActorsQuery, {}))
 export const getSettings = async () => (await runQuery(SettingsQuery, {}))?.settings;
 export const getStorage = async () => (await runQuery(StorageQuery, {}))?.storage;
 export const getShareLinks = async (all: boolean) => (await runQuery(ShareLinksQuery, { all }))?.shareLinks ?? [];
-export const getAccessRequests = async (handled: boolean | null) => (await runQuery(AccessRequestsQuery, { handled }))?.accessRequests ?? [];
+export const getAccessRequests = async (handled: boolean | null) =>
+  (await runQuery(AccessRequestsQuery, { handled }))?.accessRequests ?? [];
 export const getMaintenanceJobs = async () => (await runQuery(MaintenanceJobsQuery, {}))?.maintenanceJobs ?? [];
 export const getSpexipediaSync = async () => (await runQuery(SpexipediaSyncQuery, {}))?.spexipediaSync;
 export const trashEmpty = () => runMutation(TrashEmptyMutation, {});
 export const settingsUpdate = (input: SettingsInput) => runMutation(SettingsUpdateMutation, { input });
-export const maintenanceJobRun = async (job: MaintenanceJob) => Boolean((await runMutation(MaintenanceJobRunMutation, { job }))?.maintenanceJobRun);
+export const maintenanceJobRun = async (job: MaintenanceJob) =>
+  Boolean((await runMutation(MaintenanceJobRunMutation, { job }))?.maintenanceJobRun);
 export const instrumentCreate = (input: InstrumentInput) => runMutation(InstrumentCreate, { input });
 export const instrumentUpdate = (id: string, input: InstrumentInput) => runMutation(InstrumentUpdate, { id, input });
 export const instrumentsReorder = (ids: string[]) => runMutation(InstrumentsReorder, { ids });
@@ -106,7 +137,8 @@ export const fileRoleCreate = (input: FileRoleInput) => runMutation(FileRoleCrea
 export const fileRoleUpdate = (id: string, input: FileRoleInput) => runMutation(FileRoleUpdate, { id, input });
 export const fileRolesReorder = (ids: string[]) => runMutation(FileRolesReorder, { ids });
 export const fileRoleDelete = (id: string) => runMutation(FileRoleDelete, { id });
-export const documentKindSave = (id: string | null, input: DocumentKindInput) => runMutation(DocumentKindSave, { id, input });
+export const documentKindSave = (id: string | null, input: DocumentKindInput) =>
+  runMutation(DocumentKindSave, { id, input });
 export const documentKindsReorder = (ids: string[]) => runMutation(DocumentKindsReorder, { ids });
 export const documentKindRetire = (id: string, retired: boolean) => runMutation(DocumentKindRetire, { id, retired });
 export const documentKindMerge = (id: string, intoId: string) => runMutation(DocumentKindMerge, { id, intoId });

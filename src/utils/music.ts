@@ -4,33 +4,78 @@
  */
 
 export const TONICS = [
-  "C", "C_SHARP", "D_FLAT", "D", "D_SHARP", "E_FLAT", "E", "F", "F_SHARP", "G_FLAT", "G", "G_SHARP", "A_FLAT", "A",
-  "A_SHARP", "B_FLAT", "B",
+  "C",
+  "C_SHARP",
+  "D_FLAT",
+  "D",
+  "D_SHARP",
+  "E_FLAT",
+  "E",
+  "F",
+  "F_SHARP",
+  "G_FLAT",
+  "G",
+  "G_SHARP",
+  "A_FLAT",
+  "A",
+  "A_SHARP",
+  "B_FLAT",
+  "B",
 ] as const;
 
-export type Tonic = typeof TONICS[number];
+export type Tonic = (typeof TONICS)[number];
 
 /** The pitches a part can be written in; C is concert pitch. */
 export const PITCHES = ["C", "D_FLAT", "D", "E_FLAT", "E", "F", "F_SHARP", "G", "A_FLAT", "A", "B_FLAT", "B"] as const;
 
-export type Pitch = typeof PITCHES[number];
+export type Pitch = (typeof PITCHES)[number];
 
 export const MODES = ["MAJOR", "MINOR"] as const;
 
-export type Mode = typeof MODES[number];
+export type Mode = (typeof MODES)[number];
 
 export type Key = { tonic: Tonic; mode: Mode };
 
 export type Transposition = { pitch: Pitch; octave: number };
 
 const ENGLISH: Record<Tonic, string> = {
-  C: "C", C_SHARP: "C♯", D_FLAT: "D♭", D: "D", D_SHARP: "D♯", E_FLAT: "E♭", E: "E", F: "F", F_SHARP: "F♯",
-  G_FLAT: "G♭", G: "G", G_SHARP: "G♯", A_FLAT: "A♭", A: "A", A_SHARP: "A♯", B_FLAT: "B♭", B: "B",
+  C: "C",
+  C_SHARP: "C♯",
+  D_FLAT: "D♭",
+  D: "D",
+  D_SHARP: "D♯",
+  E_FLAT: "E♭",
+  E: "E",
+  F: "F",
+  F_SHARP: "F♯",
+  G_FLAT: "G♭",
+  G: "G",
+  G_SHARP: "G♯",
+  A_FLAT: "A♭",
+  A: "A",
+  A_SHARP: "A♯",
+  B_FLAT: "B♭",
+  B: "B",
 };
 
 const SWEDISH: Record<Tonic, string> = {
-  C: "C", C_SHARP: "Ciss", D_FLAT: "Dess", D: "D", D_SHARP: "Diss", E_FLAT: "Ess", E: "E", F: "F", F_SHARP: "Fiss",
-  G_FLAT: "Gess", G: "G", G_SHARP: "Giss", A_FLAT: "Ass", A: "A", A_SHARP: "Aiss", B_FLAT: "B", B: "H",
+  C: "C",
+  C_SHARP: "Ciss",
+  D_FLAT: "Dess",
+  D: "D",
+  D_SHARP: "Diss",
+  E_FLAT: "Ess",
+  E: "E",
+  F: "F",
+  F_SHARP: "Fiss",
+  G_FLAT: "Gess",
+  G: "G",
+  G_SHARP: "Giss",
+  A_FLAT: "Ass",
+  A: "A",
+  A_SHARP: "Aiss",
+  B_FLAT: "B",
+  B: "H",
 };
 
 const isSwedish = (locale: string) => locale !== "en";
@@ -73,7 +118,7 @@ export function formatKeys(key: Key | null | undefined, modulations: readonly Ke
   if (!key) {
     return null;
   }
-  return [key, ...modulations].map(k => formatKey(k, locale)).join(" → ");
+  return [key, ...modulations].map((k) => formatKey(k, locale)).join(" → ");
 }
 
 /**
@@ -91,9 +136,27 @@ export function formatTransposition(transposition: Transposition | null | undefi
 }
 
 const SWEDISH_NAMES: Record<string, Tonic> = {
-  c: "C", ciss: "C_SHARP", dess: "D_FLAT", des: "D_FLAT", d: "D", diss: "D_SHARP", ess: "E_FLAT", es: "E_FLAT",
-  e: "E", f: "F", fiss: "F_SHARP", gess: "G_FLAT", ges: "G_FLAT", g: "G", giss: "G_SHARP", ass: "A_FLAT",
-  as: "A_FLAT", a: "A", aiss: "A_SHARP", b: "B_FLAT", h: "B",
+  c: "C",
+  ciss: "C_SHARP",
+  dess: "D_FLAT",
+  des: "D_FLAT",
+  d: "D",
+  diss: "D_SHARP",
+  ess: "E_FLAT",
+  es: "E_FLAT",
+  e: "E",
+  f: "F",
+  fiss: "F_SHARP",
+  gess: "G_FLAT",
+  ges: "G_FLAT",
+  g: "G",
+  giss: "G_SHARP",
+  ass: "A_FLAT",
+  as: "A_FLAT",
+  a: "A",
+  aiss: "A_SHARP",
+  b: "B_FLAT",
+  h: "B",
 };
 
 /**
@@ -124,8 +187,12 @@ export function parseTonic(text: string, locale: string): Tonic | null {
 
   const letter = match[1].toUpperCase();
   const accidental = (match[2] ?? "").replace("-", "").toLowerCase();
-  const candidate = accidental === "#" || accidental === "sharp" ? `${letter}_SHARP`
-    : accidental === "b" || accidental === "flat" ? `${letter}_FLAT` : letter;
+  const candidate =
+    accidental === "#" || accidental === "sharp"
+      ? `${letter}_SHARP`
+      : accidental === "b" || accidental === "flat"
+        ? `${letter}_FLAT`
+        : letter;
 
   return isTonic(candidate) ? candidate : null;
 }
@@ -168,7 +235,7 @@ export function parseKeyParam(value: string | null | undefined): Key | null {
 /** The instrument groups in the order admins and pickers show them. */
 export const INSTRUMENT_GROUPS = ["WOODWIND", "BRASS", "RHYTHM", "STRINGS", "VOICES", "OTHER"] as const;
 
-export type InstrumentGroup = typeof INSTRUMENT_GROUPS[number];
+export type InstrumentGroup = (typeof INSTRUMENT_GROUPS)[number];
 
 export type InstrumentName = { nameSv: string; nameEn: string };
 

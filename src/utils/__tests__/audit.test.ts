@@ -11,7 +11,9 @@ describe("audit helpers", () => {
   });
 
   it("keeps the filter in the address and leaves empty parts out", () => {
-    expect(auditHref("/manage/audit", { type: "ALBUM", q: "" }, { action: "UPDATE" })).toBe("/manage/audit?type=ALBUM&action=UPDATE");
+    expect(auditHref("/manage/audit", { type: "ALBUM", q: "" }, { action: "UPDATE" })).toBe(
+      "/manage/audit?type=ALBUM&action=UPDATE"
+    );
     expect(auditHref("/manage/audit", { type: "ALBUM" }, { type: undefined })).toBe("/manage/audit");
   });
 });

@@ -29,9 +29,22 @@ beforeEach(() => {
 
 describe("ShareRequestButton", () => {
   it("shares the requested files, offers an email and marks the request handled on close", async () => {
-    render(<ShareRequestButton id="r1" name="Kim Testsson" email="kim@example.org" fileIds={["f1", "f2"]} handled={false} maxMonths={12} />);
+    render(
+      <ShareRequestButton
+        id="r1"
+        name="Kim Testsson"
+        email="kim@example.org"
+        fileIds={["f1", "f2"]}
+        handled={false}
+        maxMonths={12}
+      />
+    );
     await make();
-    expect(mocks.actions.createShareLinkAction).toHaveBeenCalledWith({ fileIds: ["f1", "f2"], name: 'shareName:{"name":"Kim Testsson"}', months: 12 });
+    expect(mocks.actions.createShareLinkAction).toHaveBeenCalledWith({
+      fileIds: ["f1", "f2"],
+      name: 'shareName:{"name":"Kim Testsson"}',
+      months: 12,
+    });
 
     const mail = screen.getByRole("link", { name: /mail/ });
 
@@ -44,7 +57,16 @@ describe("ShareRequestButton", () => {
   });
 
   it("leaves the request open when the editor unticks it", async () => {
-    render(<ShareRequestButton id="r1" name="Kim Testsson" email={null} fileIds={["f1"]} handled={false} maxMonths={12} />);
+    render(
+      <ShareRequestButton
+        id="r1"
+        name="Kim Testsson"
+        email={null}
+        fileIds={["f1"]}
+        handled={false}
+        maxMonths={12}
+      />
+    );
     await make();
     expect(screen.queryByRole("link", { name: /mail/ })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("checkbox"));
@@ -54,7 +76,16 @@ describe("ShareRequestButton", () => {
   });
 
   it("does not offer marking an already handled request", async () => {
-    render(<ShareRequestButton id="r1" name="Kim Testsson" email={null} fileIds={["f1"]} handled maxMonths={12} />);
+    render(
+      <ShareRequestButton
+        id="r1"
+        name="Kim Testsson"
+        email={null}
+        fileIds={["f1"]}
+        handled
+        maxMonths={12}
+      />
+    );
     await make();
     expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "done" }));

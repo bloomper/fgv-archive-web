@@ -100,37 +100,74 @@ export function DatePicker({
 
   return (
     <div className={cn("relative flex w-fit items-center gap-1", className)}>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger render={
-          <Button ref={trigger} id={id} type="button" variant="outline" disabled={disabled}
-                  aria-invalid={ariaInvalid} aria-describedby={ariaDescribedBy}
-                  className={cn("min-w-44 justify-start font-normal", !selected && "text-muted-foreground")} />
-        }>
+      <Popover
+        open={open}
+        onOpenChange={setOpen}
+      >
+        <PopoverTrigger
+          render={
+            <Button
+              ref={trigger}
+              id={id}
+              type="button"
+              variant="outline"
+              disabled={disabled}
+              aria-invalid={ariaInvalid}
+              aria-describedby={ariaDescribedBy}
+              className={cn("min-w-44 justify-start font-normal", !selected && "text-muted-foreground")}
+            />
+          }
+        >
           <CalendarIcon />
           {selected ? format(selected, "PPP", { locale: dateLib }) : (placeholder ?? t("pickDate"))}
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar mode="single" locale={dateLib} formatters={calendarFormatters} selected={selected} defaultMonth={selected ?? latest ?? earliest}
-                    captionLayout="dropdown" startMonth={earliest} endMonth={latest}
-                    disabled={[...(earliest ? [{ before: earliest }] : []), ...(latest ? [{ after: latest }] : [])]}
-                    onSelect={date => {
-                      set(date ? iso(date) : "");
-                      setOpen(false);
-                      trigger.current?.focus();
-                    }} />
+        <PopoverContent
+          className="w-auto p-0"
+          align="start"
+        >
+          <Calendar
+            mode="single"
+            locale={dateLib}
+            formatters={calendarFormatters}
+            selected={selected}
+            defaultMonth={selected ?? latest ?? earliest}
+            captionLayout="dropdown"
+            startMonth={earliest}
+            endMonth={latest}
+            disabled={[...(earliest ? [{ before: earliest }] : []), ...(latest ? [{ after: latest }] : [])]}
+            onSelect={(date) => {
+              set(date ? iso(date) : "");
+              setOpen(false);
+              trigger.current?.focus();
+            }}
+          />
         </PopoverContent>
       </Popover>
       {selected && !required && !disabled && (
-        <Button type="button" variant="ghost" size="icon" aria-label={t("clearDate")} onClick={() => set("")}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={t("clearDate")}
+          onClick={() => set("")}
+        >
           <X />
         </Button>
       )}
       {(name || required) && (
         // Carries the value in the form and, when required, takes part in constraint validation; the browser's
         // message is anchored next to the button.
-        <input ref={field} name={name} value={value} required={required} disabled={disabled} tabIndex={-1} aria-hidden
-               className="pointer-events-none absolute bottom-0 left-4 size-px opacity-0"
-               onChange={() => undefined} />
+        <input
+          ref={field}
+          name={name}
+          value={value}
+          required={required}
+          disabled={disabled}
+          tabIndex={-1}
+          aria-hidden
+          className="pointer-events-none absolute bottom-0 left-4 size-px opacity-0"
+          onChange={() => undefined}
+        />
       )}
     </div>
   );

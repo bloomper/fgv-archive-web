@@ -10,7 +10,7 @@ const NO_ACCESS_PATH = "/no-access";
 
 export async function withPolicyAction<T>(
   policy: () => Promise<AuthzResult>,
-  handler: (authz: AuthzOk) => Promise<T>,
+  handler: (authz: AuthzOk) => Promise<T>
 ): Promise<T> {
   const authz = await policy();
   if (!authz.ok) {
@@ -28,7 +28,7 @@ export async function withPolicyAction<T>(
  */
 export async function withPolicyPage<T>(
   policy: () => Promise<AuthzResult>,
-  handler: (authz: AuthzOk) => Promise<T>,
+  handler: (authz: AuthzOk) => Promise<T>
 ): Promise<T> {
   const authz = await policy();
   if (!authz.ok && authz.status === 403 && !hasAccess((await requireUser()).roles)) {

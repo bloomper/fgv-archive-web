@@ -57,7 +57,15 @@ function storeView(view: View) {
  * (fit to width or to the page), full screen, and a page view for a tablet on a music stand, where a tap on the left
  * or right half, the arrow keys or a page-turner pedal turn the page.
  */
-export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLabel, initialPage = 1 }: {
+export function PdfReader({
+  src,
+  title,
+  subtitle,
+  downloadHref,
+  backHref,
+  backLabel,
+  initialPage = 1,
+}: {
   /** The file's address in the web, which passes byte ranges on. */
   src: string;
   title: string;
@@ -99,26 +107,29 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
     let destroy: (() => void) | null = null;
     let opened: PDFDocumentProxy | null = null;
 
-    openPdf(src).then(async ({ task, pdf: loading }) => {
-      destroy = () => void task.destroy();
-      try {
-        const doc = await loading;
+    openPdf(src).then(
+      async ({ task, pdf: loading }) => {
+        destroy = () => void task.destroy();
+        try {
+          const doc = await loading;
 
-        opened = doc;
-        const first = await getPdfPage(doc, 1);
-        const { width, height } = first.getViewport({ scale: 1 });
+          opened = doc;
+          const first = await getPdfPage(doc, 1);
+          const { width, height } = first.getViewport({ scale: 1 });
 
-        if (!cancelled) {
-          setBase({ width, height });
-          setPdf(doc);
-          setPage(current => Math.min(current, doc.numPages));
+          if (!cancelled) {
+            setBase({ width, height });
+            setPdf(doc);
+            setPage((current) => Math.min(current, doc.numPages));
+          }
+        } catch {
+          if (!cancelled) {
+            setError(true);
+          }
         }
-      } catch {
-        if (!cancelled) {
-          setError(true);
-        }
-      }
-    }, () => setError(true));
+      },
+      () => setError(true)
+    );
 
     return () => {
       cancelled = true;
@@ -128,7 +139,7 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
       const destroyed = opened;
 
       if (destroyed) {
-        setPdf(current => (current === destroyed ? null : current));
+        setPdf((current) => (current === destroyed ? null : current));
       }
     };
   }, [src]);
@@ -140,10 +151,12 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
       return;
     }
 
-    const observer = new ResizeObserver(([entry]) => setArea({
-      width: entry.contentRect.width,
-      height: entry.contentRect.height,
-    }));
+    const observer = new ResizeObserver(([entry]) =>
+      setArea({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      })
+    );
 
     observer.observe(element);
     return () => observer.disconnect();
@@ -167,19 +180,22 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
     return Math.max(0.1, (view === "page" ? byPage : Math.min(byWidth, 1.6)) * zoom);
   }, [base, area, view, zoom]);
 
-  const goTo = useCallback((target: number) => {
-    if (numPages === 0) {
-      return;
-    }
+  const goTo = useCallback(
+    (target: number) => {
+      if (numPages === 0) {
+        return;
+      }
 
-    const next = Math.min(Math.max(1, target), numPages);
+      const next = Math.min(Math.max(1, target), numPages);
 
-    setPage(next);
-    setPageInput(String(next));
-    if (view === "scroll") {
-      pageRefs.current.get(next)?.scrollIntoView({ block: "start" });
-    }
-  }, [numPages, view]);
+      setPage(next);
+      setPageInput(String(next));
+      if (view === "scroll") {
+        pageRefs.current.get(next)?.scrollIntoView({ block: "start" });
+      }
+    },
+    [numPages, view]
+  );
 
   // Keeps the page in the address, so a reload or a shared link opens it, without a navigation
   useEffect(() => {
@@ -243,26 +259,34 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
     }
   }, []);
 
-  const changeView = useCallback((next: View) => {
-    setView(next);
-    setZoom(1);
-    storeView(next);
-    requestAnimationFrame(() => {
-      if (next === "scroll") {
-        pageRefs.current.get(page)?.scrollIntoView({ block: "start" });
-      }
-    });
-  }, [page]);
+  const changeView = useCallback(
+    (next: View) => {
+      setView(next);
+      setZoom(1);
+      storeView(next);
+      requestAnimationFrame(() => {
+        if (next === "scroll") {
+          pageRefs.current.get(page)?.scrollIntoView({ block: "start" });
+        }
+      });
+    },
+    [page]
+  );
 
   const zoomBy = useCallback((factor: number) => {
-    setZoom(current => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, current * factor)));
+    setZoom((current) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, current * factor)));
   }, []);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
 
-      if (event.altKey || event.ctrlKey || event.metaKey || target?.closest("input, textarea, select, [contenteditable=true]")) {
+      if (
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        target?.closest("input, textarea, select, [contenteditable=true]")
+      ) {
         return;
       }
 
@@ -280,7 +304,7 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
         "-": () => zoomBy(1 / ZOOM_STEP),
         "0": () => setZoom(1),
         f: toggleFullscreen,
-        t: () => setThumbnails(open => !open),
+        t: () => setThumbnails((open) => !open),
         p: () => changeView(scrollView ? "page" : "scroll"),
       };
 
@@ -304,69 +328,141 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
   const pages = useMemo(() => Array.from({ length: numPages }, (_, index) => index + 1), [numPages]);
 
   return (
-    <div ref={rootRef} className="flex h-[calc(100dvh-var(--header-height,0px))] min-h-0 flex-col bg-muted/40"
-         data-testid="pdf-reader">
-      <div role="toolbar" aria-label={t("toolbar")}
-           className="flex flex-wrap items-center gap-1 border-b bg-background px-2 py-1.5 sm:gap-2 sm:px-3">
+    <div
+      ref={rootRef}
+      className="bg-muted/40 flex h-[calc(100dvh-var(--header-height,0px))] min-h-0 flex-col"
+      data-testid="pdf-reader"
+    >
+      <div
+        role="toolbar"
+        aria-label={t("toolbar")}
+        className="bg-background flex flex-wrap items-center gap-1 border-b px-2 py-1.5 sm:gap-2 sm:px-3"
+      >
         {!fullscreen && (
-          <Link href={backHref} aria-label={backLabel} title={backLabel} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+          <Link
+            href={backHref}
+            aria-label={backLabel}
+            title={backLabel}
+            className={buttonVariants({ variant: "ghost", size: "sm" })}
+          >
             <ArrowLeft />
           </Link>
         )}
         <div className="mr-auto min-w-0 flex-1 basis-40">
           <h1 className="truncate text-sm font-semibold sm:text-base">{title}</h1>
-          {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
+          {subtitle && <p className="text-muted-foreground truncate text-xs">{subtitle}</p>}
         </div>
-        <Button variant="ghost" size="icon-sm" onClick={() => setThumbnails(open => !open)}
-                aria-pressed={thumbnails} aria-label={t("thumbnails")} title={t("thumbnails")}
-                className="hidden sm:inline-flex">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => setThumbnails((open) => !open)}
+          aria-pressed={thumbnails}
+          aria-label={t("thumbnails")}
+          title={t("thumbnails")}
+          className="hidden sm:inline-flex"
+        >
           <PanelLeft />
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={() => goTo(page - 1)} disabled={page <= 1}
-                aria-label={t("previous")} title={t("previous")}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => goTo(page - 1)}
+          disabled={page <= 1}
+          aria-label={t("previous")}
+          title={t("previous")}
+        >
           <ChevronLeft />
         </Button>
-        <form className="flex items-center gap-1 text-sm tabular-nums" onSubmit={event => {
-          event.preventDefault();
-          goTo(Number(pageInput) || page);
-        }}>
-          <input aria-label={t("page")} value={pageInput} inputMode="numeric"
-                 onChange={event => setPageInput(event.target.value.replace(/\D/g, ""))}
-                 onBlur={() => setPageInput(String(page))}
-                 className="h-8 w-10 rounded-md border bg-background text-center" />
-          <span className="text-muted-foreground" aria-live="polite">{t("of", { count: numPages })}</span>
+        <form
+          className="flex items-center gap-1 text-sm tabular-nums"
+          onSubmit={(event) => {
+            event.preventDefault();
+            goTo(Number(pageInput) || page);
+          }}
+        >
+          <input
+            aria-label={t("page")}
+            value={pageInput}
+            inputMode="numeric"
+            onChange={(event) => setPageInput(event.target.value.replace(/\D/g, ""))}
+            onBlur={() => setPageInput(String(page))}
+            className="bg-background h-8 w-10 rounded-md border text-center"
+          />
+          <span
+            className="text-muted-foreground"
+            aria-live="polite"
+          >
+            {t("of", { count: numPages })}
+          </span>
         </form>
-        <Button variant="ghost" size="icon-sm" onClick={() => goTo(page + 1)} disabled={page >= numPages}
-                aria-label={t("next")} title={t("next")}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => goTo(page + 1)}
+          disabled={page >= numPages}
+          aria-label={t("next")}
+          title={t("next")}
+        >
           <ChevronRight />
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={() => zoomBy(1 / ZOOM_STEP)} aria-label={t("zoomOut")}
-                title={t("zoomOut")}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => zoomBy(1 / ZOOM_STEP)}
+          aria-label={t("zoomOut")}
+          title={t("zoomOut")}
+        >
           <ZoomOut />
         </Button>
-        <span className="hidden w-12 text-center text-xs tabular-nums text-muted-foreground sm:inline">
+        <span className="text-muted-foreground hidden w-12 text-center text-xs tabular-nums sm:inline">
           {Math.round(scale * 100)} %
         </span>
-        <Button variant="ghost" size="icon-sm" onClick={() => zoomBy(ZOOM_STEP)} aria-label={t("zoomIn")}
-                title={t("zoomIn")}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => zoomBy(ZOOM_STEP)}
+          aria-label={t("zoomIn")}
+          title={t("zoomIn")}
+        >
           <ZoomIn />
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={() => setZoom(1)} aria-label={view === "page" ? t("fitPage") : t("fitWidth")}
-                title={view === "page" ? t("fitPage") : t("fitWidth")}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => setZoom(1)}
+          aria-label={view === "page" ? t("fitPage") : t("fitWidth")}
+          title={view === "page" ? t("fitPage") : t("fitWidth")}
+        >
           {view === "page" ? <Scan /> : <MoveHorizontal />}
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={() => changeView(view === "page" ? "scroll" : "page")}
-                aria-pressed={view === "page"} aria-label={view === "page" ? t("scrollView") : t("pageView")}
-                title={view === "page" ? t("scrollView") : t("pageView")}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => changeView(view === "page" ? "scroll" : "page")}
+          aria-pressed={view === "page"}
+          aria-label={view === "page" ? t("scrollView") : t("pageView")}
+          title={view === "page" ? t("scrollView") : t("pageView")}
+        >
           {view === "page" ? <Rows3 /> : <BookOpen />}
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={toggleFullscreen}
-                aria-label={fullscreen ? t("exitFullscreen") : t("fullscreen")}
-                title={fullscreen ? t("exitFullscreen") : t("fullscreen")}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={toggleFullscreen}
+          aria-label={fullscreen ? t("exitFullscreen") : t("fullscreen")}
+          title={fullscreen ? t("exitFullscreen") : t("fullscreen")}
+        >
           {fullscreen ? <Minimize /> : <Maximize />}
         </Button>
         {downloadHref && (
-          <a href={downloadHref} download data-umami-event="file-download" aria-label={t("download")} title={t("download")} className={buttonVariants({ variant: "ghost", size: "icon-sm" })}>
+          <a
+            href={downloadHref}
+            download
+            data-umami-event="file-download"
+            aria-label={t("download")}
+            title={t("download")}
+            className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+          >
             <Download />
           </a>
         )}
@@ -374,17 +470,28 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
 
       <div className="flex min-h-0 flex-1">
         {thumbnails && pdf && (
-          <nav aria-label={t("thumbnails")}
-               className="hidden w-36 shrink-0 overflow-y-auto border-r bg-background p-2 sm:block">
+          <nav
+            aria-label={t("thumbnails")}
+            className="bg-background hidden w-36 shrink-0 overflow-y-auto border-r p-2 sm:block"
+          >
             <ol className="space-y-2">
-              {pages.map(number => (
+              {pages.map((number) => (
                 <li key={number}>
-                  <button type="button" onClick={() => goTo(number)}
-                          aria-current={number === page ? "page" : undefined}
-                          aria-label={t("goToPage", { page: number })}
-                          className={cn("block w-full rounded-md border-2 p-1 text-center text-xs",
-                            number === page ? "border-primary" : "border-transparent hover:border-border")}>
-                    <Thumbnail pdf={pdf} number={number} base={base} />
+                  <button
+                    type="button"
+                    onClick={() => goTo(number)}
+                    aria-current={number === page ? "page" : undefined}
+                    aria-label={t("goToPage", { page: number })}
+                    className={cn(
+                      "block w-full rounded-md border-2 p-1 text-center text-xs",
+                      number === page ? "border-primary" : "hover:border-border border-transparent"
+                    )}
+                  >
+                    <Thumbnail
+                      pdf={pdf}
+                      number={number}
+                      base={base}
+                    />
                     <span className="tabular-nums">{number}</span>
                   </button>
                 </li>
@@ -393,45 +500,83 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
           </nav>
         )}
 
-        <div ref={viewportRef} tabIndex={-1} className="relative min-w-0 flex-1 overflow-auto outline-none"
-             aria-label={title}>
+        <div
+          ref={viewportRef}
+          tabIndex={-1}
+          className="relative min-w-0 flex-1 overflow-auto outline-none"
+          aria-label={title}
+        >
           {error ? (
             <div className="flex h-full items-center justify-center p-6 text-center">
               <div className="space-y-3">
-                <p role="alert" className="font-medium">{t("error")}</p>
+                <p
+                  role="alert"
+                  className="font-medium"
+                >
+                  {t("error")}
+                </p>
                 {downloadHref && (
-                  <a href={downloadHref} download className={buttonVariants({ variant: "outline" })}>
+                  <a
+                    href={downloadHref}
+                    download
+                    className={buttonVariants({ variant: "outline" })}
+                  >
                     <Download /> {t("download")}
                   </a>
                 )}
               </div>
             </div>
           ) : !pdf || !base ? (
-            <div className="flex h-full items-center justify-center gap-2 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex h-full items-center justify-center gap-2 text-sm">
               <Spinner /> {t("loading")}
             </div>
           ) : view === "scroll" ? (
             <div className="flex flex-col items-center gap-4 py-4">
-              {pages.map(number => (
-                <div key={number} ref={element => {
-                  if (element) {
-                    pageRefs.current.set(number, element);
-                  } else {
-                    pageRefs.current.delete(number);
-                  }
-                }} data-page={number}>
-                  <PageView pdf={pdf} number={number} scale={scale} base={base} lazy label={t("pageLabel", { page: number })} />
+              {pages.map((number) => (
+                <div
+                  key={number}
+                  ref={(element) => {
+                    if (element) {
+                      pageRefs.current.set(number, element);
+                    } else {
+                      pageRefs.current.delete(number);
+                    }
+                  }}
+                  data-page={number}
+                >
+                  <PageView
+                    pdf={pdf}
+                    number={number}
+                    scale={scale}
+                    base={base}
+                    lazy
+                    label={t("pageLabel", { page: number })}
+                  />
                 </div>
               ))}
             </div>
           ) : (
             <div className="relative flex min-h-full items-center justify-center p-4">
-              <PageView pdf={pdf} number={page} scale={scale} base={base} label={t("pageLabel", { page })} />
+              <PageView
+                pdf={pdf}
+                number={page}
+                scale={scale}
+                base={base}
+                label={t("pageLabel", { page })}
+              />
               {/* Tap zones for turning pages on a touch screen; the text stays selectable between them */}
-              <button type="button" aria-label={t("previous")} onClick={() => goTo(page - 1)}
-                      className="absolute inset-y-0 left-0 w-1/4 cursor-w-resize focus-visible:bg-primary/5" />
-              <button type="button" aria-label={t("next")} onClick={() => goTo(page + 1)}
-                      className="absolute inset-y-0 right-0 w-1/4 cursor-e-resize focus-visible:bg-primary/5" />
+              <button
+                type="button"
+                aria-label={t("previous")}
+                onClick={() => goTo(page - 1)}
+                className="focus-visible:bg-primary/5 absolute inset-y-0 left-0 w-1/4 cursor-w-resize"
+              />
+              <button
+                type="button"
+                aria-label={t("next")}
+                onClick={() => goTo(page + 1)}
+                className="focus-visible:bg-primary/5 absolute inset-y-0 right-0 w-1/4 cursor-e-resize"
+              />
             </div>
           )}
         </div>
@@ -443,7 +588,14 @@ export function PdfReader({ src, title, subtitle, downloadHref, backHref, backLa
 /**
  * Loads a page when it is about to be seen (or at once when not lazy) and draws it with its text layer.
  */
-function PageView({ pdf, number, scale, base, lazy = false, label }: {
+function PageView({
+  pdf,
+  number,
+  scale,
+  base,
+  lazy = false,
+  label,
+}: {
   pdf: PDFDocumentProxy;
   number: number;
   scale: number;
@@ -463,12 +615,15 @@ function PageView({ pdf, number, scale, base, lazy = false, label }: {
       return;
     }
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setVisible(true);
-        observer.disconnect();
-      }
-    }, { rootMargin: "100% 0px" });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "100% 0px" }
+    );
 
     observer.observe(holder.current);
     return () => observer.disconnect();
@@ -481,7 +636,10 @@ function PageView({ pdf, number, scale, base, lazy = false, label }: {
 
     let cancelled = false;
 
-    getPdfPage(pdf, number).then(loaded => !cancelled && setPage(loaded), () => undefined);
+    getPdfPage(pdf, number).then(
+      (loaded) => !cancelled && setPage(loaded),
+      () => undefined
+    );
     return () => {
       cancelled = true;
     };
@@ -496,18 +654,33 @@ function PageView({ pdf, number, scale, base, lazy = false, label }: {
 
     const rendered = renderPage(page, canvas.current, scale, text.current);
 
-    rendered.done.then(() => setRendering(false), () => setRendering(false));
+    rendered.done.then(
+      () => setRendering(false),
+      () => setRendering(false)
+    );
     return () => rendered.cancel();
   }, [page, scale]);
 
   const size = page ? page.getViewport({ scale }) : { width: base.width * scale, height: base.height * scale };
 
   return (
-    <div ref={holder} role="img" aria-roledescription="page" aria-label={label}
-         className="relative bg-white shadow-md"
-         style={{ width: Math.floor(size.width), height: Math.floor(size.height) }}>
-      <canvas ref={canvas} className="block" aria-hidden />
-      <div ref={text} className="textLayer" />
+    <div
+      ref={holder}
+      role="img"
+      aria-roledescription="page"
+      aria-label={label}
+      className="relative bg-white shadow-md"
+      style={{ width: Math.floor(size.width), height: Math.floor(size.height) }}
+    >
+      <canvas
+        ref={canvas}
+        className="block"
+        aria-hidden
+      />
+      <div
+        ref={text}
+        className="textLayer"
+      />
       {rendering && (
         <div className="absolute inset-0 flex items-center justify-center">
           <Spinner className="text-muted-foreground" />
@@ -523,19 +696,22 @@ function Thumbnail({ pdf, number, base }: { pdf: PDFDocumentProxy; number: numbe
   const holder = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [visible, setVisible] = useState(false);
-  const height = base ? Math.round(THUMBNAIL_WIDTH * base.height / base.width) : 150;
+  const height = base ? Math.round((THUMBNAIL_WIDTH * base.height) / base.width) : 150;
 
   useEffect(() => {
     if (!holder.current) {
       return;
     }
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setVisible(true);
-        observer.disconnect();
-      }
-    }, { rootMargin: "200px 0px" });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px 0px" }
+    );
 
     observer.observe(holder.current);
     return () => observer.disconnect();
@@ -549,13 +725,16 @@ function Thumbnail({ pdf, number, base }: { pdf: PDFDocumentProxy; number: numbe
     let rendered: RenderedPage | null = null;
     let cancelled = false;
 
-    getPdfPage(pdf, number).then(page => {
-      if (!cancelled && canvas.current) {
-        rendered = renderPage(page, canvas.current, THUMBNAIL_WIDTH / page.getViewport({ scale: 1 }).width);
-        // A thumbnail that cannot be drawn stays blank
-        rendered.done.catch(() => undefined);
-      }
-    }, () => undefined);
+    getPdfPage(pdf, number).then(
+      (page) => {
+        if (!cancelled && canvas.current) {
+          rendered = renderPage(page, canvas.current, THUMBNAIL_WIDTH / page.getViewport({ scale: 1 }).width);
+          // A thumbnail that cannot be drawn stays blank
+          rendered.done.catch(() => undefined);
+        }
+      },
+      () => undefined
+    );
     return () => {
       cancelled = true;
       rendered?.cancel();
@@ -563,8 +742,16 @@ function Thumbnail({ pdf, number, base }: { pdf: PDFDocumentProxy; number: numbe
   }, [pdf, number, visible]);
 
   return (
-    <div ref={holder} className="mx-auto mb-1 bg-white shadow-sm" style={{ width: THUMBNAIL_WIDTH, height }}>
-      <canvas ref={canvas} className="block" aria-hidden />
+    <div
+      ref={holder}
+      className="mx-auto mb-1 bg-white shadow-sm"
+      style={{ width: THUMBNAIL_WIDTH, height }}
+    >
+      <canvas
+        ref={canvas}
+        className="block"
+        aria-hidden
+      />
     </div>
   );
 }

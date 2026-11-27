@@ -10,6 +10,5 @@ declare global {
 export function track(event: string, data?: EventData) {
   try {
     window.umami?.track(event, data);
-  } catch {
-  }
+  } catch {}
 }

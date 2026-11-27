@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/stats/script.js/route";
 
-vi.mock("next/server", async importOriginal => ({ ...await importOriginal<object>(), connection: vi.fn() }));
+vi.mock("next/server", async (importOriginal) => ({ ...(await importOriginal<object>()), connection: vi.fn() }));
 
 describe("GET /stats/script.js", () => {
   beforeEach(() => {
@@ -29,7 +29,13 @@ describe("GET /stats/script.js", () => {
   });
 
   it("is not found without Umami and a bad gateway when Umami fails", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(new Response(null, { status: 500 })).mockRejectedValueOnce(new Error("down")));
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(new Response(null, { status: 500 }))
+        .mockRejectedValueOnce(new Error("down"))
+    );
 
     expect((await GET()).status).toBe(502);
     expect((await GET()).status).toBe(502);

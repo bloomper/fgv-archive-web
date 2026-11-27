@@ -58,9 +58,14 @@ describe("CommandPalette", () => {
   });
 
   it("goes to a document kind's page, counted without its id", async () => {
-    render(<CommandPalette roles={["USER"]} documentKinds={[
-      { id: "k1", name: "Program", nameSv: "Program", nameEn: "Programme", retired: false, documentCount: 1 },
-    ]} />);
+    render(
+      <CommandPalette
+        roles={["USER"]}
+        documentKinds={[
+          { id: "k1", name: "Program", nameSv: "Program", nameEn: "Programme", retired: false, documentCount: 1 },
+        ]}
+      />
+    );
     const user = await openPalette();
 
     await user.click(await screen.findByRole("option", { name: "Program" }));

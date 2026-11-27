@@ -15,13 +15,16 @@ const B = "00000000-0000-7000-8000-000000000002";
 
 describe("partFilterFromParams", () => {
   it("reads comma-separated and repeated values, drops junk and duplicates", () => {
-    expect(partFilterFromParams(new URLSearchParams(`instruments=${A},${B},nope&instruments=${A}&pitches=B_FLAT,H,E_FLAT`)))
-      .toEqual({ instrumentIds: [A, B], transpositions: ["B_FLAT", "E_FLAT"] });
+    expect(
+      partFilterFromParams(new URLSearchParams(`instruments=${A},${B},nope&instruments=${A}&pitches=B_FLAT,H,E_FLAT`))
+    ).toEqual({ instrumentIds: [A, B], transpositions: ["B_FLAT", "E_FLAT"] });
   });
 
   it("reads Next's search params objects", () => {
-    expect(partFilterFromParams({ instruments: [A, B], pitches: "C" }))
-      .toEqual({ instrumentIds: [A, B], transpositions: ["C"] });
+    expect(partFilterFromParams({ instruments: [A, B], pitches: "C" })).toEqual({
+      instrumentIds: [A, B],
+      transpositions: ["C"],
+    });
     expect(partFilterFromParams({})).toEqual({ instrumentIds: [], transpositions: [] });
   });
 });
@@ -40,8 +43,9 @@ describe("queries", () => {
   });
 
   it("checks what the route handlers pass on", () => {
-    expect(apiQueryFromParams(new URLSearchParams(`instrumentIds=${A},x&transpositions=B_FLAT,ZZ&evil=1`)))
-      .toBe(`instrumentIds=${A}&transpositions=B_FLAT`);
+    expect(apiQueryFromParams(new URLSearchParams(`instrumentIds=${A},x&transpositions=B_FLAT,ZZ&evil=1`))).toBe(
+      `instrumentIds=${A}&transpositions=B_FLAT`
+    );
   });
 
   it("leaves empty filters out", () => {
@@ -61,9 +65,12 @@ describe("sharePath", () => {
     expect(sharePath(["files", A], none)).toBe(`files/${A}?download=false`);
     expect(sharePath(["files", A, "preview"], none)).toBe(`files/${A}/preview`);
     expect(sharePath(["versions", A, "zip"], none)).toBe(`versions/${A}/zip`);
-    expect(sharePath(["versions", A, "parts", "zip"], new URLSearchParams(`instrumentIds=${B}`)))
-      .toBe(`versions/${A}/parts/zip?instrumentIds=${B}`);
-    expect(sharePath(["parts", "zip"], new URLSearchParams("transpositions=E_FLAT"))).toBe("parts/zip?transpositions=E_FLAT");
+    expect(sharePath(["versions", A, "parts", "zip"], new URLSearchParams(`instrumentIds=${B}`))).toBe(
+      `versions/${A}/parts/zip?instrumentIds=${B}`
+    );
+    expect(sharePath(["parts", "zip"], new URLSearchParams("transpositions=E_FLAT"))).toBe(
+      "parts/zip?transpositions=E_FLAT"
+    );
   });
 
   it("refuses anything else", () => {

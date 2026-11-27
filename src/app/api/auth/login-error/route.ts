@@ -8,7 +8,12 @@ const RETRYABLE_ERRORS = new Set(["state_mismatch"]);
 /**
  * What Keycloak answers a silent login (`prompt=none`) when the user has no session it can use without showing a page.
  */
-const SILENT_MISSES = new Set(["login_required", "interaction_required", "consent_required", "account_selection_required"]);
+const SILENT_MISSES = new Set([
+  "login_required",
+  "interaction_required",
+  "consent_required",
+  "account_selection_required",
+]);
 
 /**
  * Where Better Auth sends failed sign-ins. A silent login that fails goes quietly back to the page, which offers the

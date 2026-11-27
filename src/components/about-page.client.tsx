@@ -31,101 +31,94 @@ const contributorData = [
   {
     name: "Alexander Nilsson",
     nickName: "Minnet",
-    image: "https://lh3.googleusercontent.com/a-/ALV-UjValcmsFsvTq4pj9PtCJ2xgSmmo0Cg58_47JeygCwq84CzEiGg=s480-p-k-rw-no",
+    image:
+      "https://lh3.googleusercontent.com/a-/ALV-UjValcmsFsvTq4pj9PtCJ2xgSmmo0Cg58_47JeygCwq84CzEiGg=s480-p-k-rw-no",
   },
   {
     name: "Emil Reinfeldt",
     nickName: "Ministern",
     image: "https://gravatar.com/avatar/ea11d8104bc579a900cdd80be8457a8c47c3fd4e87de9eb02bf0a35666c6ddf3?s=200",
-  }
+  },
 ];
 
 export function AboutPage({ feedbackEmail }: { feedbackEmail: string }) {
   const t = useTranslations("About");
 
   const isClient = useIsClient();
-  const contributors = useMemo(
-    () => [...contributorData].sort((a, b) => fnv1a32(a.name) - fnv1a32(b.name)),
-    [],
-  );
+  const contributors = useMemo(() => [...contributorData].sort((a, b) => fnv1a32(a.name) - fnv1a32(b.name)), []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-var(--header-height))] py-12 px-4">
+    <div className="flex min-h-[calc(100vh-var(--header-height))] flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-3xl space-y-16 text-center">
-
         <section className="space-y-4">
-          <div
-            className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-link mb-6">
+          <div className="bg-primary/10 text-link mx-auto mb-6 flex size-16 items-center justify-center rounded-full">
             <Drama className="size-10" />
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-            {t("heading")}
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            {t("description")}
-          </p>
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">{t("heading")}</h1>
+          <p className="text-muted-foreground mx-auto max-w-2xl text-xl">{t("description")}</p>
         </section>
 
         <section className="space-y-8">
-          <h2 className="text-2xl font-bold uppercase tracking-widest text-link/70">
-            {t("behindTheScenes")}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left min-h-25">
-            {isClient && contributors.map((person) => (
-              <Card key={person.name}
-                    className="overflow-hidden border-none bg-sidebar/50 backdrop-blur-sm transition-all hover:bg-sidebar group">
-                <CardContent className="p-6 flex items-center gap-5">
-                  <Avatar
-                    className="size-16 border-2 border-primary/20 transition-transform group-hover:scale-110">
-                    <AvatarImage src={person.image} alt={person.name} className="object-cover" />
-                    <AvatarFallback
-                      className="bg-linear-to-br from-primary/20 to-primary/5 text-link">
-                      <User className="size-8 opacity-40" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-1">
-                    <div className="flex flex-col">
-                      {person.nickName && (
-                        <span
-                          className="text-xs font-black uppercase text-link tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
-                                                    {person.nickName}
-                                                </span>
-                      )}
-                      <span className="text-lg font-semibold leading-tight">
-                                                {person.name}
-                                            </span>
+          <h2 className="text-link/70 text-2xl font-bold tracking-widest uppercase">{t("behindTheScenes")}</h2>
+          <div className="grid min-h-25 grid-cols-1 gap-6 text-left sm:grid-cols-2">
+            {isClient &&
+              contributors.map((person) => (
+                <Card
+                  key={person.name}
+                  className="bg-sidebar/50 hover:bg-sidebar group overflow-hidden border-none backdrop-blur-sm transition-all"
+                >
+                  <CardContent className="flex items-center gap-5 p-6">
+                    <Avatar className="border-primary/20 size-16 border-2 transition-transform group-hover:scale-110">
+                      <AvatarImage
+                        src={person.image}
+                        alt={person.name}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="from-primary/20 to-primary/5 text-link bg-linear-to-br">
+                        <User className="size-8 opacity-40" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="space-y-1">
+                      <div className="flex flex-col">
+                        {person.nickName && (
+                          <span className="text-link text-xs font-black tracking-widest uppercase opacity-70 transition-opacity group-hover:opacity-100">
+                            {person.nickName}
+                          </span>
+                        )}
+                        <span className="text-lg leading-tight font-semibold">{person.name}</span>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
           </div>
         </section>
 
-        <section
-          className="relative overflow-hidden rounded-3xl bg-primary px-8 py-10 text-primary-foreground shadow-xl">
+        <section className="bg-primary text-primary-foreground relative overflow-hidden rounded-3xl px-8 py-10 shadow-xl">
           <div className="space-y-4">
-            <div
-              className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary-foreground/20">
+            <div className="bg-primary-foreground/20 mx-auto flex size-12 items-center justify-center rounded-full">
               <Mail className="size-6" />
             </div>
             <h2 className="text-2xl font-bold">{t("feedback")}</h2>
-            <p className="max-w-md mx-auto opacity-90" suppressHydrationWarning>
+            <p
+              className="mx-auto max-w-md opacity-90"
+              suppressHydrationWarning
+            >
               {t("feedbackDescription", { email: feedbackEmail })}
             </p>
             {isClient ? (
               <a
                 href={`mailto:${feedbackEmail}`}
-                className="inline-flex h-10 items-center justify-center rounded-full bg-primary-foreground px-6 text-sm font-medium text-link transition-colors hover:bg-primary-foreground/90"
+                className="bg-primary-foreground text-link hover:bg-primary-foreground/90 inline-flex h-10 items-center justify-center rounded-full px-6 text-sm font-medium transition-colors"
               >
                 {t("feedbackAction")}
               </a>
             ) : (
-              <div className="h-10 w-32 mx-auto bg-primary-foreground/20 animate-pulse rounded-full" />
+              <div className="bg-primary-foreground/20 mx-auto h-10 w-32 animate-pulse rounded-full" />
             )}
           </div>
-          <div className="absolute -right-10 -top-10 size-40 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -left-10 -bottom-10 size-40 rounded-full bg-black/10 blur-3xl" />
+          <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 size-40 rounded-full bg-black/10 blur-3xl" />
         </section>
       </div>
     </div>

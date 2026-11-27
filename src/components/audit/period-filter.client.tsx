@@ -69,7 +69,7 @@ export function PeriodFilter({
   return (
     <Popover
       open={open}
-      onOpenChange={next => {
+      onOpenChange={(next) => {
         setOpen(next);
         setPickingEnd(false);
       }}
@@ -102,7 +102,7 @@ export function PeriodFilter({
         align="start"
       >
         <p
-          className="w-0 min-w-full px-3 pt-3 text-xs text-muted-foreground"
+          className="text-muted-foreground w-0 min-w-full px-3 pt-3 text-xs"
           aria-live="polite"
         >
           {choosingEnd ? t("Audit.pickEnd") : t("Audit.pickStart")}

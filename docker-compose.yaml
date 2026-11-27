@@ -22,7 +22,7 @@ services:
       - "analytics.fgv.local.nu:host-gateway"
     restart: always
     healthcheck:
-      test: [ "CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:3000/api/auth/ok" ]
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:3000/api/auth/ok"]
       interval: 10s
       timeout: 5s
       retries: 10

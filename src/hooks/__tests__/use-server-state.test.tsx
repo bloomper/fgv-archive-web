@@ -17,10 +17,9 @@ describe("useServerState", () => {
 
   it("tells copies apart by their key", () => {
     const key = (ids: string[]) => ids.join();
-    const {
-      result,
-      rerender,
-    } = renderHook(({ value }) => useServerState(value, key), { initialProps: { value: ["a"] } });
+    const { result, rerender } = renderHook(({ value }) => useServerState(value, key), {
+      initialProps: { value: ["a"] },
+    });
 
     act(() => result.current[1](["a", "b"]));
     rerender({ value: ["a"] });

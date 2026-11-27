@@ -34,14 +34,23 @@ export function YearBrowser({ years, hrefPrefix }: Props) {
     <div className="space-y-2">
       {decades.length > 1 && (
         <ul className="flex flex-wrap gap-1.5">
-          {decades.map(decade => (
+          {decades.map((decade) => (
             <li key={decade}>
-              <button type="button" aria-expanded={open === decade} aria-controls={`${id}-years`}
-                      onClick={() => setOpen(open === decade ? null : decade)}
-                      className={cn("inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-sm tabular-nums transition-colors focus-visible:ring-2 focus-visible:ring-ring",
-                        open === decade ? "border-primary bg-primary text-primary-foreground" : "hover:bg-accent")}>
+              <button
+                type="button"
+                aria-expanded={open === decade}
+                aria-controls={`${id}-years`}
+                onClick={() => setOpen(open === decade ? null : decade)}
+                className={cn(
+                  "focus-visible:ring-ring inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-sm tabular-nums transition-colors focus-visible:ring-2",
+                  open === decade ? "border-primary bg-primary text-primary-foreground" : "hover:bg-accent"
+                )}
+              >
                 {t("decade", { decade })}
-                <ChevronDown className={cn("size-3.5 transition-transform", open === decade && "rotate-180")} aria-hidden />
+                <ChevronDown
+                  className={cn("size-3.5 transition-transform", open === decade && "rotate-180")}
+                  aria-hidden
+                />
               </button>
             </li>
           ))}
@@ -49,14 +58,22 @@ export function YearBrowser({ years, hrefPrefix }: Props) {
       )}
       <div id={`${id}-years`}>
         {shown !== null && (
-          <ul className="flex flex-wrap gap-1.5" aria-label={t("yearsOf", { decade: shown })}>
-            {sorted.filter(year => decadeOf(year) === shown).map(year => (
-              <li key={year}>
-                <Link href={`${hrefPrefix}${year}`} className="rounded-md border px-2.5 py-1 text-sm tabular-nums hover:bg-accent">
-                  {year}
-                </Link>
-              </li>
-            ))}
+          <ul
+            className="flex flex-wrap gap-1.5"
+            aria-label={t("yearsOf", { decade: shown })}
+          >
+            {sorted
+              .filter((year) => decadeOf(year) === shown)
+              .map((year) => (
+                <li key={year}>
+                  <Link
+                    href={`${hrefPrefix}${year}`}
+                    className="hover:bg-accent rounded-md border px-2.5 py-1 text-sm tabular-nums"
+                  >
+                    {year}
+                  </Link>
+                </li>
+              ))}
           </ul>
         )}
       </div>

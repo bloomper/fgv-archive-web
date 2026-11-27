@@ -209,10 +209,12 @@ export const getFileVersion = async (id: string) => (await runQuery(FileVersionQ
 export const search = async (q: string, parts: PartFilter | null, key: KeyInput | null) =>
   runQuery(SearchQuery, { q, parts, key });
 /** The document kinds in order; the retired ones too when asked. */
-export const getDocumentKinds = cache(async (includeRetired: boolean) =>
-  (await runQuery(DocumentKindsQuery, { includeRetired }))?.documentKinds ?? []);
+export const getDocumentKinds = cache(
+  async (includeRetired: boolean) => (await runQuery(DocumentKindsQuery, { includeRetired }))?.documentKinds ?? []
+);
 /** The documents of a kind across every spex, by title, and FGV's own. */
-export const getKindDocuments = async (kindId: string) => (await runQuery(KindDocumentsQuery, { kindId }))?.documents ?? [];
+export const getKindDocuments = async (kindId: string) =>
+  (await runQuery(KindDocumentsQuery, { kindId }))?.documents ?? [];
 export const getInstruments = cache(async () => (await runQuery(InstrumentsQuery, {}))?.instruments ?? []);
 export const getFileRoles = cache(async () => (await runQuery(FileRolesQuery, {}))?.fileRoles ?? []);
 export const getMissing = async (categoryId: string | null) => runQuery(MissingQuery, { categoryId });

@@ -3,9 +3,24 @@ import { apiFetch } from "@/lib/api.server";
 import { crossSite, FILE_CSP, sameOrigin } from "@/lib/http/proxy.server";
 
 const UPLOAD_ID = /^[0-9a-f-]{36}$/;
-const TUS_REQUEST_HEADERS = ["tus-resumable", "upload-length", "upload-metadata", "upload-offset", "content-type", "content-length"];
-const TUS_RESPONSE_HEADERS = ["tus-resumable", "tus-version", "tus-extension", "tus-max-size", "upload-offset",
-  "upload-length", "location", "cache-control"];
+const TUS_REQUEST_HEADERS = [
+  "tus-resumable",
+  "upload-length",
+  "upload-metadata",
+  "upload-offset",
+  "content-type",
+  "content-length",
+];
+const TUS_RESPONSE_HEADERS = [
+  "tus-resumable",
+  "tus-version",
+  "tus-extension",
+  "tus-max-size",
+  "upload-offset",
+  "upload-length",
+  "location",
+  "cache-control",
+];
 
 type Params = { params: Promise<{ path?: string[] }> };
 

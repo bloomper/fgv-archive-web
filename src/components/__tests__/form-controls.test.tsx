@@ -5,15 +5,31 @@ import { FormValidation } from "@/components/form-validation.client";
 import { DatePicker } from "@/components/date-picker.client";
 
 describe("FormValidation", () => {
-  const form = () => render(
-    <form>
-      <FormValidation />
-      <input aria-label="name" required />
-      <input aria-label="code" pattern="[a-z]+" title="a-z" defaultValue="A1" />
-      <input aria-label="email" type="email" defaultValue="nej" />
-      <input aria-label="own" ref={input => input?.setCustomValidity("Egen")} />
-    </form>,
-  );
+  const form = () =>
+    render(
+      <form>
+        <FormValidation />
+        <input
+          aria-label="name"
+          required
+        />
+        <input
+          aria-label="code"
+          pattern="[a-z]+"
+          title="a-z"
+          defaultValue="A1"
+        />
+        <input
+          aria-label="email"
+          type="email"
+          defaultValue="nej"
+        />
+        <input
+          aria-label="own"
+          ref={(input) => input?.setCustomValidity("Egen")}
+        />
+      </form>
+    );
 
   it("replaces the browser's messages with the app's", () => {
     form();
@@ -44,7 +60,15 @@ describe("FormValidation", () => {
 
 describe("DatePicker", () => {
   it("shows the date in the app's language and submits it as an ISO date", async () => {
-    render(<form aria-label="form"><DatePicker id="d" name="day" defaultValue="1975-02-14" /></form>);
+    render(
+      <form aria-label="form">
+        <DatePicker
+          id="d"
+          name="day"
+          defaultValue="1975-02-14"
+        />
+      </form>
+    );
 
     expect(screen.getByRole("button", { name: /14 februari 1975/ })).toBeInTheDocument();
     expect(new FormData(screen.getByRole<HTMLFormElement>("form", { name: "form" })).get("day")).toBe("1975-02-14");
@@ -63,7 +87,14 @@ describe("DatePicker", () => {
   });
 
   it("blocks an empty required date and goes back to the default on reset", async () => {
-    render(<form aria-label="form"><DatePicker name="day" required /></form>);
+    render(
+      <form aria-label="form">
+        <DatePicker
+          name="day"
+          required
+        />
+      </form>
+    );
     const form = screen.getByRole<HTMLFormElement>("form", { name: "form" });
 
     expect(form.checkValidity()).toBe(false);

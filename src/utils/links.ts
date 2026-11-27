@@ -52,7 +52,8 @@ export const versionZipHref = (id: string, place: Place = {}) => `${apiBase(plac
 export const versionPartsZipHref = (id: string, query: string, place: Place = {}) =>
   `${apiBase(place)}/versions/${id}/parts/zip${query ? `?${query}` : ""}`;
 export const spexPartsZipHref = (id: string, query: string) => `/api/spex/${id}/parts/zip${query ? `?${query}` : ""}`;
-export const sharePartsZipHref = (token: string, query: string) => `/api/share/${token}/parts/zip${query ? `?${query}` : ""}`;
+export const sharePartsZipHref = (token: string, query: string) =>
+  `/api/share/${token}/parts/zip${query ? `?${query}` : ""}`;
 
 export const isPdf = (file: { contentType: string }) => file.contentType === "application/pdf";
 
@@ -60,7 +61,7 @@ export const isPdf = (file: { contentType: string }) => file.contentType === "ap
  * A spex as "Title year", e.g. "Ali Baba 2028".
  */
 export function spexName(spex: { title?: string | null; year?: number | null } | null | undefined): string {
-  return [spex?.title, spex?.year].filter(value => value !== null && value !== undefined && value !== "").join(" ");
+  return [spex?.title, spex?.year].filter((value) => value !== null && value !== undefined && value !== "").join(" ");
 }
 
 /**

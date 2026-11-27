@@ -28,16 +28,25 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(mocks.params),
 }));
 vi.mock("next/link", () => ({
-  default: ({ children, href, ...rest }: { children?: ReactNode; href: string }) => <a href={href} {...rest}>{children}</a>,
+  default: ({ children, href, ...rest }: { children?: ReactNode; href: string }) => (
+    <a
+      href={href}
+      {...rest}
+    >
+      {children}
+    </a>
+  ),
 }));
 vi.mock("next/script", () => ({ default: (props: { src: string }) => <script data-src={props.src} /> }));
 vi.mock("next/server", () => ({ connection: async () => undefined }));
 vi.mock("@bloomper/fgv-web-ui/hooks/use-is-client", () => ({ useIsClient: () => true }));
 vi.mock("@/components/nav-user.client", () => ({ NavUser: () => <span>nav-user</span> }));
-vi.mock("@bloomper/fgv-web-ui/shell/app-switcher", () => ({ AppSwitcher: ({ title }: { title: string }) => <span>{title}</span> }));
+vi.mock("@bloomper/fgv-web-ui/shell/app-switcher", () => ({
+  AppSwitcher: ({ title }: { title: string }) => <span>{title}</span>,
+}));
 // The language menu is tested in @bloomper/fgv-web-ui, with the shell provider it needs
-vi.mock("@bloomper/fgv-web-ui/shell/toggles", async importOriginal => ({
-  ...await importOriginal<typeof import("@bloomper/fgv-web-ui/shell/toggles")>(),
+vi.mock("@bloomper/fgv-web-ui/shell/toggles", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@bloomper/fgv-web-ui/shell/toggles")>()),
   LanguageToggle: () => null,
 }));
 
@@ -53,9 +62,17 @@ describe("the shell", () => {
   });
 
   it("shows editors and admins more pages than users", () => {
-    const sidebar = (roles: ("USER" | "EDITOR" | "ADMIN")[]) => render(
-      <TooltipProvider><SidebarProvider><AppSidebar roles={roles} accountUrl="https://auth/account" /></SidebarProvider></TooltipProvider>,
-    );
+    const sidebar = (roles: ("USER" | "EDITOR" | "ADMIN")[]) =>
+      render(
+        <TooltipProvider>
+          <SidebarProvider>
+            <AppSidebar
+              roles={roles}
+              accountUrl="https://auth/account"
+            />
+          </SidebarProvider>
+        </TooltipProvider>
+      );
 
     const user = sidebar(["USER"]);
     const userLinks = screen.getAllByRole("link").length;
@@ -70,25 +87,43 @@ describe("the shell", () => {
   it("groups the document kinds under one entry, alphabetically, marking the kind on its page", () => {
     mocks.pathname = "/documents/k2";
     render(
-      <TooltipProvider><SidebarProvider>
-        <AppSidebar roles={["USER"]} accountUrl="https://auth/account" documentKinds={[
-          { id: "k3", name: "Övrigt", nameSv: "Övrigt", nameEn: "Other", retired: false, documentCount: 1 },
-          { id: "k2", name: "Program", nameSv: "Program", nameEn: "Programme", retired: false, documentCount: 1 },
-          { id: "k1", name: "Manus", nameSv: "Manus", nameEn: "Manuscript", retired: false, documentCount: 2 },
-        ]} />
-      </SidebarProvider></TooltipProvider>,
+      <TooltipProvider>
+        <SidebarProvider>
+          <AppSidebar
+            roles={["USER"]}
+            accountUrl="https://auth/account"
+            documentKinds={[
+              { id: "k3", name: "Övrigt", nameSv: "Övrigt", nameEn: "Other", retired: false, documentCount: 1 },
+              { id: "k2", name: "Program", nameSv: "Program", nameEn: "Programme", retired: false, documentCount: 1 },
+              { id: "k1", name: "Manus", nameSv: "Manus", nameEn: "Manuscript", retired: false, documentCount: 2 },
+            ]}
+          />
+        </SidebarProvider>
+      </TooltipProvider>
     );
     expect(screen.queryByRole("link", { name: "Nav.documents" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Nav.documents" })).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("link", { name: "Manus" })).toHaveAttribute("href", "/documents/k1");
     expect(screen.getByRole("link", { name: "Program" })).toHaveAttribute("data-active", "true");
     // In alphabetical order, Ö last in Swedish
-    const kinds = screen.getAllByRole("link").map(link => link.textContent).filter(name => ["Manus", "Program", "Övrigt"].includes(name ?? ""));
+    const kinds = screen
+      .getAllByRole("link")
+      .map((link) => link.textContent)
+      .filter((name) => ["Manus", "Program", "Övrigt"].includes(name ?? ""));
     expect(kinds).toEqual(["Manus", "Program", "Övrigt"]);
   });
 
   it("has a header with the menu button, search and the command palette", async () => {
-    render(<TooltipProvider><SidebarProvider><SiteHeader applications={[]} roles={["USER"]} /></SidebarProvider></TooltipProvider>);
+    render(
+      <TooltipProvider>
+        <SidebarProvider>
+          <SiteHeader
+            applications={[]}
+            roles={["USER"]}
+          />
+        </SidebarProvider>
+      </TooltipProvider>
+    );
     await userEvent.click(screen.getByRole("button", { name: "showMenu" }));
     expect(screen.getByRole("link", { name: "title" })).toHaveAttribute("href", "/search");
     expect(screen.getByRole("button", { name: "CommandPalette.open" })).toBeInTheDocument();
@@ -121,12 +156,32 @@ describe("the shell", () => {
         <AboutPage feedbackEmail="feedback@example.org" />
         <SupportPage supportEmail="support@example.org" />
         <NavSecondary items={[{ title: "Om", url: "/about", icon: Info }]} />
-        <LinkTabs label="Vy" items={[{ href: "/a", label: "A", active: true }, { href: "/b", label: "B", active: false }]} />
-        <LinkSegments label="Typ" items={[{ href: "/c", label: "C", active: false }]} />
-        <DataEmpty title="Inget" description="Här finns inget" />
-        <HomeSection id="s" title="Senaste" more={{ href: "/spex", label: "Alla" }}>innehåll</HomeSection>
-        <Logo /><LogoHome /><LogoText />
-      </SidebarProvider>,
+        <LinkTabs
+          label="Vy"
+          items={[
+            { href: "/a", label: "A", active: true },
+            { href: "/b", label: "B", active: false },
+          ]}
+        />
+        <LinkSegments
+          label="Typ"
+          items={[{ href: "/c", label: "C", active: false }]}
+        />
+        <DataEmpty
+          title="Inget"
+          description="Här finns inget"
+        />
+        <HomeSection
+          id="s"
+          title="Senaste"
+          more={{ href: "/spex", label: "Alla" }}
+        >
+          innehåll
+        </HomeSection>
+        <Logo />
+        <LogoHome />
+        <LogoText />
+      </SidebarProvider>
     );
     expect(screen.getByRole("link", { name: "A" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Alla" })).toHaveAttribute("href", "/spex");
@@ -136,7 +191,7 @@ describe("the shell", () => {
     expect(await Umami()).toBeNull();
     vi.stubEnv("UMAMI_URL", "http://umami");
     vi.stubEnv("UMAMI_WEBSITE_ID", "w1");
-    render(await Umami() as React.ReactElement);
+    render((await Umami()) as React.ReactElement);
     expect(document.querySelector("script[data-src='/stats/script.js']")).not.toBeNull();
   });
 });

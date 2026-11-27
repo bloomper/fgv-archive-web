@@ -32,52 +32,113 @@ export default async function VersionEditPage({ params }: { params: Promise<{ id
     const t = await getTranslations("VersionEdit");
     const [roles, all, me] = await Promise.all([getFileRoles(), getInstruments(), getMe()]);
     // Instruments Spexipedia retired are not offered anew, but stay where the version has them
-    const used = new Set([...version.files.flatMap(file => file.instruments.map(instrument => instrument.id)),
-      ...version.instrumentation.map(entry => entry.instrument.id)]);
-    const instruments = all.filter(instrument => !instrument.retired || used.has(instrument.id));
+    const used = new Set([
+      ...version.files.flatMap((file) => file.instruments.map((instrument) => instrument.id)),
+      ...version.instrumentation.map((entry) => entry.instrument.id),
+    ]);
+    const instruments = all.filter((instrument) => !instrument.retired || used.has(instrument.id));
     const manuscript = version.manuscript;
     const number = version.arrangement?.number;
     const spex = manuscript?.spex ?? number?.spex;
     const base = number?.spex.original ?? spex;
     const family = manuscript
-      ? manuscript.spex ? [manuscript.spex, ...manuscript.spex.revivals] : []
-      : number ? [base!, ...(number.spex.original ? [number.spex] : number.spex.revivals)] : [];
+      ? manuscript.spex
+        ? [manuscript.spex, ...manuscript.spex.revivals]
+        : []
+      : number
+        ? [base!, ...(number.spex.original ? [number.spex] : number.spex.revivals)]
+        : [];
     const title = manuscript?.title ?? number?.title ?? "";
     const parentHref = manuscript ? manuscriptHref(manuscript.id) : arrangementHref(version.parentId);
     const maxShareLinkMonths = me?.settings.maxShareLinkMonths ?? 24;
 
     return (
-      <Page variant="content" className="max-w-5xl">
+      <Page
+        variant="content"
+        className="max-w-5xl"
+      >
         <PageHeader
           title={t("title", { label: version.label })}
-          eyebrow={<>
-            <Link href={parentHref} className="text-link hover:text-link/80">← {title}</Link>
-            <span> · {spexName(spex)}</span>
-          </>}
+          eyebrow={
+            <>
+              <Link
+                href={parentHref}
+                className="text-link hover:text-link/80"
+              >
+                ← {title}
+              </Link>
+              <span> · {spexName(spex)}</span>
+            </>
+          }
           badges={<VersionBadges version={version} />}
         />
         <div className="flex flex-wrap items-center gap-2">
-          <VersionState id={version.id} published={version.published} recommended={version.recommended}
-                        trashed={version.trashed} admin={isAdmin(authz.roles)} parentHref={parentHref} />
-          <ShareLinkButton input={{ versionIds: [version.id] }} defaultName={`${title}, ${version.label}`}
-                           maxMonths={maxShareLinkMonths} label={t("shareVersion")} />
-          <Link href={versionHref(version)} className="px-2 text-sm text-link hover:text-link/80">{t("view")}</Link>
+          <VersionState
+            id={version.id}
+            published={version.published}
+            recommended={version.recommended}
+            trashed={version.trashed}
+            admin={isAdmin(authz.roles)}
+            parentHref={parentHref}
+          />
+          <ShareLinkButton
+            input={{ versionIds: [version.id] }}
+            defaultName={`${title}, ${version.label}`}
+            maxMonths={maxShareLinkMonths}
+            label={t("shareVersion")}
+          />
+          <Link
+            href={versionHref(version)}
+            className="text-link hover:text-link/80 px-2 text-sm"
+          >
+            {t("view")}
+          </Link>
         </div>
 
-        <section aria-labelledby="files" className="space-y-3">
-          <h2 id="files" className="text-lg font-semibold">{t("files")}</h2>
-          <FileManager versionId={version.id} files={version.files} roles={roles} instruments={instruments}
-                       maxUploadMb={me?.settings.maxUploadMb ?? 500} maxShareLinkMonths={maxShareLinkMonths}
-                       shareName={`${title}, ${version.label}`} />
+        <section
+          aria-labelledby="files"
+          className="space-y-3"
+        >
+          <h2
+            id="files"
+            className="text-lg font-semibold"
+          >
+            {t("files")}
+          </h2>
+          <FileManager
+            versionId={version.id}
+            files={version.files}
+            roles={roles}
+            instruments={instruments}
+            maxUploadMb={me?.settings.maxUploadMb ?? 500}
+            maxShareLinkMonths={maxShareLinkMonths}
+            shareName={`${title}, ${version.label}`}
+          />
         </section>
 
-        <section aria-labelledby="fields" className="space-y-3">
-          <h2 id="fields" className="text-lg font-semibold">{t("fields")}</h2>
-          <VersionForm key={version.lastModifiedAt ?? version.createdAt} version={version} spex={family}
-                       instruments={instruments} />
+        <section
+          aria-labelledby="fields"
+          className="space-y-3"
+        >
+          <h2
+            id="fields"
+            className="text-lg font-semibold"
+          >
+            {t("fields")}
+          </h2>
+          <VersionForm
+            key={version.lastModifiedAt ?? version.createdAt}
+            version={version}
+            spex={family}
+            instruments={instruments}
+          />
         </section>
 
-        <RecordHistory entityId={version.id} path="/manage/audit" linkOf={auditLink} />
+        <RecordHistory
+          entityId={version.id}
+          path="/manage/audit"
+          linkOf={auditLink}
+        />
       </Page>
     );
   });

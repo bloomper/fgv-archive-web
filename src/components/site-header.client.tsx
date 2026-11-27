@@ -11,7 +11,11 @@ import type { DocumentKindBrief } from "@/utils/document-kinds";
 /**
  * The FGV header with Spexarkiv's own controls: search and the command palette.
  */
-export function SiteHeader({ applications, roles, documentKinds = [] }: {
+export function SiteHeader({
+  applications,
+  roles,
+  documentKinds = [],
+}: {
   applications: Application[];
   roles: Role[];
   documentKinds?: DocumentKindBrief[];
@@ -22,7 +26,10 @@ export function SiteHeader({ applications, roles, documentKinds = [] }: {
       actions={
         <>
           <HeaderSearch />
-          <CommandPalette roles={roles} documentKinds={documentKinds} />
+          <CommandPalette
+            roles={roles}
+            documentKinds={documentKinds}
+          />
           <LanguageToggle />
           <ModeToggle />
         </>

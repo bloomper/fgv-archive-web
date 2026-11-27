@@ -9,15 +9,18 @@ import { INSTRUMENT_GROUPS, isPitch } from "@/utils/music";
 import { withPolicyAction } from "@/utils/route.server";
 import { Policies } from "@/utils/policy.server";
 
-const asAdmin = <T, >(work: () => Promise<T>) => withPolicyAction(Policies.admin.requireAdmin, () => toActionResult(async () => {
-  const result = await work();
+const asAdmin = <T>(work: () => Promise<T>) =>
+  withPolicyAction(Policies.admin.requireAdmin, () =>
+    toActionResult(async () => {
+      const result = await work();
 
-  revalidatePath("/", "layout");
-  return result;
-}));
+      revalidatePath("/", "layout");
+      return result;
+    })
+  );
 
 function requireId(...ids: unknown[]) {
-  if (!ids.every(id => typeof id === "string" && ID.test(id))) {
+  if (!ids.every((id) => typeof id === "string" && ID.test(id))) {
     throw new Error("Invalid id");
   }
 }
@@ -43,14 +46,19 @@ function instrument(input: InstrumentInput): InstrumentInput {
   if (!(INSTRUMENT_GROUPS as readonly string[]).includes(input.group)) {
     throw new Error("Invalid group");
   }
-  if (input.defaultTransposition && (!isPitch(input.defaultTransposition.pitch)
-    || ![-1, 0, 1].includes(input.defaultTransposition.octave ?? 0))) {
+  if (
+    input.defaultTransposition &&
+    (!isPitch(input.defaultTransposition.pitch) || ![-1, 0, 1].includes(input.defaultTransposition.octave ?? 0))
+  ) {
     throw new Error("Invalid transposition");
   }
   return {
     ...names(input),
     group: input.group,
-    abbreviations: (input.abbreviations ?? []).map(value => value.trim()).filter(Boolean).slice(0, 50),
+    abbreviations: (input.abbreviations ?? [])
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .slice(0, 50),
     defaultTransposition: input.defaultTransposition ?? null,
   };
 }
@@ -140,9 +148,9 @@ export async function deleteFileRoleAction(id: string) {
 }
 
 function documentKind(input: DocumentKindInput): DocumentKindInput {
-  const aliases = [...new Set((input.aliases ?? []).map(value => value.trim()).filter(Boolean))];
+  const aliases = [...new Set((input.aliases ?? []).map((value) => value.trim()).filter(Boolean))];
 
-  if (aliases.length > 100 || aliases.some(alias => alias.length > 100)) {
+  if (aliases.length > 100 || aliases.some((alias) => alias.length > 100)) {
     throw new Error("Invalid aliases");
   }
   return { ...names(input), aliases, book: input.book ?? undefined };

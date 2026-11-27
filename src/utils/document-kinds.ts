@@ -34,7 +34,7 @@ export type DocumentKindBrief = {
 export function menuKinds<T extends DocumentKindBrief>(kinds: T[], roles: Role[]): T[] {
   const editor = isEditor(roles);
 
-  return kinds.filter(kind => kind.documentCount > 0 || (editor && !kind.retired));
+  return kinds.filter((kind) => kind.documentCount > 0 || (editor && !kind.retired));
 }
 
 // Kinds are admins' data, so an icon is only a guess from the names; anything else is a plain document
@@ -53,22 +53,31 @@ const ICONS: [RegExp, LucideIcon][] = [
 ];
 
 export function kindIcon(kind: { nameSv: string; nameEn: string; aliases?: string[] }): LucideIcon {
-  const names = [kind.nameSv, kind.nameEn, ...(kind.aliases ?? [])].map(name => name.trim().toLowerCase());
+  const names = [kind.nameSv, kind.nameEn, ...(kind.aliases ?? [])].map((name) => name.trim().toLowerCase());
 
-  return ICONS.find(([pattern]) => names.some(name => pattern.test(name)))?.[1] ?? FileText;
+  return ICONS.find(([pattern]) => names.some((name) => pattern.test(name)))?.[1] ?? FileText;
 }
 
 /**
  * The aliases an admin typed, one per line: trimmed, without empty lines or repeats.
  */
 export function parseAliases(text: string): string[] {
-  return [...new Set(text.split(/\r?\n/).map(line => line.trim()).filter(Boolean))];
+  return [
+    ...new Set(
+      text
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+    ),
+  ];
 }
 
 /**
  * Documents grouped by spex, newest spex first, then by title; FGV's own, of no spex, last.
  */
-export function groupBySpex<T extends { spex?: { id: string; title?: string | null; year?: number | null } | null }>(documents: T[]) {
+export function groupBySpex<T extends { spex?: { id: string; title?: string | null; year?: number | null } | null }>(
+  documents: T[]
+) {
   const groups = new Map<string, { spex: NonNullable<T["spex"]> | null; documents: T[] }>();
 
   for (const document of documents) {

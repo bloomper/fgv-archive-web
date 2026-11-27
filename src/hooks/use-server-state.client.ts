@@ -9,7 +9,7 @@ import { useState } from "react";
  * would show what it had before changes made elsewhere. `key` tells values apart (by default `Object.is`), for arrays
  * and objects that arrive as new copies with the same content.
  */
-export function useServerState<T>(value: T, key: (value: T) => unknown = value => value) {
+export function useServerState<T>(value: T, key: (value: T) => unknown = (value) => value) {
   const [state, setState] = useState(value);
   const [seen, setSeen] = useState(() => key(value));
   const current = key(value);

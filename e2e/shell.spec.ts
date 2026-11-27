@@ -4,7 +4,7 @@ test.describe("The application shell", () => {
   test("shows reading, editing and administration to an admin", async ({ page, loginAs }) => {
     await loginAs("admin");
 
-    const sidebar = page.locator("[data-slot=\"sidebar\"]:visible");
+    const sidebar = page.locator('[data-slot="sidebar"]:visible');
     await expect(sidebar.getByRole("link", { name: "Hem" })).toHaveAttribute("href", "/");
     await expect(sidebar.getByRole("link", { name: "Spex", exact: true })).toHaveAttribute("href", "/spex");
     await expect(sidebar.getByRole("button", { name: "Redigera", exact: true })).toBeVisible();
@@ -14,7 +14,7 @@ test.describe("The application shell", () => {
   test("hides editing and administration from a user", async ({ page, loginAs }) => {
     await loginAs("user");
 
-    const sidebar = page.locator("[data-slot=\"sidebar\"]:visible");
+    const sidebar = page.locator('[data-slot="sidebar"]:visible');
     await expect(sidebar.getByRole("link", { name: "Sök" })).toBeVisible();
     await expect(sidebar.getByRole("button", { name: "Redigera", exact: true })).toHaveCount(0);
     await expect(sidebar.getByRole("button", { name: "Administration", exact: true })).toHaveCount(0);
@@ -38,7 +38,10 @@ test.describe("The application shell", () => {
     await expect(page).toHaveURL(/\/search\?q=finalen$/);
   });
 
-  test("greets the user and lists the recently changed versions, without unpublished ones", async ({ page, loginAs }) => {
+  test("greets the user and lists the recently changed versions, without unpublished ones", async ({
+    page,
+    loginAs,
+  }) => {
     await loginAs("user");
 
     await expect(page.getByRole("heading", { level: 1, name: "Hej Ulla Användare!" })).toBeVisible();

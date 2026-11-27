@@ -24,16 +24,21 @@ describe("the tus upload proxy", () => {
   });
 
   it("creates an upload with only tus headers and hands back the location", async () => {
-    apiFetch.mockResolvedValue(new Response(null, {
-      status: 201,
-      headers: { "tus-resumable": "1.0.0", location: `/api/uploads/${ID}`, "set-cookie": "x=1" },
-    }));
+    apiFetch.mockResolvedValue(
+      new Response(null, {
+        status: 201,
+        headers: { "tus-resumable": "1.0.0", location: `/api/uploads/${ID}`, "set-cookie": "x=1" },
+      })
+    );
 
-    const response = await POST(request("POST", "/api/uploads", {
-      "tus-resumable": "1.0.0",
-      "upload-length": "10",
-      cookie: "session=secret",
-    }), params());
+    const response = await POST(
+      request("POST", "/api/uploads", {
+        "tus-resumable": "1.0.0",
+        "upload-length": "10",
+        cookie: "session=secret",
+      }),
+      params()
+    );
 
     const [path, init] = apiFetch.mock.calls[0];
 
@@ -51,11 +56,18 @@ describe("the tus upload proxy", () => {
   it("streams a chunk to the server's upload", async () => {
     apiFetch.mockResolvedValue(new Response(null, { status: 204, headers: { "upload-offset": "4" } }));
 
-    const response = await PATCH(request("PATCH", `/api/uploads/${ID}`, {
-        "upload-offset": "0",
-        "content-type": "application/offset+octet-stream",
-      },
-      new Uint8Array([1, 2, 3, 4])), params([ID]));
+    const response = await PATCH(
+      request(
+        "PATCH",
+        `/api/uploads/${ID}`,
+        {
+          "upload-offset": "0",
+          "content-type": "application/offset+octet-stream",
+        },
+        new Uint8Array([1, 2, 3, 4])
+      ),
+      params([ID])
+    );
 
     expect(apiFetch.mock.calls[0][0]).toBe(`/api/uploads/${ID}`);
     expect(apiFetch.mock.calls[0][1].body).toBeTruthy();
@@ -64,10 +76,16 @@ describe("the tus upload proxy", () => {
 
   it("answers HEAD without a body and lets OPTIONS through from anywhere", async () => {
     apiFetch.mockResolvedValue(new Response("ignored", { status: 200, headers: { "upload-offset": "4" } }));
-    expect(await (await HEAD(request("HEAD", `/api/uploads/${ID}`, { origin: "https://evil.test" }), params([ID]))).text()).toBe("");
+    expect(
+      await (await HEAD(request("HEAD", `/api/uploads/${ID}`, { origin: "https://evil.test" }), params([ID]))).text()
+    ).toBe("");
 
     apiFetch.mockResolvedValue(new Response(null, { status: 204, headers: { "tus-version": "1.0.0" } }));
-    expect((await OPTIONS(request("OPTIONS", "/api/uploads", { origin: "https://evil.test" }), params())).headers.get("tus-version")).toBe("1.0.0");
+    expect(
+      (await OPTIONS(request("OPTIONS", "/api/uploads", { origin: "https://evil.test" }), params())).headers.get(
+        "tus-version"
+      )
+    ).toBe("1.0.0");
   });
 
   it("refuses odd paths and changes from other sites", async () => {

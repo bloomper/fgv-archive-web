@@ -5,10 +5,16 @@ import { useState } from "react";
 import { PeriodFilter } from "@/components/audit/period-filter.client";
 
 const day = (text: string) =>
-  screen.getAllByRole("button").find(button => button.textContent === text && !button.closest("[data-outside]"))!;
+  screen.getAllByRole("button").find((button) => button.textContent === text && !button.closest("[data-outside]"))!;
 
 /** The filter with its period kept, as the change log keeps it in the address. */
-function Host({ initial, spy }: { initial: { from?: string; to?: string }; spy: (from?: string, to?: string) => void }) {
+function Host({
+  initial,
+  spy,
+}: {
+  initial: { from?: string; to?: string };
+  spy: (from?: string, to?: string) => void;
+}) {
   const [period, setPeriod] = useState(initial);
 
   return (
@@ -28,7 +34,12 @@ describe("PeriodFilter", () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
 
-    render(<Host initial={{ from: "2026-10-05" }} spy={onChange} />);
+    render(
+      <Host
+        initial={{ from: "2026-10-05" }}
+        spy={onChange}
+      />
+    );
     expect(screen.getByRole("button", { name: /Audit.period/ })).toHaveTextContent("2026-10-05 – Audit.untilNow");
 
     await user.click(screen.getByRole("button", { name: /Audit.period/ }));
@@ -50,7 +61,12 @@ describe("PeriodFilter", () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
 
-    render(<Host initial={{ from: "2026-10-05", to: "2026-10-09" }} spy={onChange} />);
+    render(
+      <Host
+        initial={{ from: "2026-10-05", to: "2026-10-09" }}
+        spy={onChange}
+      />
+    );
     await user.click(screen.getByRole("button", { name: /Audit.period/ }));
     await user.click(day("15"));
     expect(onChange).toHaveBeenLastCalledWith("2026-10-15", undefined);
@@ -64,11 +80,16 @@ describe("PeriodFilter", () => {
     const today = new Date();
     const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
 
-    render(<Host initial={{}} spy={vi.fn()} />);
+    render(
+      <Host
+        initial={{}}
+        spy={vi.fn()}
+      />
+    );
     await user.click(screen.getByRole("button", { name: /Audit.period/ }));
 
     const cell = (date: Date) =>
-      screen.getAllByRole("button").find(button => button.getAttribute("data-day") === date.toLocaleDateString())!;
+      screen.getAllByRole("button").find((button) => button.getAttribute("data-day") === date.toLocaleDateString())!;
 
     expect(cell(today)).toBeEnabled();
     // Tomorrow is in this month's grid, or the next month's, which the calendar does not go to
@@ -79,7 +100,12 @@ describe("PeriodFilter", () => {
   });
 
   it("ignores a malformed day in the address", () => {
-    render(<PeriodFilter from="2026-02-31" onChange={vi.fn()} />);
+    render(
+      <PeriodFilter
+        from="2026-02-31"
+        onChange={vi.fn()}
+      />
+    );
     expect(screen.getByRole("button", { name: /Audit.period/ })).toBeInTheDocument();
   });
 });

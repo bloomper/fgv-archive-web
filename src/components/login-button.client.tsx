@@ -14,5 +14,12 @@ export function LoginButton() {
   const params = useSearchParams();
   const here = params.size ? `${pathname}?${params}` : pathname;
 
-  return <a href={loginHref(here)} className={buttonVariants()}>{t("login")}</a>;
+  return (
+    <a
+      href={loginHref(here)}
+      className={buttonVariants()}
+    >
+      {t("login")}
+    </a>
+  );
 }

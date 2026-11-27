@@ -26,29 +26,53 @@ export function TrashActions({ kind, id, title, admin }: { kind: Kind; id: strin
   const router = useRouter();
   const dialogs = useDialogs();
   const [pending, startTransition] = useTransition();
-  const run = (work: () => Promise<ActionResult<unknown>>, done: string) => startTransition(async () => {
-    const result = await work();
+  const run = (work: () => Promise<ActionResult<unknown>>, done: string) =>
+    startTransition(async () => {
+      const result = await work();
 
-    if (result.ok) {
-      toast.success(done);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
-  });
+      if (result.ok) {
+        toast.success(done);
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    });
 
   return (
     <span className="flex gap-1">
-      <Button size="xs" variant="outline" disabled={pending} aria-label={t("restoreOf", { title })}
-              onClick={() => run(() => kind === "VERSION" ? trashVersionAction(id, false) : trashParentAction(kind, id, false), t("restored"))}>
+      <Button
+        size="xs"
+        variant="outline"
+        disabled={pending}
+        aria-label={t("restoreOf", { title })}
+        onClick={() =>
+          run(
+            () => (kind === "VERSION" ? trashVersionAction(id, false) : trashParentAction(kind, id, false)),
+            t("restored")
+          )
+        }
+      >
         <Undo2 /> {t("restore")}
       </Button>
       {admin && (
-        <Button size="xs" variant="destructive" disabled={pending} aria-label={t("deleteOf", { title })} onClick={async () => {
-          if (await dialogs.confirm({ title: t("deleteTitle", { title }), description: t("deleteText"), confirmLabel: t("delete"), destructive: true })) {
-            run(() => kind === "VERSION" ? deleteVersionAction(id) : deleteParentAction(kind, id), t("deleted"));
-          }
-        }}>
+        <Button
+          size="xs"
+          variant="destructive"
+          disabled={pending}
+          aria-label={t("deleteOf", { title })}
+          onClick={async () => {
+            if (
+              await dialogs.confirm({
+                title: t("deleteTitle", { title }),
+                description: t("deleteText"),
+                confirmLabel: t("delete"),
+                destructive: true,
+              })
+            ) {
+              run(() => (kind === "VERSION" ? deleteVersionAction(id) : deleteParentAction(kind, id)), t("deleted"));
+            }
+          }}
+        >
           <Trash2 /> {t("delete")}
         </Button>
       )}
@@ -63,20 +87,31 @@ export function EmptyTrashButton() {
   const [pending, startTransition] = useTransition();
 
   return (
-    <Button variant="destructive" disabled={pending} onClick={async () => {
-      if (await dialogs.confirm({ title: t("emptyTitle"), description: t("emptyText"), confirmLabel: t("empty"), destructive: true })) {
-        startTransition(async () => {
-          const result = await emptyTrashAction();
+    <Button
+      variant="destructive"
+      disabled={pending}
+      onClick={async () => {
+        if (
+          await dialogs.confirm({
+            title: t("emptyTitle"),
+            description: t("emptyText"),
+            confirmLabel: t("empty"),
+            destructive: true,
+          })
+        ) {
+          startTransition(async () => {
+            const result = await emptyTrashAction();
 
-          if (result.ok) {
-            toast.success(t("emptied"));
-            router.refresh();
-          } else {
-            toast.error(result.message);
-          }
-        });
-      }
-    }}>
+            if (result.ok) {
+              toast.success(t("emptied"));
+              router.refresh();
+            } else {
+              toast.error(result.message);
+            }
+          });
+        }
+      }}
+    >
       <Trash2 /> {t("empty")}
     </Button>
   );

@@ -10,12 +10,18 @@ const mocks = vi.hoisted(() => ({
   authExchange: vi.fn((init: unknown) => init),
 }));
 
-vi.mock("@/utils/auth.server", () => ({ getAccessToken: mocks.getAccessToken, getSessionContext: mocks.getSessionContext }));
+vi.mock("@/utils/auth.server", () => ({
+  getAccessToken: mocks.getAccessToken,
+  getSessionContext: mocks.getSessionContext,
+}));
 vi.mock("next-intl/server", () => ({
   getLocale: async () => "sv",
   getTranslations: async () => (key: string) => key,
 }));
-vi.mock("@urql/core", async importOriginal => ({ ...(await importOriginal<typeof import("@urql/core")>()), createClient: mocks.createClient }));
+vi.mock("@urql/core", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@urql/core")>()),
+  createClient: mocks.createClient,
+}));
 vi.mock("@urql/exchange-auth", () => ({ authExchange: mocks.authExchange }));
 vi.mock("@urql/next/rsc", () => ({ registerUrql: (make: () => unknown) => ({ getClient: make }) }));
 
@@ -45,7 +51,9 @@ describe("the GraphQL client", () => {
     vi.stubEnv("API_GRAPHQL_ENDPOINT", "http://api/graphql");
     const { getClient } = await import("@/lib/urql.server");
     const options = getClient() as unknown as Options;
-    const init = options.exchanges[1] as (utils: { appendHeaders: (o: unknown, h: Record<string, string>) => unknown }) => Promise<Auth>;
+    const init = options.exchanges[1] as (utils: {
+      appendHeaders: (o: unknown, h: Record<string, string>) => unknown;
+    }) => Promise<Auth>;
     const appendHeaders = vi.fn((operation: unknown, headers: Record<string, string>) => ({ operation, headers }));
     const auth = await init({ appendHeaders });
 
@@ -56,8 +64,16 @@ describe("the GraphQL client", () => {
     await auth.refreshAuth();
     expect(auth.willAuthError()).toBe(false);
     expect(auth.addAuthToOperation("op")).toEqual({ operation: "op", headers: { Authorization: "Bearer token-1" } });
-    expect(auth.didAuthError(new CombinedError({ graphQLErrors: [new GraphQLError("no", { extensions: { code: "UNAUTHENTICATED" } })] }))).toBe(true);
-    expect(auth.didAuthError(new CombinedError({ graphQLErrors: [new GraphQLError("no", { extensions: { code: "NOT_FOUND" } })] }))).toBe(false);
+    expect(
+      auth.didAuthError(
+        new CombinedError({ graphQLErrors: [new GraphQLError("no", { extensions: { code: "UNAUTHENTICATED" } })] })
+      )
+    ).toBe(true);
+    expect(
+      auth.didAuthError(
+        new CombinedError({ graphQLErrors: [new GraphQLError("no", { extensions: { code: "NOT_FOUND" } })] })
+      )
+    ).toBe(false);
   });
 
   it("sends the language", async () => {
@@ -65,7 +81,9 @@ describe("the GraphQL client", () => {
     const options = getClient() as unknown as Options;
 
     await options.fetch("http://api/graphql", { headers: { "content-type": "application/json" } });
-    expect(new Headers((fetchMock.mock.calls.at(-1) as unknown as [string, RequestInit])[1].headers).get("accept-language")).toBe("sv");
+    expect(
+      new Headers((fetchMock.mock.calls.at(-1) as unknown as [string, RequestInit])[1].headers).get("accept-language")
+    ).toBe("sv");
   });
 });
 
@@ -82,12 +100,18 @@ describe("the plain HTTP endpoints", () => {
 
     mocks.getAccessToken.mockResolvedValue("t");
     await apiFetch("/api/x");
-    expect(new Headers((fetchMock.mock.calls.at(-1) as unknown as [string, RequestInit])[1].headers).get("authorization")).toBe("Bearer t");
+    expect(
+      new Headers((fetchMock.mock.calls.at(-1) as unknown as [string, RequestInit])[1].headers).get("authorization")
+    ).toBe("Bearer t");
     await apiFetch("/api/share/x", {}, true);
-    expect(new Headers((fetchMock.mock.calls.at(-1) as unknown as [string, RequestInit])[1].headers).get("authorization")).toBeNull();
+    expect(
+      new Headers((fetchMock.mock.calls.at(-1) as unknown as [string, RequestInit])[1].headers).get("authorization")
+    ).toBeNull();
     mocks.getAccessToken.mockResolvedValue(null);
     await apiFetch("/api/x", { method: "POST" });
-    expect(new Headers((fetchMock.mock.calls.at(-1) as unknown as [string, RequestInit])[1].headers).get("authorization")).toBeNull();
+    expect(
+      new Headers((fetchMock.mock.calls.at(-1) as unknown as [string, RequestInit])[1].headers).get("authorization")
+    ).toBeNull();
   });
 });
 
@@ -96,8 +120,8 @@ describe("the applications", () => {
     const { getApplications } = await import("@/utils/applications.server");
 
     mocks.getSessionContext.mockResolvedValue({ accessToken: null });
-    expect((await getApplications()).map(app => app.id)).toEqual(["archive"]);
+    expect((await getApplications()).map((app) => app.id)).toEqual(["archive"]);
     mocks.getSessionContext.mockResolvedValue({ accessToken: tokenWithRoles(["USER"]) });
-    expect((await getApplications()).map(app => app.id)).toContain("archive");
+    expect((await getApplications()).map((app) => app.id)).toContain("archive");
   });
 });

@@ -3,14 +3,13 @@ import { render, screen } from "@testing-library/react";
 import { CollapseSidebarOnTablet, TABLET } from "@/components/reader/collapse-sidebar-on-tablet.client";
 import { SidebarProvider, useSidebar } from "@bloomper/fgv-web-ui/ui/sidebar";
 
-const width = (matchesTablet: boolean) => vi.stubGlobal("matchMedia", (query: string) => ({
-  matches: query === TABLET ? matchesTablet : false,
-  media: query,
-  addEventListener: () => {
-  },
-  removeEventListener: () => {
-  },
-}));
+const width = (matchesTablet: boolean) =>
+  vi.stubGlobal("matchMedia", (query: string) => ({
+    matches: query === TABLET ? matchesTablet : false,
+    media: query,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  }));
 
 function State() {
   return <span>{useSidebar().open ? "open" : "closed"}</span>;

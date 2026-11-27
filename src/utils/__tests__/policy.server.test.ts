@@ -6,7 +6,7 @@ import { tokenWithRoles } from "@/utils/__tests__/token";
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("react", async (importOriginal) => ({
   ...(await importOriginal<typeof import("react")>()),
-  cache: <T, >(fn: T) => fn,
+  cache: <T>(fn: T) => fn,
 }));
 
 function loggedIn(roles: string[]) {

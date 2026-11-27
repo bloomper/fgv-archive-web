@@ -47,14 +47,16 @@ export async function getSharedView(token: string, parts: PartFilter | null = nu
     body: JSON.stringify({ query: print(SharedViewDocument), variables: { token, parts } }),
     cache: "no-store",
   });
-  const body = await response.json() as {
+  const body = (await response.json()) as {
     data?: SharedViewQuery | null;
-    errors?: { message: string; extensions?: { classification?: string } }[]
+    errors?: { message: string; extensions?: { classification?: string } }[];
   };
 
   if (body.errors?.length) {
-    throw new GraphQLRequestError((body.errors[0].extensions?.classification ?? "INTERNAL_ERROR") as ErrorCode,
-      body.errors[0].message);
+    throw new GraphQLRequestError(
+      (body.errors[0].extensions?.classification ?? "INTERNAL_ERROR") as ErrorCode,
+      body.errors[0].message
+    );
   }
   return body.data?.sharedView ?? null;
 }
