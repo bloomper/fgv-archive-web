@@ -7,6 +7,7 @@ import { ID } from "@/utils/filters";
 import { spexHref, spexName } from "@/utils/links";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The material still to hunt down: original spex without a published manuscript, and numbers without a published
@@ -20,9 +21,8 @@ export default async function MissingPage({ searchParams }: { searchParams: Prom
     const data = await getMissing(categoryId);
 
     return (
-      <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="max-w-4xl text-sm text-muted-foreground">{t("text")}</p>
+      <Page variant="content">
+        <PageHeader title={t("title")} description={t("text")}/>
         <FilterBar label={t("filters")} values={{ category: categoryId ?? undefined }}>
           <FilterSelect name="category" label={t("category")} allLabel={t("allCategories")}
                         options={data?.categories.map(item => ({ value: item.id, label: item.name })) ?? []} />
@@ -38,7 +38,7 @@ export default async function MissingPage({ searchParams }: { searchParams: Prom
                   <Link href={spexHref(spex.id)} className="row-link">{spexName(spex)}</Link>
                   <span className="flex items-center gap-2 text-xs text-muted-foreground">
                     {spex.categoryName}
-                    <Link href={`/manage/manuscripts/new?spex=${spex.id}`} className="text-primary hover:text-primary/80">{t("add")}</Link>
+                    <Link href={`/manage/manuscripts/new?spex=${spex.id}`} className="text-link hover:text-link/80">{t("add")}</Link>
                   </span>
                 </li>
               ))}
@@ -65,7 +65,7 @@ export default async function MissingPage({ searchParams }: { searchParams: Prom
             </ul>
           </section>
         </div>
-      </div>
+      </Page>
     );
   });
 }

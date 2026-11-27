@@ -5,10 +5,13 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/navigation";
 import type { AbstractIntlMessages } from "use-intl/core";
-import { ThemeProvider } from "@/components/theme-provider.client";
-import { Toaster } from "@/components/ui/sonner.client";
+import { ThemeProvider } from "@bloomper/fgv-web-ui/shell/theme-provider";
+import { Toaster } from "@bloomper/fgv-web-ui/ui/sonner";
 import { ConsentManager } from "@/components/consent-manager.client";
 import { FormValidation } from "@/components/form-validation.client";
+import { withFgvMessages } from "@bloomper/fgv-web-ui/messages";
+import { FgvShellProvider } from "@bloomper/fgv-web-ui/shell/shell-provider";
+import { track } from "@/utils/umami";
 
 type LocaleContextValue = {
   locale: string;
@@ -41,7 +44,7 @@ export default function Provider({
   const changeLocale = useCallback(async (newLocale: string) => {
     document.cookie = `locale=${newLocale}; path=/; max-age=31536000; samesite=lax`;
 
-    const newMessages = (await import(`../../messages/${newLocale}.json`)).default;
+    const newMessages = withFgvMessages(newLocale, (await import(`../../messages/${newLocale}.json`)).default);
 
     setLocale(newLocale);
     setMessages(newMessages);
@@ -61,13 +64,15 @@ export default function Provider({
   return (
     <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Stockholm">
       <LocaleContext.Provider value={{ locale, changeLocale }}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <ConsentManager>
-            {children}
-            <Toaster />
-            <FormValidation />
-          </ConsentManager>
-        </ThemeProvider>
+        <FgvShellProvider changeLocale={changeLocale} track={track}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <ConsentManager>
+              {children}
+              <Toaster />
+              <FormValidation />
+            </ConsentManager>
+          </ThemeProvider>
+        </FgvShellProvider>
       </LocaleContext.Provider>
     </NextIntlClientProvider>
   );

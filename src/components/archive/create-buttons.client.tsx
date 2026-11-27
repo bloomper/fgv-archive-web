@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
 import { createArrangementAction } from "@/app/(app)/manage/actions.server";
 import { versionEditHref } from "@/utils/links";
 import { track } from "@/utils/umami";

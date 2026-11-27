@@ -5,9 +5,10 @@ import { cookies } from "next/headers";
 import React, { Suspense } from "react";
 import Provider from "@/app/provider.client";
 import { normalizeLocale } from "@/utils/utils.server";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@bloomper/fgv-web-ui/ui/spinner";
 import enMessages from "../../messages/en.json";
 import svMessages from "../../messages/sv.json";
+import { withFgvMessages } from "@bloomper/fgv-web-ui/messages";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +23,7 @@ const geistMono = Geist_Mono({
 async function RootProvider({ children }: { children: React.ReactNode }) {
   const store = await cookies();
   const locale = normalizeLocale(store.get("locale")?.value);
-  const messages = (await import(`../../messages/${locale}.json`)).default;
+  const messages = withFgvMessages(locale, (await import(`../../messages/${locale}.json`)).default);
 
   return (
     <Provider locale={locale} messages={messages}>

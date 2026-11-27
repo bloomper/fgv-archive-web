@@ -9,6 +9,7 @@ import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 import { HandleButton } from "./handle-button.client";
 import { ShareRequestButton } from "./share-request-button.client";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 type Show = "open" | "handled" | "all";
 
@@ -30,9 +31,8 @@ export default async function AccessRequestsPage({ searchParams }: { searchParam
     });
 
     return (
-      <div className="max-w-4xl flex flex-1 flex-col gap-6 p-4 md:p-8">
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("text")}</p>
+      <Page variant="content" className="max-w-4xl">
+        <PageHeader title={t("title")} description={t("text")}/>
         <LinkTabs label={t("filter")} items={[tab("open"), tab("handled"), tab("all")]} />
         {requests.length === 0 ? (
           <p className="text-muted-foreground">{show === "open" ? t("noneOpen") : show === "handled" ? t("noneHandled") : t("none")}</p>
@@ -44,7 +44,7 @@ export default async function AccessRequestsPage({ searchParams }: { searchParam
                   <p className="font-medium">
                     {request.userName ?? "–"}
                     {request.userEmail && (
-                      <a href={`mailto:${request.userEmail}`} className="ml-2 text-sm font-normal text-primary hover:text-primary/80">{request.userEmail}</a>
+                      <a href={`mailto:${request.userEmail}`} className="ml-2 text-sm font-normal text-link hover:text-link/80">{request.userEmail}</a>
                     )}
                   </p>
                   <span className="flex items-center gap-2">
@@ -59,8 +59,8 @@ export default async function AccessRequestsPage({ searchParams }: { searchParam
                 <ul className="flex flex-wrap gap-2 text-sm">
                   {request.files.map(file => (
                     <li key={file.id}>
-                      <Link href={fileHref(file.id)} className="text-primary hover:text-primary/80">{file.title}</Link>
-                      {" "}<Link href={`/versions/${file.versionId}/edit`} className="text-xs text-muted-foreground hover:text-primary">({t("version")})</Link>
+                      <Link href={fileHref(file.id)} className="text-link hover:text-link/80">{file.title}</Link>
+                      {" "}<Link href={`/versions/${file.versionId}/edit`} className="text-xs text-muted-foreground hover:text-link">({t("version")})</Link>
                     </li>
                   ))}
                 </ul>
@@ -73,7 +73,7 @@ export default async function AccessRequestsPage({ searchParams }: { searchParam
             ))}
           </ul>
         )}
-      </div>
+      </Page>
     );
   });
 }

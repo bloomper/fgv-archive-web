@@ -18,6 +18,8 @@ export default defineConfig({
         pool: "vmThreads",
         globals: true,
         setupFiles: ["./vitest.setup.ts"],
+        // Run the shared FGV package through Vite like our own code, so the mocks in the setup file reach it
+        server: { deps: { inline: ["@bloomper/fgv-web-ui"] } },
         include: ["src/**/*.{test,spec}.{ts,tsx}"],
         reporters: process.env.CI ? ["default", "junit"] : ["default"],
         outputFile: {junit: "./test-results/junit.xml"},

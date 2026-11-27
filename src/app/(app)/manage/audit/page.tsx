@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { ChangeLog } from "@/components/audit/change-log";
-import { PageHeader } from "@/components/page-header";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 import { isAdmin } from "@/utils/auth";
@@ -15,7 +15,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
     const admin = isAdmin(authz.roles);
 
     return (
-      <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
+      <Page>
         <PageHeader
           title={t("title")}
           description={admin ? t("textAdmin") : t("text")}
@@ -28,7 +28,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
           linkOf={auditLink}
           loadMore={loadAuditPage}
         />
-      </div>
+      </Page>
     );
   });
 }

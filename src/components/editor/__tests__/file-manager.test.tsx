@@ -20,7 +20,7 @@ vi.mock("sonner", () => ({ toast: mocks.toast }));
 vi.mock("@/utils/umami", () => ({ track: vi.fn() }));
 vi.mock("@/components/upload/tus.client", () => ({ uploadFile: mocks.uploadFile }));
 vi.mock("@/app/(app)/manage/actions.server", () => mocks.actions);
-vi.mock("@/components/dialogs.client", () => ({ useDialogs: () => mocks.dialogs }));
+vi.mock("@bloomper/fgv-web-ui/shell/dialogs", () => ({ useDialogs: () => mocks.dialogs }));
 vi.mock("@/components/archive/share-link-dialog.client", () => ({
   ShareLinkButton: ({ input }: { input: { fileIds: string[] } }) => <span>share {input.fileIds.join(",")}</span>,
 }));

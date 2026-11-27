@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Download, Pencil } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
 import { FileList } from "@/components/archive/file-list";
 import { VersionBadges, VersionFacts } from "@/components/archive/version-meta";
 import { AccessRequest } from "@/components/archive/access-request.client";
@@ -15,7 +15,8 @@ import { ID } from "@/utils/filters";
 import { arrangementHref, documentsHref, spexHref, spexName, versionAnchor, versionEditHref, versionZipHref } from "@/utils/links";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
-import { DataEmpty } from "@/components/data-empty";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * A document of any kind, of a spex or FGV's own: its versions, the recommended one first, each with its files and the numbers of the spex it was used
@@ -40,18 +41,18 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
       : [];
 
     return (
-      <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
+      <Page variant="content">
         <header className="space-y-2">
           <p className="text-sm">
             {spex ? (
               <>
-                <Link href={spexHref(spex.id)} className="text-primary hover:text-primary/80">{spexName(spex)}</Link>
+                <Link href={spexHref(spex.id)} className="text-link hover:text-link/80">{spexName(spex)}</Link>
                 <span className="text-muted-foreground"> · </span>
-                <Link href={documentsHref(kind.id)} className="text-muted-foreground hover:text-primary">{kind.name}</Link>
+                <Link href={documentsHref(kind.id)} className="text-muted-foreground hover:text-link">{kind.name}</Link>
               </>
             ) : (
               <>
-                <Link href={documentsHref(kind.id)} className="text-primary hover:text-primary/80">{kind.name}</Link>
+                <Link href={documentsHref(kind.id)} className="text-link hover:text-link/80">{kind.name}</Link>
                 <span className="text-muted-foreground"> · {t("own")}</span>
               </>
             )}
@@ -143,7 +144,7 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
                     <li key={number.id}>
                       <span className="tabular-nums text-muted-foreground">{number.position}. </span>
                       {number.arrangement
-                        ? <Link href={arrangementHref(number.arrangement.id)} className="text-primary hover:text-primary/80">{number.title}</Link>
+                        ? <Link href={arrangementHref(number.arrangement.id)} className="text-link hover:text-link/80">{number.title}</Link>
                         : number.title}
                     </li>
                   ))}
@@ -152,7 +153,7 @@ export default async function ManuscriptPage({ params }: { params: Promise<{ id:
             )}
           </section>
         ))}
-      </div>
+      </Page>
     );
   });
 }

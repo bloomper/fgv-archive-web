@@ -3,6 +3,7 @@ import { getStorage } from "@/lib/admin/admin.server";
 import { formatBytes } from "@/utils/links";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * Space used by files and previews, and left on the volume.
@@ -17,8 +18,8 @@ export default async function StoragePage() {
     const share = total > 0 ? Math.round(used / total * 1000) / 10 : 0;
 
     return (
-      <div className="max-w-2xl flex flex-1 flex-col gap-6 p-4 md:p-8">
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+      <Page variant="content" className="max-w-2xl">
+        <PageHeader title={t("title")}/>
         {storage && (
           <>
             <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
@@ -38,7 +39,7 @@ export default async function StoragePage() {
             </div>
           </>
         )}
-      </div>
+      </Page>
     );
   });
 }

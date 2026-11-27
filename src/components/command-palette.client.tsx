@@ -25,9 +25,9 @@ import {
   Trash2,
   Wrench,
 } from "lucide-react";
-import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@bloomper/fgv-web-ui/ui/command";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@bloomper/fgv-web-ui/ui/dialog";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
 import type { Role } from "@/types/auth";
 import { isAdmin, isEditor } from "@/utils/auth";
 import { track } from "@/utils/umami";

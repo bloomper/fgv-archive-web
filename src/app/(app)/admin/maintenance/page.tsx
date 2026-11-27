@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
 import { getMaintenanceJobs } from "@/lib/admin/admin.server";
 import { formatInstant } from "@/utils/format";
 import { Policies } from "@/utils/policy.server";
@@ -7,6 +7,7 @@ import { withPolicyPage } from "@/utils/route.server";
 import { RefreshWhileRunning } from "./refresh-while-running.client";
 import { RunJobButton } from "./run-job-button.client";
 import { SpexipediaSyncStatus } from "./spexipedia-sync-status";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The scheduled maintenance jobs, with their schedules and latest runs, and a button to run each now.
@@ -17,9 +18,8 @@ export default async function MaintenancePage() {
     const jobs = await getMaintenanceJobs();
 
     return (
-      <div className="max-w-2xl flex flex-1 flex-col gap-6 p-4 md:p-8">
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("text")}</p>
+      <Page variant="content" className="max-w-2xl">
+        <PageHeader title={t("title")} description={t("text")}/>
         <RefreshWhileRunning running={jobs.some(job => job.running)} />
         <ul className="space-y-4">
           {jobs.map(job => (
@@ -48,7 +48,7 @@ export default async function MaintenancePage() {
           ))}
         </ul>
         <SpexipediaSyncStatus />
-      </div>
+      </Page>
     );
   });
 }

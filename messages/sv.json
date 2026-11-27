@@ -16,24 +16,17 @@
     "remove": "Ta bort",
     "delete": "Radera",
     "edit": "Redigera",
-    "close": "Stäng",
     "reload": "Ladda om",
     "chooseFile": "Välj fil…",
     "noFileChosen": "Ingen fil vald",
     "confirm": "Bekräfta",
     "loading": "Laddar…",
     "saved": "Sparat",
-    "themeLight": "Ljust",
-    "themeDark": "Mörkt",
-    "themeSystem": "System",
     "myFgvAccount": "Mitt FGV-konto",
-    "toggle": "Växla",
     "search": "Sök",
     "selected": "{count, plural, =1 {# vald} other {# valda}}",
     "reset": "Återställ",
     "resetFilters": "Återställ filter",
-    "noDataHeading": "Ingen data hittades",
-    "noDataDescription": "Kunde inte hitta någon data för tillfället. Vänligen kolla senare.",
     "noFilterMatchHeading": "Ingen data hittades",
     "noFilterMatchDescription": "Prova att ändra din filtrering eller sökord för att hitta det du letar efter.",
     "rowsPerPage": "Rader per sida",
@@ -45,7 +38,6 @@
     "clearSearch": "Rensa sökningen",
     "datePlaceholder": "ÅÅÅÅ-MM-DD",
     "pickDate": "Välj datum",
-    "noMatches": "Inget matchar",
     "loadMore": "Visa fler",
     "clearDate": "Rensa datum",
     "validation": {
@@ -65,50 +57,15 @@
       "step": "Ange ett giltigt värde."
     }
   },
-  "Header": {
-    "toggleLanguage": "Byt språk",
-    "toggleTheme": "Byt tema",
-    "showMenu": "Visa menyn"
-  },
-  "Sidebar": {
-    "hideMenu": "Dölj menyn",
-    "showMenu": "Visa menyn"
-  },
-  "AppSwitcher": {
-    "membership": "Medlemskap",
-    "heading": "Byt applikation",
-    "spexregister": "Spexregister",
-    "revival": "Nyuppsättning",
-    "spexflix": "Spexflix",
-    "spexify": "Spexify",
-    "spexgram": "Spexgram",
-    "spexipedia": "Spexipedia",
-    "archive": "Spexarkiv"
-  },
   "LoginError": {
     "title": "Inloggningen misslyckades",
     "text": "Något gick fel vid inloggningen. Försök igen.",
     "retry": "Försök igen"
   },
-  "Forbidden": {
-    "title": "Du har inte behörighet",
-    "text": "Du har inte behörighet till den här sidan. Be en administratör om du behöver den.",
-    "home": "Till startsidan"
-  },
-  "NotFound": {
-    "title": "Sidan finns inte",
-    "text": "Sidan eller albumet finns inte, eller så har du inte tillgång till den.",
-    "home": "Till startsidan"
-  },
   "Error": {
     "title": "Något gick fel",
     "text": "Ett oväntat fel inträffade.",
     "retry": "Försök igen"
-  },
-  "NoAccess": {
-    "title": "Du har inte åtkomst",
-    "text": "Ditt FGV-konto ({email}) har inte åtkomst till Spexarkiv. Be en administratör om åtkomst, eller logga ut och logga in med ett annat konto.",
-    "logout": "Logga ut"
   },
   "Errors": {
     "CONFLICT": "Någon annan har ändrat detta. Ladda om och försök igen.",

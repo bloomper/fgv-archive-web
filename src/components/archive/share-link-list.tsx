@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
 import { ShareLinkActions } from "@/components/archive/share-link-actions.client";
 import { getShareLinks } from "@/lib/admin/admin.server";
 import { getMe } from "@/lib/archive/archive.server";
 import { formatDate } from "@/utils/format";
 import { fileHref, spexHref, spexName, versionHref } from "@/utils/links";
 import { localName, noteName } from "@/utils/music";
-import { DataEmpty } from "@/components/data-empty";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
 
 /**
  * Share links, newest first: who they are for, what they open, when they expire and how often each file was
@@ -47,7 +47,7 @@ export async function ShareLinkList({ all }: { all: boolean }) {
           <ul className="space-y-0.5 text-sm">
             {link.spex && (
               <li>
-                <Link href={spexHref(link.spex.id)} className="text-primary hover:text-primary/80">{spexName(link.spex)}</Link>
+                <Link href={spexHref(link.spex.id)} className="text-link hover:text-link/80">{spexName(link.spex)}</Link>
                 {": "}{[...link.instruments.map(instrument => localName(instrument, locale)),
                   ...link.transpositions.map(pitch => noteName(pitch, locale))].join(", ")}
               </li>
@@ -55,14 +55,14 @@ export async function ShareLinkList({ all }: { all: boolean }) {
             {link.versions.map(version => (
               <li key={version.id}>
                 <Link href={versionHref({ ...version, parentId: version.manuscript?.id ?? version.arrangement?.id ?? "" })}
-                      className="text-primary hover:text-primary/80">
+                      className="text-link hover:text-link/80">
                   {version.manuscript?.title ?? version.arrangement?.number.title}
                 </Link>
                 <span className="text-muted-foreground"> · {version.label}</span>
               </li>
             ))}
             {link.files.map(file => (
-              <li key={file.id}><Link href={fileHref(file.id)} className="text-primary hover:text-primary/80">{file.title}</Link></li>
+              <li key={file.id}><Link href={fileHref(file.id)} className="text-link hover:text-link/80">{file.title}</Link></li>
             ))}
           </ul>
           {link.downloads.length > 0 && (

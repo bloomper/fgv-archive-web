@@ -2,8 +2,8 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { NativeSelect, NativeSelectOption } from "@bloomper/fgv-web-ui/ui/native-select";
 import {
   INSTRUMENT_GROUPS,
   isMode,

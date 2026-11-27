@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
 import { PdfReader } from "@/components/reader/pdf-reader.client";
 import { getSharedView } from "@/lib/share/share.server";
 import { fileDownloadHref, fileRawHref, isPdf, spexName } from "@/utils/links";

@@ -3,21 +3,21 @@ import { Info } from "lucide-react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { SidebarProvider } from "@bloomper/fgv-web-ui/ui/sidebar";
+import { TooltipProvider } from "@bloomper/fgv-web-ui/ui/tooltip";
 import { AppSidebar } from "@/components/app-sidebar.client";
 import { SiteHeader } from "@/components/site-header.client";
 import { AboutPage } from "@/components/about-page.client";
 import { SupportPage } from "@/components/support-page.client";
 import { HeaderSearch } from "@/components/header-search.client";
 import { LoginButton } from "@/components/login-button.client";
-import { NavSecondary } from "@/components/nav-secondary.client";
+import { NavSecondary } from "@bloomper/fgv-web-ui/shell/sidebar-parts";
 import { LinkSegments, LinkTabs } from "@/components/link-tabs";
-import { DataEmpty } from "@/components/data-empty";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
 import { HomeSection } from "@/components/home-section";
-import { Logo } from "@/components/logo";
-import { LogoHome } from "@/components/logo-home";
-import { LogoText } from "@/components/logo-text";
+import { Logo } from "@bloomper/fgv-web-ui/shell/logo";
+import { LogoHome } from "@bloomper/fgv-web-ui/shell/logo-home";
+import { LogoText } from "@bloomper/fgv-web-ui/shell/logo-text";
 import { Umami } from "@/components/umami";
 
 const mocks = vi.hoisted(() => ({ push: vi.fn(), pathname: "/", params: "" }));
@@ -32,11 +32,14 @@ vi.mock("next/link", () => ({
 }));
 vi.mock("next/script", () => ({ default: (props: { src: string }) => <script data-src={props.src} /> }));
 vi.mock("next/server", () => ({ connection: async () => undefined }));
-vi.mock("@/hooks/use-is-client.client", () => ({ useIsClient: () => true }));
+vi.mock("@bloomper/fgv-web-ui/hooks/use-is-client", () => ({ useIsClient: () => true }));
 vi.mock("@/components/nav-user.client", () => ({ NavUser: () => <span>nav-user</span> }));
-vi.mock("@/components/app-switcher.client", () => ({ AppSwitcher: ({ title }: { title: string }) => <span>{title}</span> }));
-// Tested in toggles.test.tsx, with the locale provider they need
-vi.mock("@/components/language-toggle.client", () => ({ LanguageToggle: () => null }));
+vi.mock("@bloomper/fgv-web-ui/shell/app-switcher", () => ({ AppSwitcher: ({ title }: { title: string }) => <span>{title}</span> }));
+// The language menu is tested in @bloomper/fgv-web-ui, with the shell provider it needs
+vi.mock("@bloomper/fgv-web-ui/shell/toggles", async importOriginal => ({
+  ...await importOriginal<typeof import("@bloomper/fgv-web-ui/shell/toggles")>(),
+  LanguageToggle: () => null,
+}));
 
 afterEach(() => {
   vi.unstubAllEnvs();

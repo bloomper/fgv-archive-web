@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import * as React from "react";
-import { Logo } from "@/components/logo";
-import { LogoText } from "@/components/logo-text";
-import { LanguageToggle } from "@/components/language-toggle.client";
-import { ModeToggle } from "@/components/mode-toggle.client";
+import { Logo } from "@bloomper/fgv-web-ui/shell/logo";
+import { LogoText } from "@bloomper/fgv-web-ui/shell/logo-text";
+import { LanguageToggle } from "@bloomper/fgv-web-ui/shell/toggles";
+import { ModeToggle } from "@bloomper/fgv-web-ui/shell/toggles";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },

@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Check, X } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@bloomper/fgv-web-ui/ui/spinner";
 import { INSTRUMENT_GROUPS, localName, noteName, type Pitch, PITCHES } from "@/utils/music";
 import { partFilterFromParams, partFilterToPageQuery, type PartFilter } from "@/utils/filters";
 import { cn } from "@/utils/utils";
@@ -66,7 +66,7 @@ export function PartFilterControls({ instruments, pitches = PITCHES, value, onCh
         <span className="flex items-center gap-2">
           {pending && <Spinner className="size-4" />}
           {active && (
-            <button type="button" className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80"
+            <button type="button" className="inline-flex items-center gap-1 text-sm text-link hover:text-link/80"
                     onClick={() => apply({ instrumentIds: [], transpositions: [] })}>
               <X className="size-3.5" /> {t("clear")}
             </button>

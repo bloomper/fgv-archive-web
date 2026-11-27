@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
 import { FileList } from "@/components/archive/file-list";
 import { AccessRequest } from "@/components/archive/access-request.client";
 import { PdfReader } from "@/components/reader/pdf-reader.client";
@@ -12,6 +12,7 @@ import { ID } from "@/utils/filters";
 import { fileDownloadHref, fileRawHref, isPdf, spexName, versionHref } from "@/utils/links";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * A file: a PDF in the reader, at the page asked for (`?page=`), or the file's details and download; a lock and
@@ -49,9 +50,9 @@ export default async function FilePage({ params, searchParams }: {
     }
 
     return (
-      <div className="max-w-3xl flex flex-1 flex-col gap-4 p-4 md:p-8">
-        <Link href={back} className="w-fit text-sm text-primary hover:text-primary/80">← {subtitle}</Link>
-        <h1 className="text-2xl font-bold tracking-tight">{file.title}</h1>
+      <Page className="max-w-3xl">
+        <Link href={back} className="w-fit text-sm text-link hover:text-link/80">← {subtitle}</Link>
+        <PageHeader title={file.title}/>
         <FileList files={[file]} />
         {file.canOpen ? (
           <div className="space-y-2">
@@ -61,7 +62,7 @@ export default async function FilePage({ params, searchParams }: {
             </a>
           </div>
         ) : <AccessRequest files={[{ id: file.id, title: file.title }]} />}
-      </div>
+      </Page>
     );
   });
 }
