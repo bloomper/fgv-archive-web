@@ -11,8 +11,14 @@ export default async function DocumentKindsPage() {
     const kinds = await getDocumentKinds(true);
 
     return (
-      <Page variant="content" className="max-w-3xl">
-        <PageHeader title={t("title")} description={t("text")}/>
+      <Page
+        variant="content"
+        className="max-w-3xl"
+      >
+        <PageHeader
+          title={t("title")}
+          description={t("text")}
+        />
         <DocumentKindsEditor kinds={kinds} />
       </Page>
     );

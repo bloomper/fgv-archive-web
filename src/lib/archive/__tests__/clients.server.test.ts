@@ -7,18 +7,25 @@ import { GraphQLRequestError } from "@/lib/graphql.server";
 
 const { runQuery, runMutation } = vi.hoisted(() => ({ runQuery: vi.fn(), runMutation: vi.fn() }));
 
-vi.mock("@/lib/graphql.server", async importOriginal => ({ ...(await importOriginal<typeof import("@/lib/graphql.server")>()), runQuery, runMutation }));
+vi.mock("@/lib/graphql.server", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/graphql.server")>()),
+  runQuery,
+  runMutation,
+}));
 vi.mock("next-intl/server", () => ({ getLocale: async () => "sv" }));
 
 /** An answer that has every field, however deep: each property is the answer again, and it can be listed. */
 const full: unknown = new Proxy(() => undefined, {
-  get: (_, key) => key === "then" ? undefined : key === Symbol.iterator ? [][Symbol.iterator] : key === "length" ? 0 : full,
+  get: (_, key) =>
+    key === "then" ? undefined : key === Symbol.iterator ? [][Symbol.iterator] : key === "length" ? 0 : full,
 });
 
 const clients = { archive, editing, admin } as Record<string, Record<string, unknown>>;
 const calls = Object.entries(clients).flatMap(([module, exports]) =>
-  Object.entries(exports).filter(([, value]) => typeof value === "function")
-    .map(([name, fn]) => [`${module}.${name}`, fn as (...args: unknown[]) => Promise<unknown>] as const));
+  Object.entries(exports)
+    .filter(([, value]) => typeof value === "function")
+    .map(([name, fn]) => [`${module}.${name}`, fn as (...args: unknown[]) => Promise<unknown>] as const)
+);
 
 describe("the GraphQL clients", () => {
   beforeEach(() => {
@@ -57,19 +64,28 @@ describe("share links", () => {
     expect(fetchMock).not.toHaveBeenCalled();
 
     fetchMock.mockResolvedValueOnce(new Response(JSON.stringify({ data: { sharedView: { name: "Orkester" } } })));
-    expect(await getSharedView("exempel-giltig-delningslank-0000000000000001", { instrumentIds: ["i1"] })).toEqual({ name: "Orkester" });
+    expect(await getSharedView("exempel-giltig-delningslank-0000000000000001", { instrumentIds: ["i1"] })).toEqual({
+      name: "Orkester",
+    });
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(new Headers(init.headers).get("authorization")).toBeNull();
-    expect(JSON.parse(String(init.body)).variables).toEqual({ token: "exempel-giltig-delningslank-0000000000000001", parts: { instrumentIds: ["i1"] } });
+    expect(JSON.parse(String(init.body)).variables).toEqual({
+      token: "exempel-giltig-delningslank-0000000000000001",
+      parts: { instrumentIds: ["i1"] },
+    });
 
     fetchMock.mockResolvedValueOnce(new Response(JSON.stringify({ data: null })));
     expect(await getSharedView("exempel-giltig-delningslank-0000000000000001")).toBeNull();
   });
 
   it("pass the server's errors on", async () => {
-    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify({ errors: [{ message: "Utgången", extensions: { classification: "NOT_FOUND" } }] })));
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ errors: [{ message: "Utgången", extensions: { classification: "NOT_FOUND" } }] }))
+    );
     await expect(getSharedView("exempel-giltig-delningslank-0000000000000001")).rejects.toThrow(GraphQLRequestError);
     fetchMock.mockResolvedValueOnce(new Response(JSON.stringify({ errors: [{ message: "Fel" }] })));
-    await expect(getSharedView("exempel-giltig-delningslank-0000000000000001")).rejects.toMatchObject({ code: "INTERNAL_ERROR" });
+    await expect(getSharedView("exempel-giltig-delningslank-0000000000000001")).rejects.toMatchObject({
+      code: "INTERNAL_ERROR",
+    });
   });
 });

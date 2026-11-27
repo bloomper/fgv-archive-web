@@ -22,7 +22,10 @@ type Search = Record<string, string | string[] | undefined>;
  * every trumpet and trombone part, or every B♭ part, downloaded as one zip; editors can share them with a link that
  * also opens parts added later.
  */
-export default async function SpexPartsPage({ params, searchParams }: {
+export default async function SpexPartsPage({
+  params,
+  searchParams,
+}: {
   params: Promise<{ id: string }>;
   searchParams: Promise<Search>;
 }) {
@@ -44,18 +47,27 @@ export default async function SpexPartsPage({ params, searchParams }: {
     const t = await getTranslations("SpexParts");
     const locale = await getLocale();
     const instruments = data.instruments;
-    const chosen = instruments.filter(instrument => filter.instrumentIds.includes(instrument.id));
+    const chosen = instruments.filter((instrument) => filter.instrumentIds.includes(instrument.id));
     // The version the zip takes from each arrangement, as the server chooses it (Arrangement.partsVersion)
-    const rows = spex.arrangements.map(arrangement => ({ arrangement, version: arrangement.partsVersion }));
+    const rows = spex.arrangements.map((arrangement) => ({ arrangement, version: arrangement.partsVersion }));
     const count = rows.reduce((sum, row) => sum + (row.version?.files.length ?? 0), 0);
-    const describe = [...chosen.map(instrument => localName(instrument, locale)),
-      ...filter.transpositions.map(pitch => noteName(pitch, locale))].join(", ");
+    const describe = [
+      ...chosen.map((instrument) => localName(instrument, locale)),
+      ...filter.transpositions.map((pitch) => noteName(pitch, locale)),
+    ].join(", ");
 
     return (
       <Page variant="content">
         <PageHeader
           title={t("title", { spex: spexName(spex) })}
-          eyebrow={<Link href={spexHref(spex.id)} className="text-link hover:text-link/80">← {spexName(spex)}</Link>}
+          eyebrow={
+            <Link
+              href={spexHref(spex.id)}
+              className="text-link hover:text-link/80"
+            >
+              ← {spexName(spex)}
+            </Link>
+          }
           description={t("text")}
         />
 
@@ -63,37 +75,66 @@ export default async function SpexPartsPage({ params, searchParams }: {
 
         <div className="flex flex-wrap items-center gap-2">
           {count > 0 && (
-            <a href={spexPartsZipHref(spex.id, partFilterToApiQuery(filter))} download data-umami-event="spex-parts-download"
-               className={buttonVariants()}>
+            <a
+              href={spexPartsZipHref(spex.id, partFilterToApiQuery(filter))}
+              download
+              data-umami-event="spex-parts-download"
+              className={buttonVariants()}
+            >
               <Download /> {isEmptyFilter(filter) ? t("downloadAll") : t("download", { what: describe })}
             </a>
           )}
-          <span className="text-sm text-muted-foreground" aria-live="polite">{t("count", { count })}</span>
+          <span
+            className="text-muted-foreground text-sm"
+            aria-live="polite"
+          >
+            {t("count", { count })}
+          </span>
           {isEditor(authz.roles) && (
-            <ShareLinkButton input={{ spexId: spex.id, instrumentIds: filter.instrumentIds, transpositions: filter.transpositions }}
-                             defaultName={`${spexName(spex)}${describe ? `, ${describe}` : ""}`}
-                             maxMonths={me?.settings.maxShareLinkMonths ?? 24}
-                             disabled={filter.instrumentIds.length === 0}
-                             label={t("share")} />
+            <ShareLinkButton
+              input={{ spexId: spex.id, instrumentIds: filter.instrumentIds, transpositions: filter.transpositions }}
+              defaultName={`${spexName(spex)}${describe ? `, ${describe}` : ""}`}
+              maxMonths={me?.settings.maxShareLinkMonths ?? 24}
+              disabled={filter.instrumentIds.length === 0}
+              label={t("share")}
+            />
           )}
         </div>
         {isEditor(authz.roles) && filter.instrumentIds.length === 0 && (
-          <p className="text-xs text-muted-foreground">{t("shareHint")}</p>
+          <p className="text-muted-foreground text-xs">{t("shareHint")}</p>
         )}
 
-        <ol className="space-y-3" aria-label={t("arrangements")}>
+        <ol
+          className="space-y-3"
+          aria-label={t("arrangements")}
+        >
           {rows.map(({ arrangement, version }) => (
-            <li key={arrangement.id} className="space-y-1">
+            <li
+              key={arrangement.id}
+              className="space-y-1"
+            >
               <h2 className="text-sm font-semibold">
                 {arrangement.number.position}.{" "}
-                <Link href={arrangementHref(arrangement.id)} className="hover:text-link">{arrangement.number.title}</Link>
-                {version && <span className="font-normal text-muted-foreground"> · {version.label}</span>}
+                <Link
+                  href={arrangementHref(arrangement.id)}
+                  className="hover:text-link"
+                >
+                  {arrangement.number.title}
+                </Link>
+                {version && <span className="text-muted-foreground font-normal"> · {version.label}</span>}
               </h2>
               {version && version.files.length > 0 ? (
-                <ul className="divide-y overflow-hidden rounded-lg border bg-card">
-                  {version.files.map(file => <FileRow key={file.id} file={file} />)}
+                <ul className="bg-card divide-y overflow-hidden rounded-lg border">
+                  {version.files.map((file) => (
+                    <FileRow
+                      key={file.id}
+                      file={file}
+                    />
+                  ))}
                 </ul>
-              ) : <p className="text-sm text-muted-foreground">{t("noneHere")}</p>}
+              ) : (
+                <p className="text-muted-foreground text-sm">{t("noneHere")}</p>
+              )}
             </li>
           ))}
           {rows.length === 0 && <li className="text-muted-foreground">{t("none")}</li>}

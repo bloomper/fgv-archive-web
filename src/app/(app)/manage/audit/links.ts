@@ -1,6 +1,17 @@
 /** The kinds of record Spexarkiv's change log has. */
-export const ENTITY_TYPES = ["MANUSCRIPT", "ARRANGEMENT", "VERSION", "FILE", "NUMBER", "SHARE_LINK", "INSTRUMENT",
-  "FILE_ROLE", "SETTINGS", "TRASH", "ACCESS_REQUEST"] as const;
+export const ENTITY_TYPES = [
+  "MANUSCRIPT",
+  "ARRANGEMENT",
+  "VERSION",
+  "FILE",
+  "NUMBER",
+  "SHARE_LINK",
+  "INSTRUMENT",
+  "FILE_ROLE",
+  "SETTINGS",
+  "TRASH",
+  "ACCESS_REQUEST",
+] as const;
 
 /**
  * Where a record in the change log can be seen. Files and numbers are shown on their version's and spex' pages, which

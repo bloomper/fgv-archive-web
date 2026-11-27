@@ -31,27 +31,46 @@ export default async function HomePage() {
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t("greeting", { name: me?.me.displayName ?? me?.me.username ?? "" })}
           </h1>
-          <p className="max-w-4xl whitespace-pre-line text-pretty text-muted-foreground">{welcome || t("intro")}</p>
+          <p className="text-muted-foreground max-w-4xl text-pretty whitespace-pre-line">{welcome || t("intro")}</p>
         </section>
 
         {home && (
-          <nav aria-label={t("browse")} className="space-y-3">
+          <nav
+            aria-label={t("browse")}
+            className="space-y-3"
+          >
             <div className="flex flex-wrap gap-2">
-              {home.categories.map(category => (
-                <Link key={category.id} href={`/spex?category=${category.id}`} className={chip}>
-                  {category.name} <span className="ml-1 text-muted-foreground">{category.spexCount}</span>
+              {home.categories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/spex?category=${category.id}`}
+                  className={chip}
+                >
+                  {category.name} <span className="text-muted-foreground ml-1">{category.spexCount}</span>
                 </Link>
               ))}
-              <Link href="/spex?material=1" className={chip}>{t("withMaterial")}</Link>
+              <Link
+                href="/spex?material=1"
+                className={chip}
+              >
+                {t("withMaterial")}
+              </Link>
             </div>
-            <YearBrowser years={home.years} hrefPrefix="/spex?year=" />
+            <YearBrowser
+              years={home.years}
+              hrefPrefix="/spex?year="
+            />
           </nav>
         )}
 
-        <HomeSection id="recent" title={t("recent")} more={{ href: "/spex?material=1", label: t("allSpex") }}>
+        <HomeSection
+          id="recent"
+          title={t("recent")}
+          more={{ href: "/spex?material=1", label: t("allSpex") }}
+        >
           {home && home.recentVersions.length > 0 ? (
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {home.recentVersions.map(version => {
+              {home.recentVersions.map((version) => {
                 const manuscript = version.manuscript;
                 const number = version.arrangement?.number;
                 const href = `${manuscript ? manuscriptHref(version.parentId) : arrangementHref(version.parentId)}#${versionAnchor(version.id)}`;
@@ -59,17 +78,33 @@ export default async function HomePage() {
                 const keys = formatKeys(version.key, version.modulations, locale);
 
                 return (
-                  <li key={version.id} className="min-w-0">
-                    <Link href={href} className="flex h-full gap-3 rounded-lg border bg-card p-3 hover:bg-accent">
-                      {manuscript
-                        ? <ScrollText className="mt-0.5 size-5 shrink-0 text-link" aria-hidden />
-                        : <FileMusic className="mt-0.5 size-5 shrink-0 text-link" aria-hidden />}
+                  <li
+                    key={version.id}
+                    className="min-w-0"
+                  >
+                    <Link
+                      href={href}
+                      className="bg-card hover:bg-accent flex h-full gap-3 rounded-lg border p-3"
+                    >
+                      {manuscript ? (
+                        <ScrollText
+                          className="text-link mt-0.5 size-5 shrink-0"
+                          aria-hidden
+                        />
+                      ) : (
+                        <FileMusic
+                          className="text-link mt-0.5 size-5 shrink-0"
+                          aria-hidden
+                        />
+                      )}
                       <span className="block min-w-0 flex-1 space-y-0.5">
                         <span className="block truncate font-medium">{manuscript?.title ?? number?.title}</span>
-                        <span className="block truncate text-sm text-muted-foreground">
-                          {[manuscript ? manuscript.kind.name : t("arrangement"), spexName(spex), version.label].filter(Boolean).join(" · ")}
+                        <span className="text-muted-foreground block truncate text-sm">
+                          {[manuscript ? manuscript.kind.name : t("arrangement"), spexName(spex), version.label]
+                            .filter(Boolean)
+                            .join(" · ")}
                         </span>
-                        <span className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
+                        <span className="text-muted-foreground flex flex-wrap items-center gap-1 text-xs">
                           {keys && <span>{keys}</span>}
                           <span>{formatDate(version.lastModifiedAt ?? version.publishedAt ?? version.createdAt)}</span>
                           <VersionBadges version={version} />
@@ -80,7 +115,12 @@ export default async function HomePage() {
                 );
               })}
             </ul>
-          ) : <DataEmpty title={t("empty")} description={null} />}
+          ) : (
+            <DataEmpty
+              title={t("empty")}
+              description={null}
+            />
+          )}
         </HomeSection>
       </Page>
     );

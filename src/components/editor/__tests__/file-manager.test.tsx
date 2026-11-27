@@ -9,8 +9,12 @@ const mocks = vi.hoisted(() => ({
   toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() },
   uploadFile: vi.fn(),
   actions: {
-    addFileAction: vi.fn(), deleteFileAction: vi.fn(), fileGuessAction: vi.fn(), reorderFilesAction: vi.fn(),
-    replaceFileAction: vi.fn(), updateFileAction: vi.fn(),
+    addFileAction: vi.fn(),
+    deleteFileAction: vi.fn(),
+    fileGuessAction: vi.fn(),
+    reorderFilesAction: vi.fn(),
+    replaceFileAction: vi.fn(),
+    updateFileAction: vi.fn(),
   },
   dialogs: undefined as unknown as ReturnType<typeof makeDialogs>,
 }));
@@ -27,30 +31,62 @@ vi.mock("@/components/archive/share-link-dialog.client", () => ({
 // The pickers have tests of their own; here they only report a choice
 vi.mock("@/components/editor/pickers.client", () => ({
   InstrumentsPicker: ({ id, onChange }: { id: string; onChange: (ids: string[]) => void }) => (
-    <><button type="button" onClick={() => onChange(["flute"])}>{`${id} flute`}</button>
-      <button type="button" onClick={() => onChange(["unknown"])}>{`${id} unknown`}</button></>
+    <>
+      <button
+        type="button"
+        onClick={() => onChange(["flute"])}
+      >{`${id} flute`}</button>
+      <button
+        type="button"
+        onClick={() => onChange(["unknown"])}
+      >{`${id} unknown`}</button>
+    </>
   ),
   TranspositionPicker: ({ id, onChange }: { id: string; onChange: (value: unknown) => void }) => (
-    <button type="button" onClick={() => onChange({ pitch: "E_FLAT", octave: 0 })}>{`${id} e-flat`}</button>
+    <button
+      type="button"
+      onClick={() => onChange({ pitch: "E_FLAT", octave: 0 })}
+    >{`${id} e-flat`}</button>
   ),
 }));
 
-const roles = [{ id: "part", nameSv: "Stämma", nameEn: "Part" }, { id: "score", nameSv: "Partitur", nameEn: "Score" }];
+const roles = [
+  { id: "part", nameSv: "Stämma", nameEn: "Part" },
+  { id: "score", nameSv: "Partitur", nameEn: "Score" },
+];
 const file = (id: string, fields: Partial<ManagedFile> = {}): ManagedFile => ({
-  id, title: `Fil ${id}`, name: `${id}.pdf`, size: 2048, processing: "DONE", role: roles[0], instruments: [instruments[0]],
-  transposition: { pitch: "B_FLAT", octave: 0 }, desk: "1", downloadCount: 3, ...fields,
+  id,
+  title: `Fil ${id}`,
+  name: `${id}.pdf`,
+  size: 2048,
+  processing: "DONE",
+  role: roles[0],
+  instruments: [instruments[0]],
+  transposition: { pitch: "B_FLAT", octave: 0 },
+  desk: "1",
+  downloadCount: 3,
+  ...fields,
 });
 const files = [file("f1"), file("f2", { processing: "PENDING", transposition: null, desk: null, downloadCount: null })];
 
-const manager = (list = files) => render(
-  <FileManager versionId="v1" files={list} roles={roles} instruments={instruments} maxUploadMb={1} maxShareLinkMonths={12} shareName="Finalen" />,
-);
+const manager = (list = files) =>
+  render(
+    <FileManager
+      versionId="v1"
+      files={list}
+      roles={roles}
+      instruments={instruments}
+      maxUploadMb={1}
+      maxShareLinkMonths={12}
+      shareName="Finalen"
+    />
+  );
 
 describe("FileManager", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.dialogs = makeDialogs();
-    Object.values(mocks.actions).forEach(action => action.mockResolvedValue({ ok: true, data: null }));
+    Object.values(mocks.actions).forEach((action) => action.mockResolvedValue({ ok: true, data: null }));
     mocks.uploadFile.mockImplementation(async (_: File, progress: (fraction: number) => void) => {
       progress(0.5);
       return "upload-1";
@@ -64,10 +100,20 @@ describe("FileManager", () => {
 
   it("uploads a file, guesses its metadata and adds it once corrected", async () => {
     mocks.actions.fileGuessAction.mockResolvedValue({
-      ok: true, data: { title: "Trumpet 1", role: { id: "part" }, instruments: [{ id: "trumpet" }], desk: "1", transposition: { pitch: "B_FLAT", octave: 0 } },
+      ok: true,
+      data: {
+        title: "Trumpet 1",
+        role: { id: "part" },
+        instruments: [{ id: "trumpet" }],
+        desk: "1",
+        transposition: { pitch: "B_FLAT", octave: 0 },
+      },
     });
     manager();
-    await userEvent.upload(screen.getByTestId("file-input"), [new File(["x"], "trumpet-1.pdf"), new File([new Uint8Array(2 * 1024 * 1024)], "stor.pdf")]);
+    await userEvent.upload(screen.getByTestId("file-input"), [
+      new File(["x"], "trumpet-1.pdf"),
+      new File([new Uint8Array(2 * 1024 * 1024)], "stor.pdf"),
+    ]);
     expect(mocks.toast.error).toHaveBeenCalledWith(`tooLarge:${JSON.stringify({ name: "stor.pdf", max: 1 })}`);
 
     const upload = await screen.findByTestId("pending-upload");
@@ -80,9 +126,16 @@ describe("FileManager", () => {
     await userEvent.click(within(upload).getByRole("button", { name: /flute$/ }));
     await userEvent.click(within(upload).getByRole("button", { name: /e-flat$/ }));
     await userEvent.click(within(upload).getByRole("button", { name: "add" }));
-    await waitFor(() => expect(mocks.actions.addFileAction).toHaveBeenCalledWith("v1", "upload-1", {
-      title: "Trumpet 1", comment: "Ny", roleId: "score", instrumentIds: ["flute"], desk: "1b", transposition: { pitch: "E_FLAT", octave: 0 },
-    }));
+    await waitFor(() =>
+      expect(mocks.actions.addFileAction).toHaveBeenCalledWith("v1", "upload-1", {
+        title: "Trumpet 1",
+        comment: "Ny",
+        roleId: "score",
+        instrumentIds: ["flute"],
+        desk: "1b",
+        transposition: { pitch: "E_FLAT", octave: 0 },
+      })
+    );
     await waitFor(() => expect(screen.queryByTestId("pending-upload")).not.toBeInTheDocument());
   });
 
@@ -93,7 +146,9 @@ describe("FileManager", () => {
 
     fireEvent.dragOver(zone, { dataTransfer: { types: ["Files"], files: [] } });
     fireEvent.dragLeave(zone);
-    fireEvent.drop(zone, { dataTransfer: { types: ["Files"], files: [new File(["x"], "a.pdf"), new File(["y"], "b.pdf")] } });
+    fireEvent.drop(zone, {
+      dataTransfer: { types: ["Files"], files: [new File(["x"], "a.pdf"), new File(["y"], "b.pdf")] },
+    });
 
     const uploads = await screen.findAllByTestId("pending-upload");
     await waitFor(() => expect(within(uploads[1]).getByText("uploaded")).toBeInTheDocument());
@@ -103,8 +158,15 @@ describe("FileManager", () => {
     mocks.actions.addFileAction.mockResolvedValueOnce({ ok: false, message: "Fel" });
     await userEvent.click(screen.getByRole("button", { name: "addAll" }));
     await waitFor(() => expect(mocks.actions.addFileAction).toHaveBeenCalledTimes(2));
-    expect(mocks.actions.addFileAction.mock.calls[0][2]).toMatchObject({ title: "a", instrumentIds: ["flute"], transposition: { pitch: "C", octave: 0 } });
-    expect(mocks.actions.addFileAction.mock.calls[1][2]).toMatchObject({ instrumentIds: ["unknown"], transposition: null });
+    expect(mocks.actions.addFileAction.mock.calls[0][2]).toMatchObject({
+      title: "a",
+      instrumentIds: ["flute"],
+      transposition: { pitch: "C", octave: 0 },
+    });
+    expect(mocks.actions.addFileAction.mock.calls[1][2]).toMatchObject({
+      instrumentIds: ["unknown"],
+      transposition: null,
+    });
     await waitFor(() => expect(mocks.toast.error).toHaveBeenCalledWith("Fel"));
 
     await userEvent.click(within(screen.getByTestId("pending-upload")).getByRole("button", { name: "cancel" }));
@@ -129,9 +191,16 @@ describe("FileManager", () => {
     await userEvent.type(within(form).getByLabelText("fileTitle"), "Trumpet");
     await userEvent.click(within(form).getByRole("button", { name: /flute$/ }));
     await userEvent.click(within(form).getByRole("button", { name: "save" }));
-    await waitFor(() => expect(mocks.actions.updateFileAction).toHaveBeenCalledWith("f1", expect.objectContaining({
-      title: "Trumpet", instrumentIds: ["flute"], transposition: { pitch: "B_FLAT", octave: 0 },
-    })));
+    await waitFor(() =>
+      expect(mocks.actions.updateFileAction).toHaveBeenCalledWith(
+        "f1",
+        expect.objectContaining({
+          title: "Trumpet",
+          instrumentIds: ["flute"],
+          transposition: { pitch: "B_FLAT", octave: 0 },
+        })
+      )
+    );
 
     await userEvent.click(screen.getByRole("button", { name: `edit:${JSON.stringify({ title: "Fil f1" })}` }));
     mocks.actions.updateFileAction.mockResolvedValueOnce({ ok: false, message: "Fel" });

@@ -15,7 +15,9 @@ describe("links", () => {
 
   it("builds zip addresses", () => {
     expect(versionPartsZipHref("v", "")).toBe("/api/versions/v/parts/zip");
-    expect(versionPartsZipHref("v", "transpositions=C", { share: "t" })).toBe("/api/share/t/versions/v/parts/zip?transpositions=C");
+    expect(versionPartsZipHref("v", "transpositions=C", { share: "t" })).toBe(
+      "/api/share/t/versions/v/parts/zip?transpositions=C"
+    );
   });
 
   it("names spex and sizes", () => {

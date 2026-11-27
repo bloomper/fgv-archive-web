@@ -4,13 +4,12 @@ import { POST } from "@/app/stats/api/send/route";
 const fetchMock = vi.fn();
 
 const makeRequest = (headers: Record<string, string>) =>
-  new Request("http://localhost/stats/api/send", { method: "POST", body: "{\"type\":\"event\"}", headers });
+  new Request("http://localhost/stats/api/send", { method: "POST", body: '{"type":"event"}', headers });
 
 beforeEach(() => {
   fetchMock.mockReset();
   vi.stubGlobal("fetch", fetchMock);
-  vi.spyOn(console, "error").mockImplementation(() => {
-  });
+  vi.spyOn(console, "error").mockImplementation(() => {});
   vi.stubEnv("UMAMI_URL", "http://umami-server:3000/");
 });
 
@@ -21,10 +20,15 @@ afterEach(() => {
 
 describe("stats send POST", () => {
   it("never forwards a share link page", async () => {
-    const res = await POST(new Request("http://localhost/stats/api/send", {
-      method: "POST",
-      body: JSON.stringify({ type: "event", payload: { url: "/share/exempel-token-0000000000000001", referrer: "" } }),
-    }));
+    const res = await POST(
+      new Request("http://localhost/stats/api/send", {
+        method: "POST",
+        body: JSON.stringify({
+          type: "event",
+          payload: { url: "/share/exempel-token-0000000000000001", referrer: "" },
+        }),
+      })
+    );
 
     expect(res.status).toBe(204);
     expect(fetchMock).not.toHaveBeenCalled();
@@ -40,22 +44,24 @@ describe("stats send POST", () => {
   });
 
   it("forwards the event with the visitor's address and browser", async () => {
-    fetchMock.mockResolvedValue(new Response("{\"cache\":\"abc\"}", { headers: { "content-type": "application/json" } }));
+    fetchMock.mockResolvedValue(new Response('{"cache":"abc"}', { headers: { "content-type": "application/json" } }));
 
-    const res = await POST(makeRequest({
-      "content-type": "application/json",
-      "user-agent": "Mozilla/5.0",
-      "x-umami-cache": "abc",
-      "cf-connecting-ip": "203.0.113.7",
-      "x-forwarded-for": "10.0.0.1",
-      cookie: "better-auth.session_data=secret",
-    }));
+    const res = await POST(
+      makeRequest({
+        "content-type": "application/json",
+        "user-agent": "Mozilla/5.0",
+        "x-umami-cache": "abc",
+        "cf-connecting-ip": "203.0.113.7",
+        "x-forwarded-for": "10.0.0.1",
+        cookie: "better-auth.session_data=secret",
+      })
+    );
 
     const [url, init] = fetchMock.mock.calls[0];
     const headers = init.headers as Headers;
 
     expect(url).toBe("http://umami-server:3000/api/send");
-    expect(init.body).toBe("{\"type\":\"event\"}");
+    expect(init.body).toBe('{"type":"event"}');
     expect(headers.get("x-forwarded-for")).toBe("203.0.113.7");
     expect(headers.get("user-agent")).toBe("Mozilla/5.0");
     expect(headers.get("x-umami-cache")).toBe("abc");

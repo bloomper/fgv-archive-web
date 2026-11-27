@@ -10,8 +10,15 @@ const mocks = vi.hoisted(() => ({
   router: { refresh: vi.fn(), push: vi.fn() },
   toast: { success: vi.fn(), error: vi.fn() },
   actions: {
-    createVersionAction: vi.fn(), trashParentAction: vi.fn(), searchSpexAction: vi.fn(), updateManuscriptAction: vi.fn(), updateArrangementAction: vi.fn(),
-    createShareLinkAction: vi.fn(), renameShareLinkAction: vi.fn(), extendShareLinkAction: vi.fn(), revokeShareLinkAction: vi.fn(),
+    createVersionAction: vi.fn(),
+    trashParentAction: vi.fn(),
+    searchSpexAction: vi.fn(),
+    updateManuscriptAction: vi.fn(),
+    updateArrangementAction: vi.fn(),
+    createShareLinkAction: vi.fn(),
+    renameShareLinkAction: vi.fn(),
+    extendShareLinkAction: vi.fn(),
+    revokeShareLinkAction: vi.fn(),
   },
   dialogs: undefined as unknown as ReturnType<typeof makeDialogs>,
 }));
@@ -25,12 +32,20 @@ vi.mock("@bloomper/fgv-web-ui/shell/dialogs", () => ({ useDialogs: () => mocks.d
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.dialogs = makeDialogs();
-  Object.values(mocks.actions).forEach(action => action.mockResolvedValue({ ok: true, data: null }));
+  Object.values(mocks.actions).forEach((action) => action.mockResolvedValue({ ok: true, data: null }));
 });
 
 describe("ParentActions", () => {
   it("makes a new version and edits a manuscript", async () => {
-    render(<ParentActions kind="MANUSCRIPT" id="m1" trashed={false} fields={{ title: "Manus", authors: null }} spexHref="/spex/s1" />);
+    render(
+      <ParentActions
+        kind="MANUSCRIPT"
+        id="m1"
+        trashed={false}
+        fields={{ title: "Manus", authors: null }}
+        spexHref="/spex/s1"
+      />
+    );
     mocks.actions.createVersionAction.mockResolvedValueOnce({ ok: true, data: "v9" });
     await userEvent.click(screen.getByRole("button", { name: "newVersion" }));
     await waitFor(() => expect(mocks.router.push).toHaveBeenCalledWith(expect.stringContaining("v9")));
@@ -45,7 +60,13 @@ describe("ParentActions", () => {
     await userEvent.type(screen.getByLabelText("authors"), "Kim");
     await userEvent.type(screen.getByLabelText("description"), "Text");
     await userEvent.click(screen.getByRole("button", { name: "save" }));
-    await waitFor(() => expect(mocks.actions.updateManuscriptAction).toHaveBeenCalledWith("m1", { title: "Manus", authors: "Kim", description: "Text" }));
+    await waitFor(() =>
+      expect(mocks.actions.updateManuscriptAction).toHaveBeenCalledWith("m1", {
+        title: "Manus",
+        authors: "Kim",
+        description: "Text",
+      })
+    );
     await waitFor(() => expect(screen.queryByLabelText("authors")).not.toBeInTheDocument());
 
     await userEvent.click(screen.getByRole("button", { name: "editManuscript" }));
@@ -55,9 +76,19 @@ describe("ParentActions", () => {
 
   it("changes a document's kind and files it under another spex, but never under none", async () => {
     mocks.actions.searchSpexAction.mockResolvedValue({ ok: true, data: [{ id: "s2", title: "Nobel", year: 1975 }] });
-    render(<ParentActions kind="MANUSCRIPT" id="m1" trashed={false} spexHref="/spex/s1"
-                          fields={{ title: "Manus", kindId: "k1", spex: { id: "s1", title: "Ali Baba", year: 1985 } }}
-                          kinds={[{ id: "k1", name: "Manus" }, { id: "k2", name: "Program" }]} />);
+    render(
+      <ParentActions
+        kind="MANUSCRIPT"
+        id="m1"
+        trashed={false}
+        spexHref="/spex/s1"
+        fields={{ title: "Manus", kindId: "k1", spex: { id: "s1", title: "Ali Baba", year: 1985 } }}
+        kinds={[
+          { id: "k1", name: "Manus" },
+          { id: "k2", name: "Program" },
+        ]}
+      />
+    );
     await userEvent.click(screen.getByRole("button", { name: "editManuscript" }));
     expect(screen.getByText("spexKept")).toBeInTheDocument();
     await userEvent.selectOptions(screen.getByLabelText("kind"), "k2");
@@ -66,12 +97,27 @@ describe("ParentActions", () => {
     await userEvent.type(screen.getByLabelText("spex"), "Nobel");
     await userEvent.click(await screen.findByRole("button", { name: /Nobel 1975/ }));
     await userEvent.click(screen.getByRole("button", { name: "save" }));
-    await waitFor(() => expect(mocks.actions.updateManuscriptAction)
-      .toHaveBeenCalledWith("m1", { title: "Manus", authors: null, description: null, kindId: "k2", spexId: "s2" }));
+    await waitFor(() =>
+      expect(mocks.actions.updateManuscriptAction).toHaveBeenCalledWith("m1", {
+        title: "Manus",
+        authors: null,
+        description: null,
+        kindId: "k2",
+        spexId: "s2",
+      })
+    );
   });
 
   it("edits an arrangement and puts it in the trash", async () => {
-    render(<ParentActions kind="ARRANGEMENT" id="a1" trashed={false} fields={{ description: "Gammal" }} spexHref="/spex/s1" />);
+    render(
+      <ParentActions
+        kind="ARRANGEMENT"
+        id="a1"
+        trashed={false}
+        fields={{ description: "Gammal" }}
+        spexHref="/spex/s1"
+      />
+    );
     await userEvent.click(screen.getByRole("button", { name: "editArrangement" }));
     mocks.actions.updateArrangementAction.mockResolvedValueOnce({ ok: false, message: "Fel" });
     await userEvent.clear(screen.getByLabelText("description"));
@@ -87,7 +133,15 @@ describe("ParentActions", () => {
   });
 
   it("restores from the trash", async () => {
-    render(<ParentActions kind="ARRANGEMENT" id="a1" trashed fields={{}} spexHref="/spex/s1" />);
+    render(
+      <ParentActions
+        kind="ARRANGEMENT"
+        id="a1"
+        trashed
+        fields={{}}
+        spexHref="/spex/s1"
+      />
+    );
     expect(screen.getByRole("button", { name: "newVersion" })).toBeDisabled();
     await userEvent.click(screen.getByRole("button", { name: "restore" }));
     await waitFor(() => expect(mocks.actions.trashParentAction).toHaveBeenCalledWith("ARRANGEMENT", "a1", false));
@@ -103,7 +157,13 @@ describe("ShareLinkButton", () => {
     const writeText = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce(new Error("denied"));
 
     Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
-    render(<ShareLinkButton input={{ versionIds: ["v1"] }} defaultName="Finalen" maxMonths={6} />);
+    render(
+      <ShareLinkButton
+        input={{ versionIds: ["v1"] }}
+        defaultName="Finalen"
+        maxMonths={6}
+      />
+    );
     mocks.actions.createShareLinkAction.mockResolvedValueOnce({ ok: false, message: "Fel" });
     await userEvent.click(screen.getByRole("button", { name: "create" }));
     expect(screen.getByLabelText("months")).toHaveValue(6);
@@ -114,7 +174,13 @@ describe("ShareLinkButton", () => {
     await userEvent.clear(screen.getByLabelText("name"));
     await userEvent.type(screen.getByLabelText("name"), "Orkester");
     await userEvent.click(screen.getByRole("button", { name: "createButton" }));
-    await waitFor(() => expect(mocks.actions.createShareLinkAction).toHaveBeenLastCalledWith({ versionIds: ["v1"], name: "Orkester", months: 6 }));
+    await waitFor(() =>
+      expect(mocks.actions.createShareLinkAction).toHaveBeenLastCalledWith({
+        versionIds: ["v1"],
+        name: "Orkester",
+        months: 6,
+      })
+    );
     expect(await screen.findByLabelText("address")).toHaveValue(`${window.location.origin}/share/abc`);
 
     await userEvent.click(screen.getByRole("button", { name: "copy" }));
@@ -126,7 +192,14 @@ describe("ShareLinkButton", () => {
   });
 
   it("is closed with cancel", async () => {
-    render(<ShareLinkButton input={{ fileIds: ["f1"] }} maxMonths={24} label="Dela" size="default" />);
+    render(
+      <ShareLinkButton
+        input={{ fileIds: ["f1"] }}
+        maxMonths={24}
+        label="Dela"
+        size="default"
+      />
+    );
     await userEvent.click(screen.getByRole("button", { name: "Dela" }));
     expect(screen.getByLabelText("months")).toHaveValue(12);
     expect(screen.getByRole("button", { name: "createButton" })).toBeDisabled();
@@ -139,13 +212,27 @@ describe("ShareLinkActions", () => {
   const label = (key: string) => `${key}:${JSON.stringify({ name: "Orkester" })}`;
 
   it("shows nothing for a revoked link", () => {
-    const { container } = render(<ShareLinkActions id="l1" name="Orkester" revoked maxMonths={12} />);
+    const { container } = render(
+      <ShareLinkActions
+        id="l1"
+        name="Orkester"
+        revoked
+        maxMonths={12}
+      />
+    );
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it("renames, extends and revokes", async () => {
-    render(<ShareLinkActions id="l1" name="Orkester" revoked={false} maxMonths={12} />);
+    render(
+      <ShareLinkActions
+        id="l1"
+        name="Orkester"
+        revoked={false}
+        maxMonths={12}
+      />
+    );
     await userEvent.click(screen.getByRole("button", { name: label("renameOf") }));
     await waitFor(() => expect(mocks.actions.renameShareLinkAction).toHaveBeenCalledWith("l1", "Svar"));
     mocks.actions.renameShareLinkAction.mockResolvedValueOnce({ ok: false, message: "Fel" });

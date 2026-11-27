@@ -17,10 +17,12 @@ export const metadata: Metadata = {
 export default function ShareLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col [--header-height:calc(--spacing(14))]">
-      <header className="sticky top-0 z-40 flex h-(--header-height) items-center justify-between gap-3 border-b bg-background px-4 print:hidden">
+      <header className="bg-background sticky top-0 z-40 flex h-(--header-height) items-center justify-between gap-3 border-b px-4 print:hidden">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="size-9 shrink-0"><Logo /></div>
-          <LogoText className="hidden h-9 w-auto text-foreground sm:block" />
+          <div className="size-9 shrink-0">
+            <Logo />
+          </div>
+          <LogoText className="text-foreground hidden h-9 w-auto sm:block" />
           <span className="truncate text-base font-semibold">Spexarkiv</span>
         </div>
         <div className="flex shrink-0 items-center gap-1">

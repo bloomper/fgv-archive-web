@@ -72,7 +72,7 @@ export async function requireAnyRole(required: Role[]): Promise<AuthzResult> {
     return notAuthenticated();
   }
 
-  if (!required.some(role => roles.includes(role))) {
+  if (!required.some((role) => roles.includes(role))) {
     return notAuthorized();
   }
 

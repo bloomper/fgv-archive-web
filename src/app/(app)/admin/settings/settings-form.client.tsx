@@ -22,62 +22,104 @@ export function SettingsForm({ initial }: { initial: SettingsInput }) {
   const [pending, startTransition] = useTransition();
 
   return (
-    <form className="max-w-2xl space-y-4" onSubmit={event => {
-      event.preventDefault();
-      startTransition(async () => {
-        const result = await saveSettingsAction({
-          ...values,
-          welcomeSv: values.welcomeSv?.trim() || null,
-          welcomeEn: values.welcomeEn?.trim() || null,
-          accessRequestRecipients: recipients.split(/[\s,;]+/).map(value => value.trim()).filter(Boolean),
-        });
+    <form
+      className="max-w-2xl space-y-4"
+      onSubmit={(event) => {
+        event.preventDefault();
+        startTransition(async () => {
+          const result = await saveSettingsAction({
+            ...values,
+            welcomeSv: values.welcomeSv?.trim() || null,
+            welcomeEn: values.welcomeEn?.trim() || null,
+            accessRequestRecipients: recipients
+              .split(/[\s,;]+/)
+              .map((value) => value.trim())
+              .filter(Boolean),
+          });
 
-        if (result.ok) {
-          toast.success(t("saved"));
-        } else {
-          toast.error(result.message);
-        }
-      });
-    }}>
+          if (result.ok) {
+            toast.success(t("saved"));
+          } else {
+            toast.error(result.message);
+          }
+        });
+      }}
+    >
       <div className="space-y-1.5">
         <Label htmlFor="welcome-sv">{t("welcomeSv")}</Label>
-        <Textarea id="welcome-sv" rows={3} value={values.welcomeSv ?? ""} maxLength={2000}
-                  onChange={event => setValues({ ...values, welcomeSv: event.target.value })} />
+        <Textarea
+          id="welcome-sv"
+          rows={3}
+          value={values.welcomeSv ?? ""}
+          maxLength={2000}
+          onChange={(event) => setValues({ ...values, welcomeSv: event.target.value })}
+        />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="welcome-en">{t("welcomeEn")}</Label>
-        <Textarea id="welcome-en" rows={3} value={values.welcomeEn ?? ""} maxLength={2000}
-                  onChange={event => setValues({ ...values, welcomeEn: event.target.value })} />
+        <Textarea
+          id="welcome-en"
+          rows={3}
+          value={values.welcomeEn ?? ""}
+          maxLength={2000}
+          onChange={(event) => setValues({ ...values, welcomeEn: event.target.value })}
+        />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="max-upload">{t("maxUploadMb")}</Label>
-          <Input id="max-upload" type="number" min={1} max={10000} value={values.maxUploadMb}
-                 onChange={event => setValues({ ...values, maxUploadMb: Number(event.target.value) })} />
+          <Input
+            id="max-upload"
+            type="number"
+            min={1}
+            max={10000}
+            value={values.maxUploadMb}
+            onChange={(event) => setValues({ ...values, maxUploadMb: Number(event.target.value) })}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="max-share">{t("maxShareLinkMonths")}</Label>
-          <Input id="max-share" type="number" min={1} max={24} value={values.maxShareLinkMonths}
-                 onChange={event => setValues({ ...values, maxShareLinkMonths: Number(event.target.value) })} />
+          <Input
+            id="max-share"
+            type="number"
+            min={1}
+            max={24}
+            value={values.maxShareLinkMonths}
+            onChange={(event) => setValues({ ...values, maxShareLinkMonths: Number(event.target.value) })}
+          />
         </div>
       </div>
       <label className="flex items-center gap-2 text-sm">
-        <Checkbox checked={values.manuscriptRestricted}
-                  onCheckedChange={checked => setValues({ ...values, manuscriptRestricted: checked === true })} />
+        <Checkbox
+          checked={values.manuscriptRestricted}
+          onCheckedChange={(checked) => setValues({ ...values, manuscriptRestricted: checked === true })}
+        />
         {t("manuscriptRestricted")}
       </label>
       <label className="flex items-center gap-2 text-sm">
-        <Checkbox checked={values.arrangementRestricted}
-                  onCheckedChange={checked => setValues({ ...values, arrangementRestricted: checked === true })} />
+        <Checkbox
+          checked={values.arrangementRestricted}
+          onCheckedChange={(checked) => setValues({ ...values, arrangementRestricted: checked === true })}
+        />
         {t("arrangementRestricted")}
       </label>
       <div className="space-y-1.5">
         <Label htmlFor="recipients">{t("recipients")}</Label>
-        <Textarea id="recipients" rows={3} value={recipients} onChange={event => setRecipients(event.target.value)}
-                  placeholder="redaktor@example.org" />
-        <p className="text-xs text-muted-foreground">{t("recipientsHint")}</p>
+        <Textarea
+          id="recipients"
+          rows={3}
+          value={recipients}
+          onChange={(event) => setRecipients(event.target.value)}
+          placeholder="redaktor@example.org"
+        />
+        <p className="text-muted-foreground text-xs">{t("recipientsHint")}</p>
       </div>
-      <Button type="submit" disabled={pending}>{t("save")}</Button>
+      <Button
+        type="submit"
+        disabled={pending}
+      >
+        {t("save")}
+      </Button>
     </form>
   );
 }

@@ -9,7 +9,7 @@ import { loadAuditPage } from "./actions.server";
 import { auditLink, ENTITY_TYPES } from "./links";
 
 export default async function AuditPage({ searchParams }: { searchParams: Promise<AuditSearch> }) {
-  return withPolicyPage(Policies.editor.requireEditor, async authz => {
+  return withPolicyPage(Policies.editor.requireEditor, async (authz) => {
     const t = await getTranslations("Audit");
     const search = auditSearchOf(await searchParams);
     const admin = isAdmin(authz.roles);

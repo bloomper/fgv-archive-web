@@ -27,7 +27,7 @@ type SpexNumber = { id: string; act: number; position: number; title: string };
 export function BookSongsEditor({ bookId, songs }: { bookId: string; songs: EditorSong[] }) {
   const t = useTranslations("BookSongs");
   const router = useRouter();
-  const [list, setList] = useServerState(songs, value => JSON.stringify(value));
+  const [list, setList] = useServerState(songs, (value) => JSON.stringify(value));
   const [spex, setSpex] = useState<PickedSpex | null>(null);
   const [numbers, setNumbers] = useState<SpexNumber[]>([]);
   const [numberId, setNumberId] = useState("");
@@ -52,7 +52,7 @@ export function BookSongsEditor({ bookId, songs }: { bookId: string; songs: Edit
   };
 
   const addNumber = () => {
-    const number = numbers.find(candidate => candidate.id === numberId);
+    const number = numbers.find((candidate) => candidate.id === numberId);
 
     if (number) {
       setList([...list, { numberId: number.id, label: `${number.title} (${spexName(spex)})`, textOnly: false }]);
@@ -67,74 +67,153 @@ export function BookSongsEditor({ bookId, songs }: { bookId: string; songs: Edit
     setList(next);
   };
 
-  const save = () => startTransition(async () => {
-    const result = await setBookSongsAction(bookId, list.map(song => ({
-      numberId: song.numberId ?? null, title: song.numberId ? null : song.title ?? song.label, textOnly: song.textOnly,
-    })));
+  const save = () =>
+    startTransition(async () => {
+      const result = await setBookSongsAction(
+        bookId,
+        list.map((song) => ({
+          numberId: song.numberId ?? null,
+          title: song.numberId ? null : (song.title ?? song.label),
+          textOnly: song.textOnly,
+        }))
+      );
 
-    if (result.ok) {
-      toast.success(t("saved"));
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
-  });
+      if (result.ok) {
+        toast.success(t("saved"));
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    });
 
   return (
     <div className="space-y-4 rounded-lg border p-4">
       <h3 className="font-semibold">{t("editTitle")}</h3>
-      <p className="text-xs text-muted-foreground">{t("help")}</p>
+      <p className="text-muted-foreground text-xs">{t("help")}</p>
       {list.length > 0 && (
         <ol className="divide-y rounded-md border">
           {list.map((song, index) => (
-            <li key={`${song.numberId ?? song.title}-${index}`} className="flex flex-wrap items-center gap-2 px-3 py-1.5 text-sm">
-              <span className="w-6 tabular-nums text-muted-foreground">{index + 1}.</span>
-              <span className="min-w-0 flex-1">{song.label}{!song.numberId && <span className="text-muted-foreground"> ({t("freeTitle")})</span>}</span>
+            <li
+              key={`${song.numberId ?? song.title}-${index}`}
+              className="flex flex-wrap items-center gap-2 px-3 py-1.5 text-sm"
+            >
+              <span className="text-muted-foreground w-6 tabular-nums">{index + 1}.</span>
+              <span className="min-w-0 flex-1">
+                {song.label}
+                {!song.numberId && <span className="text-muted-foreground"> ({t("freeTitle")})</span>}
+              </span>
               <label className="flex items-center gap-1.5 text-xs">
-                <Checkbox checked={song.textOnly} aria-label={t("textOnlyOf", { title: song.label })}
-                          onCheckedChange={checked => setList(list.map((other, i) => i === index ? { ...other, textOnly: checked === true } : other))} />
+                <Checkbox
+                  checked={song.textOnly}
+                  aria-label={t("textOnlyOf", { title: song.label })}
+                  onCheckedChange={(checked) =>
+                    setList(list.map((other, i) => (i === index ? { ...other, textOnly: checked === true } : other)))
+                  }
+                />
                 {t("textOnly")}
               </label>
-              <Button size="icon-sm" variant="ghost" disabled={index === 0} aria-label={t("moveUp", { title: song.label })}
-                      onClick={() => move(index, -1)}><ArrowUp /></Button>
-              <Button size="icon-sm" variant="ghost" disabled={index === list.length - 1} aria-label={t("moveDown", { title: song.label })}
-                      onClick={() => move(index, 1)}><ArrowDown /></Button>
-              <Button size="icon-sm" variant="ghost" aria-label={t("remove", { title: song.label })}
-                      onClick={() => setList(list.filter((_, i) => i !== index))}><Trash2 /></Button>
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                disabled={index === 0}
+                aria-label={t("moveUp", { title: song.label })}
+                onClick={() => move(index, -1)}
+              >
+                <ArrowUp />
+              </Button>
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                disabled={index === list.length - 1}
+                aria-label={t("moveDown", { title: song.label })}
+                onClick={() => move(index, 1)}
+              >
+                <ArrowDown />
+              </Button>
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                aria-label={t("remove", { title: song.label })}
+                onClick={() => setList(list.filter((_, i) => i !== index))}
+              >
+                <Trash2 />
+              </Button>
             </li>
           ))}
         </ol>
       )}
       <div className="grid gap-3 md:grid-cols-2">
         <div className="space-y-2">
-          <SpexPicker value={spex} onChange={pickSpex} />
+          <SpexPicker
+            value={spex}
+            onChange={pickSpex}
+          />
           {spex && (
             <div className="flex gap-2">
-              <NativeSelect aria-label={t("number")} value={numberId} className="w-full" onChange={event => setNumberId(event.target.value)}>
-                <NativeSelectOption value="">{numbers.length === 0 ? t("noNumbers") : t("pickNumber")}</NativeSelectOption>
-                {numbers.map(number => (
-                  <NativeSelectOption key={number.id} value={number.id}>{`${number.act}:${number.position} ${number.title}`}</NativeSelectOption>
+              <NativeSelect
+                aria-label={t("number")}
+                value={numberId}
+                className="w-full"
+                onChange={(event) => setNumberId(event.target.value)}
+              >
+                <NativeSelectOption value="">
+                  {numbers.length === 0 ? t("noNumbers") : t("pickNumber")}
+                </NativeSelectOption>
+                {numbers.map((number) => (
+                  <NativeSelectOption
+                    key={number.id}
+                    value={number.id}
+                  >{`${number.act}:${number.position} ${number.title}`}</NativeSelectOption>
                 ))}
               </NativeSelect>
-              <Button type="button" variant="outline" disabled={!numberId} onClick={addNumber}><Plus />{t("add")}</Button>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={!numberId}
+                onClick={addNumber}
+              >
+                <Plus />
+                {t("add")}
+              </Button>
             </div>
           )}
         </div>
-        <form className="space-y-1.5" onSubmit={event => {
-          event.preventDefault();
-          if (title.trim()) {
-            setList([...list, { label: title.trim(), title: title.trim(), textOnly: false }]);
-            setTitle("");
-          }
-        }}>
+        <form
+          className="space-y-1.5"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (title.trim()) {
+              setList([...list, { label: title.trim(), title: title.trim(), textOnly: false }]);
+              setTitle("");
+            }
+          }}
+        >
           <Label htmlFor="book-free-title">{t("freeTitleLabel")}</Label>
           <div className="flex gap-2">
-            <Input id="book-free-title" value={title} maxLength={255} onChange={event => setTitle(event.target.value)} />
-            <Button type="submit" variant="outline" disabled={!title.trim()}><Plus />{t("add")}</Button>
+            <Input
+              id="book-free-title"
+              value={title}
+              maxLength={255}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={!title.trim()}
+            >
+              <Plus />
+              {t("add")}
+            </Button>
           </div>
         </form>
       </div>
-      <Button size="sm" disabled={pending} onClick={save}>{t("save")}</Button>
+      <Button
+        size="sm"
+        disabled={pending}
+        onClick={save}
+      >
+        {t("save")}
+      </Button>
     </div>
   );
 }

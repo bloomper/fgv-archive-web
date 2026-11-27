@@ -3,15 +3,21 @@ import { Book, FileText, ScrollText } from "lucide-react";
 import { groupBySpex, kindIcon, menuKinds, parseAliases } from "@/utils/document-kinds";
 import { documentsHref, newDocumentHref } from "@/utils/links";
 
-const kind = (id: string, documentCount: number, retired = false) =>
-  ({ id, name: id, nameSv: id, nameEn: id, retired, documentCount });
+const kind = (id: string, documentCount: number, retired = false) => ({
+  id,
+  name: id,
+  nameSv: id,
+  nameEn: id,
+  retired,
+  documentCount,
+});
 
 describe("document kinds", () => {
   it("shows users the kinds with documents, and editors every kind in use too", () => {
     const kinds = [kind("Manus", 2), kind("Program", 0), kind("Gammal", 1, true), kind("Borta", 0, true)];
 
-    expect(menuKinds(kinds, ["USER"]).map(k => k.id)).toEqual(["Manus", "Gammal"]);
-    expect(menuKinds(kinds, ["USER", "EDITOR"]).map(k => k.id)).toEqual(["Manus", "Program", "Gammal"]);
+    expect(menuKinds(kinds, ["USER"]).map((k) => k.id)).toEqual(["Manus", "Gammal"]);
+    expect(menuKinds(kinds, ["USER", "EDITOR"]).map((k) => k.id)).toEqual(["Manus", "Program", "Gammal"]);
   });
 
   it("guesses an icon from the names and aliases, else a plain document", () => {
@@ -28,11 +34,17 @@ describe("document kinds", () => {
     const old = { id: "s1", title: "Nobel", year: 1975 };
     const recent = { id: "s2", title: "Ali Baba", year: 1985 };
     const groups = groupBySpex([
-      { id: "d1", spex: old }, { id: "d2", spex: null }, { id: "d3", spex: recent }, { id: "d4", spex: old },
+      { id: "d1", spex: old },
+      { id: "d2", spex: null },
+      { id: "d3", spex: recent },
+      { id: "d4", spex: old },
     ]);
 
-    expect(groups.map(group => [group.spex?.id ?? null, group.documents.map(d => d.id)]))
-      .toEqual([["s2", ["d3"]], ["s1", ["d1", "d4"]], [null, ["d2"]]]);
+    expect(groups.map((group) => [group.spex?.id ?? null, group.documents.map((d) => d.id)])).toEqual([
+      ["s2", ["d3"]],
+      ["s1", ["d1", "d4"]],
+      [null, ["d2"]],
+    ]);
   });
 
   it("links to a kind's documents and a new document", () => {

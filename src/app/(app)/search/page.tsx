@@ -3,7 +3,14 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Lock, Search as SearchIcon } from "lucide-react";
 import { SubmitButton } from "@/components/submit-button.client";
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@bloomper/fgv-web-ui/ui/empty";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@bloomper/fgv-web-ui/ui/empty";
 import { Input } from "@bloomper/fgv-web-ui/ui/input";
 import { Label } from "@bloomper/fgv-web-ui/ui/label";
 import { PartFilterControls } from "@/components/archive/part-filter.client";
@@ -44,7 +51,12 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     ]);
     const found = result?.search;
     const total = found
-      ? found.spex.length + found.manuscripts.length + found.numbers.length + found.arrangements.length + found.versions.length + found.textHits.length
+      ? found.spex.length +
+        found.manuscripts.length +
+        found.numbers.length +
+        found.arrangements.length +
+        found.versions.length +
+        found.textHits.length
       : 0;
     const heading = "text-lg font-semibold";
     const list = "divide-y overflow-hidden rounded-lg border bg-card";
@@ -52,21 +64,61 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
     return (
       <Page variant="content">
-        <PageHeader title={t("title")}/>
-        <Form action="/search" role="search" className="grid gap-3 sm:grid-cols-[2fr_1fr_auto]">
-          {filter.instrumentIds.length > 0 && <input type="hidden" name="instruments" value={filter.instrumentIds.join(",")} />}
-          {filter.transpositions.length > 0 && <input type="hidden" name="pitches" value={filter.transpositions.join(",")} />}
+        <PageHeader title={t("title")} />
+        <Form
+          action="/search"
+          role="search"
+          className="grid gap-3 sm:grid-cols-[2fr_1fr_auto]"
+        >
+          {filter.instrumentIds.length > 0 && (
+            <input
+              type="hidden"
+              name="instruments"
+              value={filter.instrumentIds.join(",")}
+            />
+          )}
+          {filter.transpositions.length > 0 && (
+            <input
+              type="hidden"
+              name="pitches"
+              value={filter.transpositions.join(",")}
+            />
+          )}
           <div className="space-y-1.5">
             <Label htmlFor="search-q">{t("query")}</Label>
-            <Input id="search-q" name="q" type="search" defaultValue={q} maxLength={200} placeholder={t("placeholder")}
-                   aria-invalid={tooShort || undefined} aria-describedby={tooShort ? "search-q-error" : undefined} />
-            {tooShort && <p id="search-q-error" className="text-xs text-destructive">{t("tooShort")}</p>}
+            <Input
+              id="search-q"
+              name="q"
+              type="search"
+              defaultValue={q}
+              maxLength={200}
+              placeholder={t("placeholder")}
+              aria-invalid={tooShort || undefined}
+              aria-describedby={tooShort ? "search-q-error" : undefined}
+            />
+            {tooShort && (
+              <p
+                id="search-q-error"
+                className="text-destructive text-xs"
+              >
+                {t("tooShort")}
+              </p>
+            )}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="search-key">{t("key")}</Label>
-            <Input id="search-key" name="key" defaultValue={key ? formatKey(key, locale) : keyText} maxLength={30}
-                   placeholder={t("keyPlaceholder")} aria-describedby="search-key-hint" />
-            <p id="search-key-hint" className="text-xs text-muted-foreground">
+            <Input
+              id="search-key"
+              name="key"
+              defaultValue={key ? formatKey(key, locale) : keyText}
+              maxLength={30}
+              placeholder={t("keyPlaceholder")}
+              aria-describedby="search-key-hint"
+            />
+            <p
+              id="search-key-hint"
+              className="text-muted-foreground text-xs"
+            >
               {keyText && !key ? <span className="text-destructive">{t("keyUnknown")}</span> : t("keyHint")}
             </p>
           </div>
@@ -76,31 +128,56 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         </Form>
         <PartFilterControls instruments={instruments} />
 
-        {!ready ? !tooShort && (
-          <Empty className="border">
-            <EmptyHeader>
-              <EmptyMedia variant="icon"><SearchIcon /></EmptyMedia>
-              <EmptyTitle>{t("emptyTitle")}</EmptyTitle>
-              <EmptyDescription>{isEmptyFilter(filter) ? t("hint") : t("filterOnly")}</EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Link href="/spex" className="text-sm text-link hover:text-link/80">{t("browse")}</Link>
-            </EmptyContent>
-          </Empty>
+        {!ready ? (
+          !tooShort && (
+            <Empty className="border">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <SearchIcon />
+                </EmptyMedia>
+                <EmptyTitle>{t("emptyTitle")}</EmptyTitle>
+                <EmptyDescription>{isEmptyFilter(filter) ? t("hint") : t("filterOnly")}</EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Link
+                  href="/spex"
+                  className="text-link hover:text-link/80 text-sm"
+                >
+                  {t("browse")}
+                </Link>
+              </EmptyContent>
+            </Empty>
+          )
         ) : !found || total === 0 ? (
-          <DataEmpty title={t("none")} description={null} />
+          <DataEmpty
+            title={t("none")}
+            description={null}
+          />
         ) : (
           <div className="space-y-6">
-            <p className="text-sm text-muted-foreground" aria-live="polite">{t("count", { count: total })}</p>
+            <p
+              className="text-muted-foreground text-sm"
+              aria-live="polite"
+            >
+              {t("count", { count: total })}
+            </p>
 
             {found.spex.length > 0 && (
               <section className="space-y-2">
                 <h2 className={heading}>{t("spex")}</h2>
                 <ul className={list}>
-                  {found.spex.map(spex => (
-                    <li key={spex.id} className={row}>
-                      <Link href={spexHref(spex.id)} className="row-link font-medium">{spexName(spex)}</Link>
-                      <span className="text-sm text-muted-foreground"> · {spex.categoryName}</span>
+                  {found.spex.map((spex) => (
+                    <li
+                      key={spex.id}
+                      className={row}
+                    >
+                      <Link
+                        href={spexHref(spex.id)}
+                        className="row-link font-medium"
+                      >
+                        {spexName(spex)}
+                      </Link>
+                      <span className="text-muted-foreground text-sm"> · {spex.categoryName}</span>
                     </li>
                   ))}
                 </ul>
@@ -111,10 +188,21 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <section className="space-y-2">
                 <h2 className={heading}>{t("manuscripts")}</h2>
                 <ul className={list}>
-                  {found.manuscripts.map(manuscript => (
-                    <li key={manuscript.id} className={row}>
-                      <Link href={manuscriptHref(manuscript.id)} className="row-link font-medium">{manuscript.title}</Link>
-                      <span className="text-sm text-muted-foreground"> · {[spexName(manuscript.spex), manuscript.authors].filter(Boolean).join(" · ")}</span>
+                  {found.manuscripts.map((manuscript) => (
+                    <li
+                      key={manuscript.id}
+                      className={row}
+                    >
+                      <Link
+                        href={manuscriptHref(manuscript.id)}
+                        className="row-link font-medium"
+                      >
+                        {manuscript.title}
+                      </Link>
+                      <span className="text-muted-foreground text-sm">
+                        {" "}
+                        · {[spexName(manuscript.spex), manuscript.authors].filter(Boolean).join(" · ")}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -125,12 +213,30 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <section className="space-y-2">
                 <h2 className={heading}>{t("numbers")}</h2>
                 <ul className={list}>
-                  {found.numbers.map(number => (
-                    <li key={number.id} className={row}>
-                      {number.arrangement
-                        ? <Link href={arrangementHref(number.arrangement.id)} className="row-link font-medium">{number.title}</Link>
-                        : <Link href={spexHref(number.spex.id)} className="row-link font-medium">{number.title}</Link>}
-                      <span className="text-sm text-muted-foreground"> · {[spexName(number.spex), number.originalSong].filter(Boolean).join(" · ")}</span>
+                  {found.numbers.map((number) => (
+                    <li
+                      key={number.id}
+                      className={row}
+                    >
+                      {number.arrangement ? (
+                        <Link
+                          href={arrangementHref(number.arrangement.id)}
+                          className="row-link font-medium"
+                        >
+                          {number.title}
+                        </Link>
+                      ) : (
+                        <Link
+                          href={spexHref(number.spex.id)}
+                          className="row-link font-medium"
+                        >
+                          {number.title}
+                        </Link>
+                      )}
+                      <span className="text-muted-foreground text-sm">
+                        {" "}
+                        · {[spexName(number.spex), number.originalSong].filter(Boolean).join(" · ")}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -141,10 +247,18 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <section className="space-y-2">
                 <h2 className={heading}>{t("arrangements")}</h2>
                 <ul className={list}>
-                  {found.arrangements.map(arrangement => (
-                    <li key={arrangement.id} className={row}>
-                      <Link href={arrangementHref(arrangement.id)} className="row-link font-medium">{arrangement.number.title}</Link>
-                      <span className="text-sm text-muted-foreground"> · {spexName(arrangement.number.spex)}</span>
+                  {found.arrangements.map((arrangement) => (
+                    <li
+                      key={arrangement.id}
+                      className={row}
+                    >
+                      <Link
+                        href={arrangementHref(arrangement.id)}
+                        className="row-link font-medium"
+                      >
+                        {arrangement.number.title}
+                      </Link>
+                      <span className="text-muted-foreground text-sm"> · {spexName(arrangement.number.spex)}</span>
                     </li>
                   ))}
                 </ul>
@@ -155,16 +269,32 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <section className="space-y-2">
                 <h2 className={heading}>{t("versionsInKey", { key: key ? formatKey(key, locale) : "" })}</h2>
                 <ul className={list}>
-                  {found.versions.map(version => version.arrangement && (
-                    <li key={version.id} className={row}>
-                      <Link href={`${arrangementHref(version.arrangement.id)}#version-${version.id}`} className="row-link font-medium">
-                        {version.arrangement.number.title}
-                      </Link>
-                      <span className="text-sm text-muted-foreground">
-                        {" · "}{[version.label, formatKeys(version.key, version.modulations, locale), spexName(version.arrangement.number.spex)].filter(Boolean).join(" · ")}
-                      </span>
-                    </li>
-                  ))}
+                  {found.versions.map(
+                    (version) =>
+                      version.arrangement && (
+                        <li
+                          key={version.id}
+                          className={row}
+                        >
+                          <Link
+                            href={`${arrangementHref(version.arrangement.id)}#version-${version.id}`}
+                            className="row-link font-medium"
+                          >
+                            {version.arrangement.number.title}
+                          </Link>
+                          <span className="text-muted-foreground text-sm">
+                            {" · "}
+                            {[
+                              version.label,
+                              formatKeys(version.key, version.modulations, locale),
+                              spexName(version.arrangement.number.spex),
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </span>
+                        </li>
+                      )
+                  )}
                 </ul>
               </section>
             )}
@@ -172,7 +302,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             {found.textHits.length > 0 && (
               <section className="space-y-2">
                 <h2 className={heading}>{t("textHits")}</h2>
-                {!isEmptyFilter(filter) && <p className="text-xs text-muted-foreground">{t("textHitsFiltered")}</p>}
+                {!isEmptyFilter(filter) && <p className="text-muted-foreground text-xs">{t("textHitsFiltered")}</p>}
                 <ul className={list}>
                   {found.textHits.map((hit, index) => {
                     const parent = hit.version.manuscript?.title ?? hit.version.arrangement?.number.title;
@@ -180,19 +310,43 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                     const transposition = formatTransposition(hit.file.transposition, locale);
 
                     return (
-                      <li key={`${hit.file.id}-${hit.page}-${index}`} className={`${row} space-y-1`} data-testid="text-hit">
+                      <li
+                        key={`${hit.file.id}-${hit.page}-${index}`}
+                        className={`${row} space-y-1`}
+                        data-testid="text-hit"
+                      >
                         <div className="flex flex-wrap items-baseline gap-x-2">
-                          {hit.file.canOpen
-                            ? <Link href={fileHref(hit.file.id, {}, hit.page)} className="row-link font-medium">{hit.file.title}</Link>
-                            : <span className="inline-flex items-center gap-1 font-medium"><Lock className="size-3.5" aria-hidden />{hit.file.title}</span>}
-                          {hit.page && <span className="text-sm text-link">{t("page", { page: hit.page })}</span>}
-                          <span className="text-sm text-muted-foreground">
-                            {[parent, hit.version.label, spexName(spex), localName(hit.file.role, locale),
-                              hit.file.instruments.map(instrument => localName(instrument, locale)).join(" / "), transposition]
-                              .filter(Boolean).join(" · ")}
+                          {hit.file.canOpen ? (
+                            <Link
+                              href={fileHref(hit.file.id, {}, hit.page)}
+                              className="row-link font-medium"
+                            >
+                              {hit.file.title}
+                            </Link>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 font-medium">
+                              <Lock
+                                className="size-3.5"
+                                aria-hidden
+                              />
+                              {hit.file.title}
+                            </span>
+                          )}
+                          {hit.page && <span className="text-link text-sm">{t("page", { page: hit.page })}</span>}
+                          <span className="text-muted-foreground text-sm">
+                            {[
+                              parent,
+                              hit.version.label,
+                              spexName(spex),
+                              localName(hit.file.role, locale),
+                              hit.file.instruments.map((instrument) => localName(instrument, locale)).join(" / "),
+                              transposition,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground">…{hit.snippet}…</p>
+                        <p className="text-muted-foreground text-sm">…{hit.snippet}…</p>
                       </li>
                     );
                   })}

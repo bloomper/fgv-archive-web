@@ -16,8 +16,10 @@ export async function proxy(request: NextRequest) {
   const result = await refresh(request);
 
   if (!request.nextUrl.pathname.startsWith("/api/")) {
-    result.headers.set("Content-Security-Policy",
-      contentSecurityPolicy(process.env.NODE_ENV === "development", isReaderPath(request.nextUrl.pathname)));
+    result.headers.set(
+      "Content-Security-Policy",
+      contentSecurityPolicy(process.env.NODE_ENV === "development", isReaderPath(request.nextUrl.pathname))
+    );
   }
   return result;
 }
@@ -35,9 +37,7 @@ async function refresh(request: NextRequest): Promise<NextResponse> {
     return response;
   }
 
-  const hasAccountCookie = request.cookies
-    .getAll()
-    .some(({ name }) => name.includes(ACCOUNT_COOKIE));
+  const hasAccountCookie = request.cookies.getAll().some(({ name }) => name.includes(ACCOUNT_COOKIE));
 
   if (!hasAccountCookie) {
     return response;
@@ -66,23 +66,26 @@ async function refresh(request: NextRequest): Promise<NextResponse> {
     }
 
     return refreshed;
-  } catch {
-  }
+  } catch {}
 
   return response;
 }
 
 function applySetCookie(request: NextRequest, setCookie: string) {
-  const [pair, ...attributes] = setCookie.split(";").map(part => part.trim());
+  const [pair, ...attributes] = setCookie.split(";").map((part) => part.trim());
   const separator = pair.indexOf("=");
   const name = pair.slice(0, separator);
   const value = pair.slice(separator + 1);
-  const expired = value === "" || attributes.some(attribute => {
-    const [key, attributeValue = ""] = attribute.split("=");
+  const expired =
+    value === "" ||
+    attributes.some((attribute) => {
+      const [key, attributeValue = ""] = attribute.split("=");
 
-    return (key.toLowerCase() === "max-age" && Number(attributeValue) <= 0)
-      || (key.toLowerCase() === "expires" && Date.parse(attributeValue) <= Date.now());
-  });
+      return (
+        (key.toLowerCase() === "max-age" && Number(attributeValue) <= 0) ||
+        (key.toLowerCase() === "expires" && Date.parse(attributeValue) <= Date.now())
+      );
+    });
 
   if (expired) {
     request.cookies.delete(name);

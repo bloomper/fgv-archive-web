@@ -6,7 +6,14 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Check, Copy, Share2 } from "lucide-react";
 import { Button } from "@bloomper/fgv-web-ui/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@bloomper/fgv-web-ui/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@bloomper/fgv-web-ui/ui/dialog";
 import { Input } from "@bloomper/fgv-web-ui/ui/input";
 import { Label } from "@bloomper/fgv-web-ui/ui/label";
 import type { ShareLinkInput } from "@/gql/graphql";
@@ -18,7 +25,16 @@ import { track } from "@/utils/umami";
  * it is for and how many months it lasts. The address is shown once, with a copy button; only its hash is kept.
  * `afterCreate` adds to the dialog once the link is made (e.g. emailing it), and `onDone` runs when that dialog closes.
  */
-export function ShareLinkButton({ input, defaultName = "", maxMonths, label, disabled = false, size = "sm", afterCreate, onDone }: {
+export function ShareLinkButton({
+  input,
+  defaultName = "",
+  maxMonths,
+  label,
+  disabled = false,
+  size = "sm",
+  afterCreate,
+  onDone,
+}: {
   input: Omit<ShareLinkInput, "name" | "months">;
   defaultName?: string;
   maxMonths: number;
@@ -44,21 +60,22 @@ export function ShareLinkButton({ input, defaultName = "", maxMonths, label, dis
     }
   };
 
-  const create = () => startTransition(async () => {
-    const result = await createShareLinkAction({ ...input, name, months: Number(months) });
+  const create = () =>
+    startTransition(async () => {
+      const result = await createShareLinkAction({ ...input, name, months: Number(months) });
 
-    if (result.ok) {
-      track("share-link-create", {
-        versions: input.versionIds?.length ?? 0,
-        files: input.fileIds?.length ?? 0,
-        instruments: input.instrumentIds?.length ?? 0,
-      });
-      setUrl(`${window.location.origin}/share/${result.data.token}`);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
-  });
+      if (result.ok) {
+        track("share-link-create", {
+          versions: input.versionIds?.length ?? 0,
+          files: input.fileIds?.length ?? 0,
+          instruments: input.instrumentIds?.length ?? 0,
+        });
+        setUrl(`${window.location.origin}/share/${result.data.token}`);
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    });
 
   const copy = async () => {
     if (!url) {
@@ -75,16 +92,24 @@ export function ShareLinkButton({ input, defaultName = "", maxMonths, label, dis
 
   return (
     <>
-      <Button size={size} variant="outline" disabled={disabled} onClick={() => {
-        setUrl(null);
-        setCopied(false);
-        setName(defaultName);
-        setMonths(String(Math.min(12, maxMonths)));
-        setOpen(true);
-      }}>
+      <Button
+        size={size}
+        variant="outline"
+        disabled={disabled}
+        onClick={() => {
+          setUrl(null);
+          setCopied(false);
+          setName(defaultName);
+          setMonths(String(Math.min(12, maxMonths)));
+          setOpen(true);
+        }}
+      >
         <Share2 /> {label ?? t("create")}
       </Button>
-      <Dialog open={open} onOpenChange={changeOpen}>
+      <Dialog
+        open={open}
+        onOpenChange={changeOpen}
+      >
         <DialogContent className="sm:max-w-lg">
           {url ? (
             <div className="grid gap-4">
@@ -93,40 +118,83 @@ export function ShareLinkButton({ input, defaultName = "", maxMonths, label, dis
                 <DialogDescription>{t("shownOnce")}</DialogDescription>
               </DialogHeader>
               <div className="flex gap-2">
-                <Input readOnly value={url} aria-label={t("address")} onFocus={event => event.target.select()}
-                       className="font-mono text-xs" />
-                <Button type="button" variant="outline" onClick={copy} aria-label={t("copy")}>
+                <Input
+                  readOnly
+                  value={url}
+                  aria-label={t("address")}
+                  onFocus={(event) => event.target.select()}
+                  className="font-mono text-xs"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={copy}
+                  aria-label={t("copy")}
+                >
                   {copied ? <Check /> : <Copy />} {t("copy")}
                 </Button>
               </div>
               {afterCreate?.(url, Number(months))}
               <DialogFooter>
-                <Button type="button" onClick={() => changeOpen(false)}>{t("done")}</Button>
+                <Button
+                  type="button"
+                  onClick={() => changeOpen(false)}
+                >
+                  {t("done")}
+                </Button>
               </DialogFooter>
             </div>
           ) : (
-            <form className="grid gap-4" onSubmit={event => {
-              event.preventDefault();
-              create();
-            }}>
+            <form
+              className="grid gap-4"
+              onSubmit={(event) => {
+                event.preventDefault();
+                create();
+              }}
+            >
               <DialogHeader>
                 <DialogTitle>{t("createTitle")}</DialogTitle>
                 <DialogDescription>{t("createText")}</DialogDescription>
               </DialogHeader>
               <div className="space-y-1.5">
                 <Label htmlFor="share-name">{t("name")}</Label>
-                <Input id="share-name" value={name} required maxLength={200} placeholder={t("namePlaceholder")}
-                       onChange={event => setName(event.target.value)} />
+                <Input
+                  id="share-name"
+                  value={name}
+                  required
+                  maxLength={200}
+                  placeholder={t("namePlaceholder")}
+                  onChange={(event) => setName(event.target.value)}
+                />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="share-months">{t("months")}</Label>
-                <Input id="share-months" type="number" min={1} max={maxMonths} value={months} required className="w-28"
-                       onChange={event => setMonths(event.target.value)} />
-                <p className="text-xs text-muted-foreground">{t("monthsHint", { max: maxMonths })}</p>
+                <Input
+                  id="share-months"
+                  type="number"
+                  min={1}
+                  max={maxMonths}
+                  value={months}
+                  required
+                  className="w-28"
+                  onChange={(event) => setMonths(event.target.value)}
+                />
+                <p className="text-muted-foreground text-xs">{t("monthsHint", { max: maxMonths })}</p>
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("cancel")}</Button>
-                <Button type="submit" disabled={pending || !name.trim()}>{t("createButton")}</Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                >
+                  {t("cancel")}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={pending || !name.trim()}
+                >
+                  {t("createButton")}
+                </Button>
               </DialogFooter>
             </form>
           )}

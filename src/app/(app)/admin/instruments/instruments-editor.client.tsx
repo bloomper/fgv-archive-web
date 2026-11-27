@@ -60,22 +60,25 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
   const locale = useLocale();
   const router = useRouter();
   const dialogs = useDialogs();
-  const [order, setOrder] = useServerState(instruments, list => list.map(item => `${item.id}:${item.position}:${item.nameSv}:${item.useCount}`).join("|"));
+  const [order, setOrder] = useServerState(instruments, (list) =>
+    list.map((item) => `${item.id}:${item.position}:${item.nameSv}:${item.useCount}`).join("|")
+  );
   const [editing, setEditing] = useState<string | null>(null);
-  const fromSpexipedia = editing !== null && instruments.find(instrument => instrument.id === editing)?.taskId;
+  const fromSpexipedia = editing !== null && instruments.find((instrument) => instrument.id === editing)?.taskId;
   const [fields, setFields] = useState<Fields>(toFields());
   const [pending, startTransition] = useTransition();
 
-  const run = (work: () => Promise<ActionResult<unknown>>, done: string) => startTransition(async () => {
-    const result = await work();
+  const run = (work: () => Promise<ActionResult<unknown>>, done: string) =>
+    startTransition(async () => {
+      const result = await work();
 
-    if (result.ok) {
-      toast.success(done);
-    } else {
-      toast.error(result.message);
-    }
-    router.refresh();
-  });
+      if (result.ok) {
+        toast.success(done);
+      } else {
+        toast.error(result.message);
+      }
+      router.refresh();
+    });
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -84,17 +87,20 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
       nameSv: fields.nameSv,
       nameEn: fields.nameEn,
       group: fields.group,
-      abbreviations: fields.abbreviations.split(",").map(value => value.trim()).filter(Boolean),
+      abbreviations: fields.abbreviations
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean),
       defaultTransposition: fields.transposition,
     };
     const id = editing;
 
     setEditing(null);
-    run(() => id && id !== "new" ? updateInstrumentAction(id, input) : createInstrumentAction(input), t("saved"));
+    run(() => (id && id !== "new" ? updateInstrumentAction(id, input) : createInstrumentAction(input)), t("saved"));
   };
 
   const move = (instrument: AdminInstrument, delta: number) => {
-    const group = order.filter(item => item.group === instrument.group);
+    const group = order.filter((item) => item.group === instrument.group);
     const index = group.indexOf(instrument);
     const target = group[index + delta];
 
@@ -108,63 +114,135 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
 
     [next[a], next[b]] = [next[b], next[a]];
     setOrder(next);
-    run(() => reorderInstrumentsAction(next.map(item => item.id)), t("reordered"));
+    run(() => reorderInstrumentsAction(next.map((item) => item.id)), t("reordered"));
   };
 
   const form = (
-    <form onSubmit={submit} className="grid gap-3 rounded-md border bg-muted/40 p-3 sm:grid-cols-2" aria-label={t("form")}>
+    <form
+      onSubmit={submit}
+      className="bg-muted/40 grid gap-3 rounded-md border p-3 sm:grid-cols-2"
+      aria-label={t("form")}
+    >
       <div className="space-y-1">
         <Label htmlFor="instrument-sv">{t("nameSv")}</Label>
-        <Input id="instrument-sv" value={fields.nameSv} required maxLength={100} onChange={event => setFields({ ...fields, nameSv: event.target.value })}
-               readOnly={Boolean(fromSpexipedia)} aria-describedby={fromSpexipedia ? "instrument-sv-help" : undefined} />
-        {fromSpexipedia && <p id="instrument-sv-help" className="text-xs text-muted-foreground">{t("nameFromSpexipedia")}</p>}
+        <Input
+          id="instrument-sv"
+          value={fields.nameSv}
+          required
+          maxLength={100}
+          onChange={(event) => setFields({ ...fields, nameSv: event.target.value })}
+          readOnly={Boolean(fromSpexipedia)}
+          aria-describedby={fromSpexipedia ? "instrument-sv-help" : undefined}
+        />
+        {fromSpexipedia && (
+          <p
+            id="instrument-sv-help"
+            className="text-muted-foreground text-xs"
+          >
+            {t("nameFromSpexipedia")}
+          </p>
+        )}
       </div>
       <div className="space-y-1">
         <Label htmlFor="instrument-en">{t("nameEn")}</Label>
-        <Input id="instrument-en" value={fields.nameEn} required maxLength={100} onChange={event => setFields({ ...fields, nameEn: event.target.value })} />
+        <Input
+          id="instrument-en"
+          value={fields.nameEn}
+          required
+          maxLength={100}
+          onChange={(event) => setFields({ ...fields, nameEn: event.target.value })}
+        />
       </div>
       <div className="space-y-1">
         <Label htmlFor="instrument-group">{t("group")}</Label>
-        <NativeSelect id="instrument-group" value={fields.group} className="w-full"
-                      onChange={event => setFields({ ...fields, group: event.target.value as Group })}>
-          {INSTRUMENT_GROUPS.map(group => <NativeSelectOption key={group} value={group}>{groups(group)}</NativeSelectOption>)}
+        <NativeSelect
+          id="instrument-group"
+          value={fields.group}
+          className="w-full"
+          onChange={(event) => setFields({ ...fields, group: event.target.value as Group })}
+        >
+          {INSTRUMENT_GROUPS.map((group) => (
+            <NativeSelectOption
+              key={group}
+              value={group}
+            >
+              {groups(group)}
+            </NativeSelectOption>
+          ))}
         </NativeSelect>
       </div>
       <div className="space-y-1">
         <Label htmlFor="instrument-transposition">{t("transposition")}</Label>
-        <TranspositionPicker id="instrument-transposition" value={fields.transposition} allowNone={false}
-                             onChange={value => value && setFields({ ...fields, transposition: value })} />
+        <TranspositionPicker
+          id="instrument-transposition"
+          value={fields.transposition}
+          allowNone={false}
+          onChange={(value) => value && setFields({ ...fields, transposition: value })}
+        />
       </div>
       <div className="space-y-1 sm:col-span-2">
         <Label htmlFor="instrument-abbreviations">{t("abbreviations")}</Label>
-        <Input id="instrument-abbreviations" value={fields.abbreviations} placeholder="tpt, trp, trumpet"
-               onChange={event => setFields({ ...fields, abbreviations: event.target.value })} />
+        <Input
+          id="instrument-abbreviations"
+          value={fields.abbreviations}
+          placeholder="tpt, trp, trumpet"
+          onChange={(event) => setFields({ ...fields, abbreviations: event.target.value })}
+        />
       </div>
       <div className="flex gap-2 sm:col-span-2">
-        <Button type="submit" size="sm" disabled={pending}>{t("save")}</Button>
-        <Button type="button" size="sm" variant="outline" onClick={() => setEditing(null)}>{t("cancel")}</Button>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={pending}
+        >
+          {t("save")}
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => setEditing(null)}
+        >
+          {t("cancel")}
+        </Button>
       </div>
     </form>
   );
 
   return (
     <div className="space-y-6">
-      {editing === "new" ? form : (
-        <Button variant="outline" onClick={() => {
-          setFields(toFields());
-          setEditing("new");
-        }}><Plus /> {t("add")}</Button>
+      {editing === "new" ? (
+        form
+      ) : (
+        <Button
+          variant="outline"
+          onClick={() => {
+            setFields(toFields());
+            setEditing("new");
+          }}
+        >
+          <Plus /> {t("add")}
+        </Button>
       )}
-      {INSTRUMENT_GROUPS.map(group => {
-        const members = order.filter(instrument => instrument.group === group);
+      {INSTRUMENT_GROUPS.map((group) => {
+        const members = order.filter((instrument) => instrument.group === group);
 
         return members.length === 0 ? null : (
-          <section key={group} className="space-y-2" aria-label={groups(group)}>
+          <section
+            key={group}
+            className="space-y-2"
+            aria-label={groups(group)}
+          >
             <h2 className="font-semibold">{groups(group)}</h2>
-            <ul className="divide-y rounded-lg border bg-card">
+            <ul className="bg-card divide-y rounded-lg border">
               {members.map((instrument, index) => (
-                <li key={instrument.id} className="px-3 py-2">
-                  {editing === instrument.id ? form : (
+                <li
+                  key={instrument.id}
+                  className="px-3 py-2"
+                >
+                  {editing === instrument.id ? (
+                    form
+                  ) : (
                     <div className="flex flex-wrap items-center gap-2">
                       <div className="min-w-0 flex-1 basis-48">
                         <p className="flex flex-wrap items-center gap-2 font-medium">
@@ -172,41 +250,96 @@ export function InstrumentsEditor({ instruments }: { instruments: AdminInstrumen
                           {instrument.taskId && <Badge variant="outline">{t("fromSpexipedia")}</Badge>}
                           {instrument.retired && <Badge variant="secondary">{t("retired")}</Badge>}
                         </p>
-                        <p className="text-xs text-muted-foreground">
-                          {[locale === "en" ? instrument.nameSv : instrument.nameEn,
-                            t("defaultIn", { pitch: formatTransposition(instrument.defaultTransposition, locale) ?? "" }),
-                            instrument.abbreviations.join(", "), t("uses", { count: instrument.useCount })].filter(Boolean).join(" · ")}
+                        <p className="text-muted-foreground text-xs">
+                          {[
+                            locale === "en" ? instrument.nameSv : instrument.nameEn,
+                            t("defaultIn", {
+                              pitch: formatTransposition(instrument.defaultTransposition, locale) ?? "",
+                            }),
+                            instrument.abbreviations.join(", "),
+                            t("uses", { count: instrument.useCount }),
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
                         </p>
                       </div>
                       <span className="flex gap-0.5">
-                        <Button size="icon-sm" variant="ghost" disabled={index === 0 || pending}
-                                aria-label={t("moveUp", { name: instrument.nameSv })} onClick={() => move(instrument, -1)}><ArrowUp /></Button>
-                        <Button size="icon-sm" variant="ghost" disabled={index === members.length - 1 || pending}
-                                aria-label={t("moveDown", { name: instrument.nameSv })} onClick={() => move(instrument, 1)}><ArrowDown /></Button>
-                        <Button size="icon-sm" variant="ghost" aria-label={t("edit", { name: instrument.nameSv })}
-                                onClick={() => {
-                                  setFields(toFields(instrument));
-                                  setEditing(instrument.id);
-                                }}><Pencil /></Button>
-                        <Button size="icon-sm" variant="ghost" disabled={Boolean(instrument.taskId)}
-                                title={instrument.taskId ? t("changeInSpexipedia") : undefined}
-                                aria-label={t("merge", { name: instrument.nameSv })} onClick={async () => {
-                          const into = await dialogs.choose({
-                            title: t("mergeTitle", { name: localName(instrument, locale) }),
-                            items: order.filter(other => other.id !== instrument.id).map(other => ({ id: other.id, label: localName(other, locale) })),
-                          });
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          disabled={index === 0 || pending}
+                          aria-label={t("moveUp", { name: instrument.nameSv })}
+                          onClick={() => move(instrument, -1)}
+                        >
+                          <ArrowUp />
+                        </Button>
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          disabled={index === members.length - 1 || pending}
+                          aria-label={t("moveDown", { name: instrument.nameSv })}
+                          onClick={() => move(instrument, 1)}
+                        >
+                          <ArrowDown />
+                        </Button>
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          aria-label={t("edit", { name: instrument.nameSv })}
+                          onClick={() => {
+                            setFields(toFields(instrument));
+                            setEditing(instrument.id);
+                          }}
+                        >
+                          <Pencil />
+                        </Button>
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          disabled={Boolean(instrument.taskId)}
+                          title={instrument.taskId ? t("changeInSpexipedia") : undefined}
+                          aria-label={t("merge", { name: instrument.nameSv })}
+                          onClick={async () => {
+                            const into = await dialogs.choose({
+                              title: t("mergeTitle", { name: localName(instrument, locale) }),
+                              items: order
+                                .filter((other) => other.id !== instrument.id)
+                                .map((other) => ({ id: other.id, label: localName(other, locale) })),
+                            });
 
-                          if (into) {
-                            run(() => mergeInstrumentAction(instrument.id, into), t("merged"));
+                            if (into) {
+                              run(() => mergeInstrumentAction(instrument.id, into), t("merged"));
+                            }
+                          }}
+                        >
+                          <GitMerge />
+                        </Button>
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          disabled={instrument.useCount > 0 || Boolean(instrument.taskId)}
+                          title={
+                            instrument.taskId
+                              ? t("changeInSpexipedia")
+                              : instrument.useCount > 0
+                                ? t("inUse")
+                                : undefined
                           }
-                        }}><GitMerge /></Button>
-                        <Button size="icon-sm" variant="ghost" disabled={instrument.useCount > 0 || Boolean(instrument.taskId)}
-                                title={instrument.taskId ? t("changeInSpexipedia") : instrument.useCount > 0 ? t("inUse") : undefined}
-                                aria-label={t("delete", { name: instrument.nameSv })} onClick={async () => {
-                          if (await dialogs.confirm({ title: t("deleteTitle", { name: localName(instrument, locale) }), confirmLabel: t("deleteButton"), destructive: true })) {
-                            run(() => deleteInstrumentAction(instrument.id), t("deleted"));
-                          }
-                        }}><Trash2 /></Button>
+                          aria-label={t("delete", { name: instrument.nameSv })}
+                          onClick={async () => {
+                            if (
+                              await dialogs.confirm({
+                                title: t("deleteTitle", { name: localName(instrument, locale) }),
+                                confirmLabel: t("deleteButton"),
+                                destructive: true,
+                              })
+                            ) {
+                              run(() => deleteInstrumentAction(instrument.id), t("deleted"));
+                            }
+                          }}
+                        >
+                          <Trash2 />
+                        </Button>
                       </span>
                     </div>
                   )}

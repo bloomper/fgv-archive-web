@@ -15,13 +15,14 @@ type Params = URLSearchParams | Record<string, string | string[] | undefined>;
 function read(params: Params, name: string): string[] {
   const raw = params instanceof URLSearchParams ? params.getAll(name) : [params[name]].flat();
 
-  return raw.filter((value): value is string => typeof value === "string")
-    .flatMap(value => value.split(","))
-    .map(value => value.trim())
+  return raw
+    .filter((value): value is string => typeof value === "string")
+    .flatMap((value) => value.split(","))
+    .map((value) => value.trim())
     .filter(Boolean);
 }
 
-const unique = <T, >(values: T[]) => [...new Set(values)];
+const unique = <T>(values: T[]) => [...new Set(values)];
 
 /**
  * The part filter of a page's address: `instruments` and `pitches`, comma separated or repeated. Anything that is
@@ -29,7 +30,7 @@ const unique = <T, >(values: T[]) => [...new Set(values)];
  */
 export function partFilterFromParams(params: Params): PartFilter {
   return {
-    instrumentIds: unique(read(params, "instruments").filter(id => ID.test(id))),
+    instrumentIds: unique(read(params, "instruments").filter((id) => ID.test(id))),
     transpositions: unique(read(params, "pitches").filter(isPitch)),
   };
 }
@@ -73,7 +74,7 @@ export function partFilterToApiQuery(filter: PartFilter): string {
  */
 export function apiQueryFromParams(params: URLSearchParams): string {
   return partFilterToApiQuery({
-    instrumentIds: unique(read(params, "instrumentIds").filter(id => ID.test(id))),
+    instrumentIds: unique(read(params, "instrumentIds").filter((id) => ID.test(id))),
     transpositions: unique(read(params, "transpositions").filter(isPitch)),
   });
 }

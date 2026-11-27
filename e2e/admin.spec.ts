@@ -46,9 +46,13 @@ test.describe("Administration", () => {
     await page.getByRole("dialog").getByRole("button", { name: "Övrigt" }).click();
     await answerDialog(page, "Slå ihop");
     await expect(list.getByRole("listitem").filter({ hasText: "Spexbok" })).toHaveCount(1);
-    await expect(list.getByRole("listitem").filter({ hasText: "Övrigt" })).toContainText("Spexbok, Spex book, sångbok · 1 dokument");
+    await expect(list.getByRole("listitem").filter({ hasText: "Övrigt" })).toContainText(
+      "Spexbok, Spex book, sångbok · 1 dokument"
+    );
     // The menu follows
-    await expect(page.locator("[data-slot=\"sidebar\"]:visible").getByRole("link", { name: "Spexbok", exact: true })).toHaveCount(0);
+    await expect(
+      page.locator('[data-slot="sidebar"]:visible').getByRole("link", { name: "Spexbok", exact: true })
+    ).toHaveCount(0);
   });
 
   test("an admin changes the settings and sees storage and jobs", async ({ page, loginAs }) => {
@@ -62,7 +66,9 @@ test.describe("Administration", () => {
     await expect(page.getByText("12,5 MB")).toBeVisible();
     await page.goto("/admin/maintenance");
     await expect(page.getByRole("heading", { name: "Text och förhandsvisningar" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Ändringar från Spexipedia" }).getByText("1 ändring har hoppats över")).toBeVisible();
+    await expect(
+      page.getByRole("region", { name: "Ändringar från Spexipedia" }).getByText("1 ändring har hoppats över")
+    ).toBeVisible();
   });
 
   test("an admin sees everyone's share links and the trash", async ({ page, loginAs }) => {

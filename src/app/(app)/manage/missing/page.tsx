@@ -22,46 +22,95 @@ export default async function MissingPage({ searchParams }: { searchParams: Prom
 
     return (
       <Page variant="content">
-        <PageHeader title={t("title")} description={t("text")}/>
-        <FilterBar label={t("filters")} values={{ category: categoryId ?? undefined }}>
-          <FilterSelect name="category" label={t("category")} allLabel={t("allCategories")}
-                        options={data?.categories.map(item => ({ value: item.id, label: item.name })) ?? []} />
+        <PageHeader
+          title={t("title")}
+          description={t("text")}
+        />
+        <FilterBar
+          label={t("filters")}
+          values={{ category: categoryId ?? undefined }}
+        >
+          <FilterSelect
+            name="category"
+            label={t("category")}
+            allLabel={t("allCategories")}
+            options={data?.categories.map((item) => ({ value: item.id, label: item.name })) ?? []}
+          />
         </FilterBar>
         <div className="grid gap-6 lg:grid-cols-2">
-          <section className="space-y-2" aria-labelledby="missing-manuscripts">
-            <h2 id="missing-manuscripts" className="text-lg font-semibold">
+          <section
+            className="space-y-2"
+            aria-labelledby="missing-manuscripts"
+          >
+            <h2
+              id="missing-manuscripts"
+              className="text-lg font-semibold"
+            >
               {t("manuscripts", { count: data?.missingManuscripts.length ?? 0 })}
             </h2>
-            <ul className="divide-y overflow-hidden rounded-lg border bg-card">
-              {data?.missingManuscripts.map(spex => (
-                <li key={spex.id} className="link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2">
-                  <Link href={spexHref(spex.id)} className="row-link">{spexName(spex)}</Link>
-                  <span className="flex items-center gap-2 text-xs text-muted-foreground">
+            <ul className="bg-card divide-y overflow-hidden rounded-lg border">
+              {data?.missingManuscripts.map((spex) => (
+                <li
+                  key={spex.id}
+                  className="link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2"
+                >
+                  <Link
+                    href={spexHref(spex.id)}
+                    className="row-link"
+                  >
+                    {spexName(spex)}
+                  </Link>
+                  <span className="text-muted-foreground flex items-center gap-2 text-xs">
                     {spex.categoryName}
-                    <Link href={`/manage/manuscripts/new?spex=${spex.id}`} className="text-link hover:text-link/80">{t("add")}</Link>
+                    <Link
+                      href={`/manage/manuscripts/new?spex=${spex.id}`}
+                      className="text-link hover:text-link/80"
+                    >
+                      {t("add")}
+                    </Link>
                   </span>
                 </li>
               ))}
-              {data?.missingManuscripts.length === 0 && <li className="px-3 py-2 text-sm text-muted-foreground">{t("none")}</li>}
+              {data?.missingManuscripts.length === 0 && (
+                <li className="text-muted-foreground px-3 py-2 text-sm">{t("none")}</li>
+              )}
             </ul>
           </section>
-          <section className="space-y-2" aria-labelledby="missing-arrangements">
-            <h2 id="missing-arrangements" className="text-lg font-semibold">
+          <section
+            className="space-y-2"
+            aria-labelledby="missing-arrangements"
+          >
+            <h2
+              id="missing-arrangements"
+              className="text-lg font-semibold"
+            >
               {t("arrangements", { count: data?.missingArrangements.length ?? 0 })}
             </h2>
-            <ul className="divide-y overflow-hidden rounded-lg border bg-card">
-              {data?.missingArrangements.map(number => (
-                <li key={number.id} className="link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2">
+            <ul className="bg-card divide-y overflow-hidden rounded-lg border">
+              {data?.missingArrangements.map((number) => (
+                <li
+                  key={number.id}
+                  className="link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2"
+                >
                   <span>
-                    <span className="tabular-nums text-muted-foreground">{number.position}. </span>{number.title}
-                    <Link href={spexHref(number.spex.id)} className="row-link ml-2 text-sm text-muted-foreground">
+                    <span className="text-muted-foreground tabular-nums">{number.position}. </span>
+                    {number.title}
+                    <Link
+                      href={spexHref(number.spex.id)}
+                      className="row-link text-muted-foreground ml-2 text-sm"
+                    >
                       {spexName(number.spex)}
                     </Link>
                   </span>
-                  <CreateArrangementButton numberId={number.id} title={number.title} />
+                  <CreateArrangementButton
+                    numberId={number.id}
+                    title={number.title}
+                  />
                 </li>
               ))}
-              {data?.missingArrangements.length === 0 && <li className="px-3 py-2 text-sm text-muted-foreground">{t("none")}</li>}
+              {data?.missingArrangements.length === 0 && (
+                <li className="text-muted-foreground px-3 py-2 text-sm">{t("none")}</li>
+              )}
             </ul>
           </section>
         </div>

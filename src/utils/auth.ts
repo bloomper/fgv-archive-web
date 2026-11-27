@@ -31,18 +31,12 @@ function normalizeRole(value: string): Role | null {
  */
 export function extractRolesFromClaims(claims: AccessTokenClaims): Role[] {
   const rawRoles = claims.resource_access?.[CLIENT_ID]?.roles ?? [];
-  const roles = rawRoles
-    .map(normalizeRole)
-    .filter((r): r is Role => r !== null);
+  const roles = rawRoles.map(normalizeRole).filter((r): r is Role => r !== null);
 
   return Array.from(new Set(roles));
 }
 
-export const appendLogoutParams = (
-  logoutUrl: string,
-  locale?: string,
-  theme?: "light" | "dark" | "system",
-): string => {
+export const appendLogoutParams = (logoutUrl: string, locale?: string, theme?: "light" | "dark" | "system"): string => {
   if (!locale && !theme) {
     return logoutUrl;
   }

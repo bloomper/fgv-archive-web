@@ -12,8 +12,13 @@ export default async function SettingsPage() {
 
     return (
       <Page variant="content">
-        <PageHeader title={t("title")}/>
-        {settings && <SettingsForm key={JSON.stringify(settings)} initial={settings} />}
+        <PageHeader title={t("title")} />
+        {settings && (
+          <SettingsForm
+            key={JSON.stringify(settings)}
+            initial={settings}
+          />
+        )}
       </Page>
     );
   });

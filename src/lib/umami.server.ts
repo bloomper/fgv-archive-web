@@ -19,7 +19,7 @@ export function forwardedHeaders(request: Request) {
     }
   }
 
-  const clientIp = CLIENT_IP_HEADERS.map(name => request.headers.get(name)).find(Boolean);
+  const clientIp = CLIENT_IP_HEADERS.map((name) => request.headers.get(name)).find(Boolean);
 
   if (clientIp) {
     headers.set("x-forwarded-for", clientIp);

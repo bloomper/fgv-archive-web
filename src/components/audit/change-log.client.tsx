@@ -66,11 +66,11 @@ function ChangeLogFilters({
 
   const typeItems = [
     { value: ALL, label: t("Audit.allTypes") },
-    ...entityTypes.map(value => ({ value, label: label("type", value) })),
+    ...entityTypes.map((value) => ({ value, label: label("type", value) })),
   ];
   const actionItems = [
     { value: ALL, label: t("Audit.allActions") },
-    ...AUDIT_ACTIONS.map(value => ({ value, label: label("action", value) })),
+    ...AUDIT_ACTIONS.map((value) => ({ value, label: label("action", value) })),
   ];
   const filtered = Boolean(search.q || search.type || search.action || search.actor || search.from || search.to);
 
@@ -87,12 +87,12 @@ function ChangeLogFilters({
       className="flex flex-wrap items-center gap-2"
     >
       <div className="relative w-full sm:w-56">
-        <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
         <Input
           type="search"
           value={q}
           maxLength={100}
-          onChange={e => searchFor(e.target.value)}
+          onChange={(e) => searchFor(e.target.value)}
           placeholder={t("Audit.search")}
           aria-label={t("Audit.search")}
           className="h-8 pl-8"
@@ -101,7 +101,7 @@ function ChangeLogFilters({
 
       <Select
         value={search.type || ALL}
-        onValueChange={next => next !== null && onChange({ type: next === ALL ? undefined : next })}
+        onValueChange={(next) => next !== null && onChange({ type: next === ALL ? undefined : next })}
         items={typeItems}
       >
         <SelectTrigger
@@ -112,7 +112,7 @@ function ChangeLogFilters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {typeItems.map(item => (
+          {typeItems.map((item) => (
             <SelectItem
               key={item.value}
               value={item.value}
@@ -125,7 +125,7 @@ function ChangeLogFilters({
 
       <Select
         value={search.action || ALL}
-        onValueChange={next => next !== null && onChange({ action: next === ALL ? undefined : next })}
+        onValueChange={(next) => next !== null && onChange({ action: next === ALL ? undefined : next })}
         items={actionItems}
       >
         <SelectTrigger
@@ -136,7 +136,7 @@ function ChangeLogFilters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {actionItems.map(item => (
+          {actionItems.map((item) => (
             <SelectItem
               key={item.value}
               value={item.value}
@@ -150,10 +150,10 @@ function ChangeLogFilters({
       {isAdmin && (
         <DataFilter
           title={t("Audit.who")}
-          options={actors.map(actor => ({ value: actor.id, label: actor.name ?? actor.id }))}
+          options={actors.map((actor) => ({ value: actor.id, label: actor.name ?? actor.id }))}
           selectedValues={new Set(search.actor ? [search.actor] : [])}
           // The server takes one person: the one picked last
-          onSelect={values => onChange({ actor: [...values].find(value => value !== search.actor) })}
+          onSelect={(values) => onChange({ actor: [...values].find((value) => value !== search.actor) })}
           onClear={() => onChange({ actor: undefined })}
         />
       )}
@@ -170,7 +170,14 @@ function ChangeLogFilters({
           onClick={() => {
             clearTimeout(timer.current);
             setQ("");
-            onChange({ q: undefined, type: undefined, action: undefined, actor: undefined, from: undefined, to: undefined });
+            onChange({
+              q: undefined,
+              type: undefined,
+              action: undefined,
+              actor: undefined,
+              from: undefined,
+              to: undefined,
+            });
           }}
           className="h-8 px-2 lg:px-3"
         >
@@ -210,7 +217,7 @@ function EntryDetail({ row }: { row: AuditRow }) {
           {row.historyHref && (
             <Link
               href={row.historyHref}
-              className="inline-flex items-center gap-1 text-link hover:text-link/80"
+              className="text-link hover:text-link/80 inline-flex items-center gap-1"
               aria-label={t("historyOf", { summary: row.summary })}
             >
               <History className="size-3" />
@@ -241,7 +248,7 @@ export function AuditTable({
   const label = useLabel();
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  const toggle = (id: string) => setExpanded(current => (current === id ? null : id));
+  const toggle = (id: string) => setExpanded((current) => (current === id ? null : id));
 
   return (
     <div className={`rounded-md border transition-opacity ${pending ? "opacity-50" : "opacity-100"}`}>
@@ -270,7 +277,7 @@ export function AuditTable({
               </TableCell>
             </TableRow>
           )}
-          {rows.map(row => {
+          {rows.map((row) => {
             const isExpanded = expanded === row.id;
 
             return (
@@ -283,10 +290,10 @@ export function AuditTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="size-6 text-muted-foreground"
+                      className="text-muted-foreground size-6"
                       aria-expanded={isExpanded}
                       aria-label={t("Audit.details")}
-                      onClick={e => {
+                      onClick={(e) => {
                         e.stopPropagation();
                         toggle(row.id);
                       }}
@@ -303,7 +310,7 @@ export function AuditTable({
                       >
                         {row.actorName ?? "–"}
                       </span>
-                      <span className="text-xs tracking-wide text-muted-foreground uppercase sm:hidden">
+                      <span className="text-muted-foreground text-xs tracking-wide uppercase sm:hidden">
                         {label("action", row.action)}
                       </span>
                     </div>
@@ -320,7 +327,7 @@ export function AuditTable({
                         <Link
                           href={row.link}
                           className="hover:text-link"
-                          onClick={e => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {row.summary}
                         </Link>
@@ -375,7 +382,10 @@ export function ChangeLogView({
   const path = usePathname();
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useServerState(initial, value => `${value.totalCount}:${value.rows.map(row => row.id).join()}`);
+  const [page, setPage] = useServerState(
+    initial,
+    (value) => `${value.totalCount}:${value.rows.map((row) => row.id).join()}`
+  );
   const filtered = Boolean(search.q || search.type || search.action || search.actor || search.from || search.to);
 
   const navigate = (changes: Partial<AuditSearch>) =>
@@ -384,14 +394,17 @@ export function ChangeLogView({
   const more = () => {
     setIsLoading(true);
     loadMore(search, Math.floor(page.rows.length / pageSize), pageSize)
-      .then(next =>
-        setPage(current => {
-          const seen = new Set(current.rows.map(row => row.id));
+      .then((next) =>
+        setPage((current) => {
+          const seen = new Set(current.rows.map((row) => row.id));
 
-          return { rows: [...current.rows, ...next.rows.filter(row => !seen.has(row.id))], totalCount: next.totalCount };
+          return {
+            rows: [...current.rows, ...next.rows.filter((row) => !seen.has(row.id))],
+            totalCount: next.totalCount,
+          };
         })
       )
-      .catch(e => console.error("Failed to load more changes", e))
+      .catch((e) => console.error("Failed to load more changes", e))
       .finally(() => setIsLoading(false));
   };
 
@@ -406,7 +419,7 @@ export function ChangeLogView({
       />
 
       {search.entity && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {t("Audit.oneRecord")}{" "}
           <Link
             href={auditHref(path, search, { entity: undefined })}

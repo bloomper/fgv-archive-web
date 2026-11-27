@@ -9,8 +9,12 @@ const mocks = vi.hoisted(() => ({
   router: { refresh: vi.fn(), push: vi.fn() },
   toast: { success: vi.fn(), error: vi.fn() },
   actions: {
-    updateVersionAction: vi.fn(), copyVersionAction: vi.fn(), deleteVersionAction: vi.fn(), publishVersionAction: vi.fn(),
-    recommendVersionAction: vi.fn(), trashVersionAction: vi.fn(),
+    updateVersionAction: vi.fn(),
+    copyVersionAction: vi.fn(),
+    deleteVersionAction: vi.fn(),
+    publishVersionAction: vi.fn(),
+    recommendVersionAction: vi.fn(),
+    trashVersionAction: vi.fn(),
   },
   dialogs: undefined as unknown as ReturnType<typeof makeDialogs>,
 }));
@@ -24,19 +28,41 @@ vi.mock("@bloomper/fgv-web-ui/shell/dialogs", () => ({ useDialogs: () => mocks.d
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.dialogs = makeDialogs();
-  Object.values(mocks.actions).forEach(action => action.mockResolvedValue({ ok: true, data: null }));
+  Object.values(mocks.actions).forEach((action) => action.mockResolvedValue({ ok: true, data: null }));
 });
 
 const arrangement: EditableVersion = {
-  id: "v1", kind: "ARRANGEMENT", label: "Original", usedInSpexId: null, date: null, notes: null, arranger: "Kim",
-  key: { tonic: "F", mode: "MAJOR" }, modulations: [{ tonic: "G", mode: "MAJOR" }], tempo: null, duration: null, restricted: false,
-  instrumentation: [{ count: 2, instrument: { id: "trumpet" } }, { count: 1, instrument: { id: "gone" } }],
+  id: "v1",
+  kind: "ARRANGEMENT",
+  label: "Original",
+  usedInSpexId: null,
+  date: null,
+  notes: null,
+  arranger: "Kim",
+  key: { tonic: "F", mode: "MAJOR" },
+  modulations: [{ tonic: "G", mode: "MAJOR" }],
+  tempo: null,
+  duration: null,
+  restricted: false,
+  instrumentation: [
+    { count: 2, instrument: { id: "trumpet" } },
+    { count: 1, instrument: { id: "gone" } },
+  ],
 };
-const spex = [{ id: "s1", title: "Nobel", year: 1975, revival: false }, { id: "s2", title: "Nobel", year: 2001, revival: true }];
+const spex = [
+  { id: "s1", title: "Nobel", year: 1975, revival: false },
+  { id: "s2", title: "Nobel", year: 2001, revival: true },
+];
 
 describe("VersionForm", () => {
   it("saves an arrangement's fields and instrumentation", async () => {
-    render(<VersionForm version={{ ...arrangement, date: "2001-02-01" }} spex={spex} instruments={instruments} />);
+    render(
+      <VersionForm
+        version={{ ...arrangement, date: "2001-02-01" }}
+        spex={spex}
+        instruments={instruments}
+      />
+    );
     await userEvent.clear(screen.getByLabelText("label"));
     await userEvent.type(screen.getByLabelText("label"), "Ny");
     await userEvent.selectOptions(screen.getByLabelText("usedIn"), "s2");
@@ -53,11 +79,24 @@ describe("VersionForm", () => {
     await userEvent.click(screen.getByRole("checkbox"));
     await userEvent.click(screen.getByRole("button", { name: "save" }));
 
-    await waitFor(() => expect(mocks.actions.updateVersionAction).toHaveBeenCalledWith("v1", {
-      label: "Ny", usedInSpexId: "s2", date: "2001-02-14", notes: "Anteckning", restricted: true, arranger: null,
-      key: { tonic: "F", mode: "MAJOR" }, modulations: [{ tonic: "G", mode: "MAJOR" }], tempo: "Allegro", duration: "3:20",
-      instrumentation: [{ instrumentId: "trumpet", count: 3 }, { instrumentId: "flute", count: 1 }],
-    }));
+    await waitFor(() =>
+      expect(mocks.actions.updateVersionAction).toHaveBeenCalledWith("v1", {
+        label: "Ny",
+        usedInSpexId: "s2",
+        date: "2001-02-14",
+        notes: "Anteckning",
+        restricted: true,
+        arranger: null,
+        key: { tonic: "F", mode: "MAJOR" },
+        modulations: [{ tonic: "G", mode: "MAJOR" }],
+        tempo: "Allegro",
+        duration: "3:20",
+        instrumentation: [
+          { instrumentId: "trumpet", count: 3 },
+          { instrumentId: "flute", count: 1 },
+        ],
+      })
+    );
     await waitFor(() => expect(mocks.router.refresh).toHaveBeenCalled());
 
     await userEvent.selectOptions(screen.getAllByRole("combobox", { name: "tonic" })[0], "");
@@ -68,18 +107,39 @@ describe("VersionForm", () => {
   });
 
   it("leaves out an arrangement's fields for a manuscript", async () => {
-    render(<VersionForm version={{ ...arrangement, kind: "MANUSCRIPT", key: null, modulations: [], instrumentation: [] }} spex={spex} instruments={instruments} />);
+    render(
+      <VersionForm
+        version={{ ...arrangement, kind: "MANUSCRIPT", key: null, modulations: [], instrumentation: [] }}
+        spex={spex}
+        instruments={instruments}
+      />
+    );
     expect(screen.queryByLabelText("arranger")).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "save" }));
-    await waitFor(() => expect(mocks.actions.updateVersionAction).toHaveBeenCalledWith("v1", {
-      label: "Original", usedInSpexId: null, date: null, notes: null, restricted: false,
-    }));
+    await waitFor(() =>
+      expect(mocks.actions.updateVersionAction).toHaveBeenCalledWith("v1", {
+        label: "Original",
+        usedInSpexId: null,
+        date: null,
+        notes: null,
+        restricted: false,
+      })
+    );
   });
 });
 
 describe("VersionState", () => {
   it("publishes, recommends, copies and trashes", async () => {
-    render(<VersionState id="v1" published={false} recommended={false} trashed={false} admin={false} parentHref="/manuscripts/m1" />);
+    render(
+      <VersionState
+        id="v1"
+        published={false}
+        recommended={false}
+        trashed={false}
+        admin={false}
+        parentHref="/manuscripts/m1"
+      />
+    );
     await userEvent.click(screen.getByRole("button", { name: "publish" }));
     await waitFor(() => expect(mocks.actions.publishVersionAction).toHaveBeenCalledWith("v1", true));
     await userEvent.click(screen.getByRole("button", { name: "recommend" }));
@@ -100,7 +160,16 @@ describe("VersionState", () => {
   });
 
   it("restores and deletes a trashed version for admins", async () => {
-    render(<VersionState id="v1" published recommended trashed admin parentHref="/arrangements/a1" />);
+    render(
+      <VersionState
+        id="v1"
+        published
+        recommended
+        trashed
+        admin
+        parentHref="/arrangements/a1"
+      />
+    );
     expect(screen.getByRole("button", { name: "unpublish" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "unrecommend" })).toBeDisabled();
 

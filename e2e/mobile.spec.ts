@@ -5,21 +5,47 @@ import { expect, test } from "./fixtures";
 /** A small phone, a common phone and a tablet held upright. */
 const WIDTHS = [360, 390, 768];
 
-const READING = ["/", "/spex", `/spex/${uuidOf(11)}`, `/spex/${uuidOf(11)}/parts`, `/manuscripts/${uuidOf(401)}`,
-  `/arrangements/${uuidOf(411)}`, `/arrangements/${uuidOf(412)}`, `/files/${uuidOf(611)}`, "/search?q=kungamantel",
-  "/about", "/support"];
-const EDITING = [`/versions/${uuidOf(511)}/edit`, "/manage/missing", "/manage/share-links",
-  "/manage/trash", "/manage/audit", "/manage/access-requests?show=all", "/manage/manuscripts/new", "/admin/settings",
-  "/admin/instruments", "/admin/file-roles", "/admin/storage", "/admin/maintenance", "/admin/share-links"];
-const SHARED = ["/share/exempel-giltig-delningslank-0000000000000001",
+const READING = [
+  "/",
+  "/spex",
+  `/spex/${uuidOf(11)}`,
+  `/spex/${uuidOf(11)}/parts`,
+  `/manuscripts/${uuidOf(401)}`,
+  `/arrangements/${uuidOf(411)}`,
+  `/arrangements/${uuidOf(412)}`,
+  `/files/${uuidOf(611)}`,
+  "/search?q=kungamantel",
+  "/about",
+  "/support",
+];
+const EDITING = [
+  `/versions/${uuidOf(511)}/edit`,
+  "/manage/missing",
+  "/manage/share-links",
+  "/manage/trash",
+  "/manage/audit",
+  "/manage/access-requests?show=all",
+  "/manage/manuscripts/new",
+  "/admin/settings",
+  "/admin/instruments",
+  "/admin/file-roles",
+  "/admin/storage",
+  "/admin/maintenance",
+  "/admin/share-links",
+];
+const SHARED = [
+  "/share/exempel-giltig-delningslank-0000000000000001",
   "/share/exempel-instrumentlank-trumpet-000000000001",
   `/share/exempel-giltig-delningslank-0000000000000001/files/${uuidOf(601)}`,
-  "/share/exempel-utgangen-delningslank-00000000000001"];
+  "/share/exempel-utgangen-delningslank-00000000000001",
+];
 
 async function fits(page: Page, path: string, width: number) {
   await page.goto(path);
   await page.getByRole("heading", { level: 1 }).first().waitFor();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth), `${path} at ${width} px`).toBeLessThanOrEqual(width);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth), `${path} at ${width} px`).toBeLessThanOrEqual(
+    width
+  );
 }
 
 test.describe("Phones and tablets: no page scrolls sideways", () => {
@@ -56,7 +82,10 @@ test.describe("Phones and tablets: no page scrolls sideways", () => {
 });
 
 test.describe("The reader on a tablet held upright", () => {
-  test("has the whole width: the sidebar collapses while it is open and comes back after", async ({ page, loginAs }) => {
+  test("has the whole width: the sidebar collapses while it is open and comes back after", async ({
+    page,
+    loginAs,
+  }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await loginAs("user");
     const sidebar = page.locator("[data-slot=sidebar][data-state]");
@@ -80,7 +109,10 @@ test.describe("The header on a phone", () => {
     await expect(page.locator("header").first().getByRole("button", { name: "Visa menyn" })).toBeVisible();
 
     await expect(name).toBeVisible();
-    expect(await name.evaluate(element => element.scrollWidth <= element.clientWidth), "the name is not cut off").toBe(true);
+    expect(
+      await name.evaluate((element) => element.scrollWidth <= element.clientWidth),
+      "the name is not cut off"
+    ).toBe(true);
     await expect(page.getByRole("searchbox", { name: "Sök i arkivet" })).toBeHidden();
 
     await page.locator("header").first().getByRole("link", { name: "Sök", exact: true }).click();

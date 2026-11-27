@@ -12,11 +12,15 @@ describe("sameOrigin", () => {
   it("accepts a request without Origin, or from the same host", () => {
     expect(sameOrigin(request())).toBe(true);
     expect(sameOrigin(request({ origin: "https://archive.test", host: "archive.test" }))).toBe(true);
-    expect(sameOrigin(request({
-      origin: "https://archive.test",
-      "x-forwarded-host": "archive.test, proxy",
-      host: "internal",
-    }))).toBe(true);
+    expect(
+      sameOrigin(
+        request({
+          origin: "https://archive.test",
+          "x-forwarded-host": "archive.test, proxy",
+          host: "internal",
+        })
+      )
+    ).toBe(true);
   });
 
   it("refuses another site, a sibling subdomain and a malformed origin", () => {
@@ -42,15 +46,17 @@ describe("streamFromApi", () => {
   });
 
   it("passes the range to the server and its partial answer back, without other headers", async () => {
-    apiFetch.mockResolvedValue(new Response(new Uint8Array([1, 2]), {
-      status: 206,
-      headers: {
-        "content-type": "application/pdf",
-        "content-range": "bytes 0-1/10",
-        "set-cookie": "x=1",
-        "accept-ranges": "bytes",
-      },
-    }));
+    apiFetch.mockResolvedValue(
+      new Response(new Uint8Array([1, 2]), {
+        status: 206,
+        headers: {
+          "content-type": "application/pdf",
+          "content-range": "bytes 0-1/10",
+          "set-cookie": "x=1",
+          "accept-ranges": "bytes",
+        },
+      })
+    );
 
     const response = await streamFromApi(request({ range: "bytes=0-1" }), "/api/files/1");
 
@@ -64,9 +70,11 @@ describe("streamFromApi", () => {
   });
 
   it("keeps the server's own policy and adds the web's sandbox, so an XML file cannot run a script", async () => {
-    apiFetch.mockResolvedValue(new Response("<x:script xmlns:x=\"http://www.w3.org/1999/xhtml\">alert(1)</x:script>", {
-      headers: { "content-type": "application/xml", "content-security-policy": "sandbox" },
-    }));
+    apiFetch.mockResolvedValue(
+      new Response('<x:script xmlns:x="http://www.w3.org/1999/xhtml">alert(1)</x:script>', {
+        headers: { "content-type": "application/xml", "content-security-policy": "sandbox" },
+      })
+    );
 
     const response = await streamFromApi(request(), "/api/files/1");
 
@@ -77,7 +85,9 @@ describe("streamFromApi", () => {
   it("keeps headers the route sets over the server's", async () => {
     apiFetch.mockResolvedValue(new Response("x", { headers: { "content-type": "image/png" } }));
 
-    const response = await streamFromApi(request(), "/api/files/1/preview", { extra: { "Content-Type": "image/jpeg" } });
+    const response = await streamFromApi(request(), "/api/files/1/preview", {
+      extra: { "Content-Type": "image/jpeg" },
+    });
 
     expect(response.headers.get("content-type")).toBe("image/jpeg");
   });
@@ -92,8 +102,12 @@ describe("streamFromApi", () => {
   });
 
   it("passes on who made an expired share link, without a token", async () => {
-    apiFetch.mockResolvedValue(Response.json({ code: "SHARE_LINK_EXPIRED", message: "Utgången", createdByName: "Erik", detail: "x" },
-      { status: 410 }));
+    apiFetch.mockResolvedValue(
+      Response.json(
+        { code: "SHARE_LINK_EXPIRED", message: "Utgången", createdByName: "Erik", detail: "x" },
+        { status: 410 }
+      )
+    );
 
     const response = await streamFromApi(request(), "/api/share/t/files/1", { anonymous: true });
 

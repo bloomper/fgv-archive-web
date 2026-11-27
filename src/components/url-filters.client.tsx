@@ -80,7 +80,7 @@ export function FilterSearch({ name, label }: { name: string; label: string }) {
 
   return (
     <div className="relative w-full sm:w-56">
-      <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
       <Input
         type="search"
         value={value}
@@ -88,7 +88,7 @@ export function FilterSearch({ name, label }: { name: string; label: string }) {
         placeholder={label}
         aria-label={label}
         className="h-8 pl-8"
-        onChange={e => {
+        onChange={(e) => {
           const next = e.target.value;
 
           setValue(next);
@@ -118,7 +118,7 @@ export function FilterSelect({
   return (
     <Select
       value={params.get(name) || ALL}
-      onValueChange={next => next !== null && set({ [name]: next === ALL ? undefined : next })}
+      onValueChange={(next) => next !== null && set({ [name]: next === ALL ? undefined : next })}
       items={items}
     >
       <SelectTrigger
@@ -129,7 +129,7 @@ export function FilterSelect({
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {items.map(item => (
+        {items.map((item) => (
           <SelectItem
             key={item.value}
             value={item.value}
@@ -152,7 +152,7 @@ export function FilterToggle({ name, label }: { name: string; label: string }) {
       variant="outline"
       size="sm"
       aria-pressed={on}
-      className={cn("h-8 border-dashed", on && "border-solid border-primary")}
+      className={cn("h-8 border-dashed", on && "border-primary border-solid")}
       onClick={() => set({ [name]: on ? undefined : "1" })}
     >
       <SquareCheck className={cn("mr-2 h-4 w-4", !on && "text-muted-foreground")} />
@@ -165,14 +165,14 @@ export function FilterToggle({ name, label }: { name: string; label: string }) {
 export function FilterReset({ names, label }: { names: string[]; label: string }) {
   const { params, set } = useSetParams();
 
-  if (!names.some(name => params.get(name))) {
+  if (!names.some((name) => params.get(name))) {
     return null;
   }
   return (
     <Button
       variant="ghost"
       className="h-8 px-2 lg:px-3"
-      onClick={() => set(Object.fromEntries(names.map(name => [name, undefined])))}
+      onClick={() => set(Object.fromEntries(names.map((name) => [name, undefined])))}
     >
       <X className="mr-2 h-4 w-4" />
       {label}

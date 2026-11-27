@@ -57,7 +57,7 @@ export function CommandPalette({ roles, documentKinds = [] }: { roles: Role[]; d
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
-        setOpen(previous => !previous);
+        setOpen((previous) => !previous);
       }
     };
 
@@ -71,7 +71,12 @@ export function CommandPalette({ roles, documentKinds = [] }: { roles: Role[]; d
       { id: "home", label: t("Nav.home"), href: "/", icon: House },
       { id: "spex", label: t("Nav.spex"), href: "/spex", icon: Archive },
       // The statistics get "document-kind", not the kind's id
-      ...documentKinds.map(kind => ({ id: `document-kind:${kind.id}`, label: kind.name, href: documentsHref(kind.id), icon: kindIcon(kind) })),
+      ...documentKinds.map((kind) => ({
+        id: `document-kind:${kind.id}`,
+        label: kind.name,
+        href: documentsHref(kind.id),
+        icon: kindIcon(kind),
+      })),
       { id: "search", label: t("Nav.search"), href: "/search", icon: Search },
     ];
     const actionEntries: PaletteEntry[] = [];
@@ -95,7 +100,12 @@ export function CommandPalette({ roles, documentKinds = [] }: { roles: Role[]; d
       navigationEntries.push(
         { id: "admin-settings", label: t("Nav.adminSettings"), href: "/admin/settings", icon: SlidersHorizontal },
         { id: "admin-instruments", label: t("Nav.adminInstruments"), href: "/admin/instruments", icon: Music },
-        { id: "admin-document-kinds", label: t("Nav.adminDocumentKinds"), href: "/admin/document-kinds", icon: Library },
+        {
+          id: "admin-document-kinds",
+          label: t("Nav.adminDocumentKinds"),
+          href: "/admin/document-kinds",
+          icon: Library,
+        },
         { id: "admin-file-roles", label: t("Nav.adminFileRoles"), href: "/admin/file-roles", icon: Tags },
         { id: "admin-share-links", label: t("Nav.adminShareLinks"), href: "/admin/share-links", icon: FileText },
         { id: "admin-storage", label: t("Nav.adminStorage"), href: "/admin/storage", icon: HardDrive },
@@ -112,7 +122,7 @@ export function CommandPalette({ roles, documentKinds = [] }: { roles: Role[]; d
 
   const term = normalize(query);
   const matching = (entries: PaletteEntry[]) =>
-    term ? entries.filter(entry => normalize(entry.label).includes(term)) : entries;
+    term ? entries.filter((entry) => normalize(entry.label).includes(term)) : entries;
   const matchingNavigation = matching(navigation);
   const matchingActions = matching(actions);
 
@@ -133,7 +143,7 @@ export function CommandPalette({ roles, documentKinds = [] }: { roles: Role[]; d
         aria-label={t("CommandPalette.open")}
       >
         <CommandIcon className="h-4 w-4" />
-        <span className="hidden text-xs text-muted-foreground lg:inline">{t("CommandPalette.hint")}</span>
+        <span className="text-muted-foreground hidden text-xs lg:inline">{t("CommandPalette.hint")}</span>
       </Button>
 
       <Dialog
@@ -167,7 +177,7 @@ export function CommandPalette({ roles, documentKinds = [] }: { roles: Role[]; d
 
               {matchingNavigation.length > 0 && (
                 <CommandGroup heading={t("CommandPalette.navigation")}>
-                  {matchingNavigation.map(entry => (
+                  {matchingNavigation.map((entry) => (
                     <CommandItem
                       key={entry.id}
                       value={entry.id}
@@ -182,7 +192,7 @@ export function CommandPalette({ roles, documentKinds = [] }: { roles: Role[]; d
 
               {matchingActions.length > 0 && (
                 <CommandGroup heading={t("CommandPalette.create")}>
-                  {matchingActions.map(entry => (
+                  {matchingActions.map((entry) => (
                     <CommandItem
                       key={entry.id}
                       value={entry.id}

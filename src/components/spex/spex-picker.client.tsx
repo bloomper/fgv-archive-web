@@ -23,7 +23,11 @@ export type PickedSpex = {
  * Picks one spex from Spexregister's copy by title or year. Search results show each original with its revivals
  * indented under it; with `originalsOnly`, revivals cannot be picked (a manuscript belongs to the original).
  */
-export function SpexPicker({ value, onChange, originalsOnly = false }: {
+export function SpexPicker({
+  value,
+  onChange,
+  originalsOnly = false,
+}: {
   value: PickedSpex | null;
   onChange: (spex: PickedSpex | null) => void;
   originalsOnly?: boolean;
@@ -40,15 +44,19 @@ export function SpexPicker({ value, onChange, originalsOnly = false }: {
       return;
     }
 
-    const timer = setTimeout(() => startSearch(async () => {
-      const result = await searchSpexAction(query);
+    const timer = setTimeout(
+      () =>
+        startSearch(async () => {
+          const result = await searchSpexAction(query);
 
-      if (result.ok) {
-        setResults(result.data);
-      } else {
-        toast.error(result.message);
-      }
-    }), 300);
+          if (result.ok) {
+            setResults(result.data);
+          } else {
+            toast.error(result.message);
+          }
+        }),
+      300
+    );
 
     return () => clearTimeout(timer);
   }, [query]);
@@ -58,8 +66,17 @@ export function SpexPicker({ value, onChange, originalsOnly = false }: {
       <div className="space-y-1.5">
         <p className="text-sm font-medium">{t("spex")}</p>
         <div className="flex items-center justify-between gap-2 rounded-md border px-3 py-2 text-sm">
-          <SpexName spex={value} revival={t("revival")} />
-          <Button type="button" variant="ghost" size="sm" onClick={() => onChange(null)} aria-label={t("remove")}>
+          <SpexName
+            spex={value}
+            revival={t("revival")}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => onChange(null)}
+            aria-label={t("remove")}
+          >
             <X />
           </Button>
         </div>
@@ -70,21 +87,40 @@ export function SpexPicker({ value, onChange, originalsOnly = false }: {
   return (
     <div className="space-y-1">
       <Label htmlFor={inputId}>{t("spex")}</Label>
-      <Input id={inputId} value={query} placeholder={t("search")} onChange={event => setQuery(event.target.value)} />
-      <p className="text-xs text-muted-foreground">{searching ? t("searching") : t("hint")}</p>
+      <Input
+        id={inputId}
+        value={query}
+        placeholder={t("search")}
+        onChange={(event) => setQuery(event.target.value)}
+      />
+      <p className="text-muted-foreground text-xs">{searching ? t("searching") : t("hint")}</p>
       {results.length > 0 && query.trim().length >= 2 && (
-        <ul aria-label={t("results")} className="max-h-72 divide-y overflow-y-auto rounded-md border">
-          {results.map(item => (
+        <ul
+          aria-label={t("results")}
+          className="max-h-72 divide-y overflow-y-auto rounded-md border"
+        >
+          {results.map((item) => (
             <li key={item.id}>
-              <button type="button" disabled={Boolean(originalsOnly && item.revival)}
-                      className="flex w-full items-center gap-1.5 px-3 py-2 text-left text-sm hover:bg-accent disabled:opacity-50 disabled:hover:bg-transparent"
-                      onClick={() => {
-                        onChange(item);
-                        setResults([]);
-                        setQuery("");
-                      }}>
-                {item.revival && <CornerDownRight className="ml-2 size-3.5 shrink-0 text-muted-foreground" aria-hidden />}
-                <SpexName spex={item} revival={t("revival")} />
+              <button
+                type="button"
+                disabled={Boolean(originalsOnly && item.revival)}
+                className="hover:bg-accent flex w-full items-center gap-1.5 px-3 py-2 text-left text-sm disabled:opacity-50 disabled:hover:bg-transparent"
+                onClick={() => {
+                  onChange(item);
+                  setResults([]);
+                  setQuery("");
+                }}
+              >
+                {item.revival && (
+                  <CornerDownRight
+                    className="text-muted-foreground ml-2 size-3.5 shrink-0"
+                    aria-hidden
+                  />
+                )}
+                <SpexName
+                  spex={item}
+                  revival={t("revival")}
+                />
               </button>
             </li>
           ))}

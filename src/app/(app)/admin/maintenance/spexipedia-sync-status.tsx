@@ -15,31 +15,44 @@ export async function SpexipediaSyncStatus() {
   }
 
   return (
-    <section className="space-y-3 rounded-lg border p-4" aria-labelledby="spexipedia-sync">
-      <h2 id="spexipedia-sync" className="font-medium">{t("title")}</h2>
-      <p className="text-sm text-muted-foreground">{t("text")}</p>
+    <section
+      className="space-y-3 rounded-lg border p-4"
+      aria-labelledby="spexipedia-sync"
+    >
+      <h2
+        id="spexipedia-sync"
+        className="font-medium"
+      >
+        {t("title")}
+      </h2>
+      <p className="text-muted-foreground text-sm">{t("text")}</p>
       <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
         <dt className="text-muted-foreground">{t("lastSuccess")}</dt>
         <dd>{formatInstant(sync.lastSuccess) ?? t("never")}</dd>
         {sync.lastError && (
           <>
             <dt className="text-muted-foreground">{t("lastError")}</dt>
-            <dd className="break-words text-destructive">{sync.lastError}</dd>
+            <dd className="text-destructive break-words">{sync.lastError}</dd>
           </>
         )}
       </dl>
       {sync.skipped.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("noneSkipped")}</p>
+        <p className="text-muted-foreground text-sm">{t("noneSkipped")}</p>
       ) : (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-destructive">{t("skipped", { count: sync.skipped.length })}</h3>
-          <p className="text-sm text-muted-foreground">{t("skippedText")}</p>
+          <h3 className="text-destructive text-sm font-medium">{t("skipped", { count: sync.skipped.length })}</h3>
+          <p className="text-muted-foreground text-sm">{t("skippedText")}</p>
           <ul className="space-y-2 text-sm">
-            {sync.skipped.map(change => (
-              <li key={change.sequence} className="space-y-1 rounded-md border p-2">
-                <div>{t("change", { change: change.change, kind: change.kind, at: formatInstant(change.skippedAt) ?? "" })}</div>
-                <code className="break-all text-xs">{change.id}</code>
-                <div className="break-words text-muted-foreground">{change.error}</div>
+            {sync.skipped.map((change) => (
+              <li
+                key={change.sequence}
+                className="space-y-1 rounded-md border p-2"
+              >
+                <div>
+                  {t("change", { change: change.change, kind: change.kind, at: formatInstant(change.skippedAt) ?? "" })}
+                </div>
+                <code className="text-xs break-all">{change.id}</code>
+                <div className="text-muted-foreground break-words">{change.error}</div>
               </li>
             ))}
           </ul>

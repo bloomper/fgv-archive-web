@@ -45,4 +45,3 @@ describe("normalizeLocale (env-driven)", () => {
     expect(normalizeLocale("fr")).toBe("no");
   });
 });
-

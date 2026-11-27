@@ -23,22 +23,49 @@ export default async function TrashPage() {
     const row = "link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2";
 
     return (
-      <Page variant="content" className="max-w-4xl">
-        <PageHeader title={t("title")} actions={<>{admin && !empty && <EmptyTrashButton />}</>}/>
-        <p className="text-sm text-muted-foreground">{admin ? t("textAdmin") : t("text")}</p>
-        {empty ? <DataEmpty title={t("none")} description={null} /> : (
+      <Page
+        variant="content"
+        className="max-w-4xl"
+      >
+        <PageHeader
+          title={t("title")}
+          actions={<>{admin && !empty && <EmptyTrashButton />}</>}
+        />
+        <p className="text-muted-foreground text-sm">{admin ? t("textAdmin") : t("text")}</p>
+        {empty ? (
+          <DataEmpty
+            title={t("none")}
+            description={null}
+          />
+        ) : (
           <>
             {trash.manuscripts.length > 0 && (
               <section className="space-y-2">
                 <h2 className="text-lg font-semibold">{t("manuscripts")}</h2>
                 <ul className={list}>
-                  {trash.manuscripts.map(manuscript => (
-                    <li key={manuscript.id} className={row}>
+                  {trash.manuscripts.map((manuscript) => (
+                    <li
+                      key={manuscript.id}
+                      className={row}
+                    >
                       <span>
-                        <Link href={manuscriptHref(manuscript.id)} className="row-link font-medium">{manuscript.title}</Link>
-                        <span className="text-sm text-muted-foreground"> · {spexName(manuscript.spex)} · {t("versions", { count: manuscript.versions.length })}</span>
+                        <Link
+                          href={manuscriptHref(manuscript.id)}
+                          className="row-link font-medium"
+                        >
+                          {manuscript.title}
+                        </Link>
+                        <span className="text-muted-foreground text-sm">
+                          {" "}
+                          · {spexName(manuscript.spex)} · {t("versions", { count: manuscript.versions.length })}
+                        </span>
                       </span>
-                      <TrashActions kind="MANUSCRIPT" id={manuscript.id} title={manuscript.title} admin={admin} />
+                      <TrashActions
+                        kind="MANUSCRIPT"
+                        id={manuscript.id}
+                        title={manuscript.title}
+                        admin={admin}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -48,13 +75,30 @@ export default async function TrashPage() {
               <section className="space-y-2">
                 <h2 className="text-lg font-semibold">{t("arrangements")}</h2>
                 <ul className={list}>
-                  {trash.arrangements.map(arrangement => (
-                    <li key={arrangement.id} className={row}>
+                  {trash.arrangements.map((arrangement) => (
+                    <li
+                      key={arrangement.id}
+                      className={row}
+                    >
                       <span>
-                        <Link href={arrangementHref(arrangement.id)} className="row-link font-medium">{arrangement.number.title}</Link>
-                        <span className="text-sm text-muted-foreground"> · {spexName(arrangement.number.spex)} · {t("versions", { count: arrangement.versions.length })}</span>
+                        <Link
+                          href={arrangementHref(arrangement.id)}
+                          className="row-link font-medium"
+                        >
+                          {arrangement.number.title}
+                        </Link>
+                        <span className="text-muted-foreground text-sm">
+                          {" "}
+                          · {spexName(arrangement.number.spex)} ·{" "}
+                          {t("versions", { count: arrangement.versions.length })}
+                        </span>
                       </span>
-                      <TrashActions kind="ARRANGEMENT" id={arrangement.id} title={arrangement.number.title} admin={admin} />
+                      <TrashActions
+                        kind="ARRANGEMENT"
+                        id={arrangement.id}
+                        title={arrangement.number.title}
+                        admin={admin}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -64,17 +108,30 @@ export default async function TrashPage() {
               <section className="space-y-2">
                 <h2 className="text-lg font-semibold">{t("versionsHeading")}</h2>
                 <ul className={list}>
-                  {trash.versions.map(version => {
+                  {trash.versions.map((version) => {
                     const title = version.manuscript?.title ?? version.arrangement?.number.title ?? "";
                     const spex = version.manuscript?.spex ?? version.arrangement?.number.spex;
 
                     return (
-                      <li key={version.id} className={row}>
+                      <li
+                        key={version.id}
+                        className={row}
+                      >
                         <span>
-                          <Link href={versionEditHref(version.id)} className="row-link font-medium">{title}, {version.label}</Link>
-                          <span className="text-sm text-muted-foreground"> · {spexName(spex)}</span>
+                          <Link
+                            href={versionEditHref(version.id)}
+                            className="row-link font-medium"
+                          >
+                            {title}, {version.label}
+                          </Link>
+                          <span className="text-muted-foreground text-sm"> · {spexName(spex)}</span>
                         </span>
-                        <TrashActions kind="VERSION" id={version.id} title={`${title}, ${version.label}`} admin={admin} />
+                        <TrashActions
+                          kind="VERSION"
+                          id={version.id}
+                          title={`${title}, ${version.label}`}
+                          admin={admin}
+                        />
                       </li>
                     );
                   })}

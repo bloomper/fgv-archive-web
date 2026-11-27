@@ -29,10 +29,10 @@ export const useLocaleContext = () => {
 };
 
 export default function Provider({
-                                   children,
-                                   locale: initialLocale,
-                                   messages: initialMessages,
-                                 }: Readonly<{
+  children,
+  locale: initialLocale,
+  messages: initialMessages,
+}: Readonly<{
   children: React.ReactNode;
   locale: string;
   messages: AbstractIntlMessages;
@@ -41,15 +41,18 @@ export default function Provider({
   const [locale, setLocale] = useState(initialLocale);
   const [messages, setMessages] = useState(initialMessages);
 
-  const changeLocale = useCallback(async (newLocale: string) => {
-    document.cookie = `locale=${newLocale}; path=/; max-age=31536000; samesite=lax`;
+  const changeLocale = useCallback(
+    async (newLocale: string) => {
+      document.cookie = `locale=${newLocale}; path=/; max-age=31536000; samesite=lax`;
 
-    const newMessages = withFgvMessages(newLocale, (await import(`../../messages/${newLocale}.json`)).default);
+      const newMessages = withFgvMessages(newLocale, (await import(`../../messages/${newLocale}.json`)).default);
 
-    setLocale(newLocale);
-    setMessages(newMessages);
-    router.refresh();
-  }, [router]);
+      setLocale(newLocale);
+      setMessages(newMessages);
+      router.refresh();
+    },
+    [router]
+  );
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -62,10 +65,22 @@ export default function Provider({
   }, [locale, messages]);
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Stockholm">
+    <NextIntlClientProvider
+      locale={locale}
+      messages={messages}
+      timeZone="Europe/Stockholm"
+    >
       <LocaleContext.Provider value={{ locale, changeLocale }}>
-        <FgvShellProvider changeLocale={changeLocale} track={track}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <FgvShellProvider
+          changeLocale={changeLocale}
+          track={track}
+        >
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             <ConsentManager>
               {children}
               <Toaster />

@@ -20,6 +20,20 @@ export function dialogs() {
 
 /** Instruments as the pickers and the API's fragments have them. */
 export const instruments = [
-  { id: "trumpet", nameSv: "Trumpet", nameEn: "Trumpet", group: "BRASS" as const, position: 1, defaultTransposition: { pitch: "B_FLAT" as const, octave: 0 } },
-  { id: "flute", nameSv: "Flöjt", nameEn: "Flute", group: "WOODWIND" as const, position: 1, defaultTransposition: { pitch: "C" as const, octave: 0 } },
+  {
+    id: "trumpet",
+    nameSv: "Trumpet",
+    nameEn: "Trumpet",
+    group: "BRASS" as const,
+    position: 1,
+    defaultTransposition: { pitch: "B_FLAT" as const, octave: 0 },
+  },
+  {
+    id: "flute",
+    nameSv: "Flöjt",
+    nameEn: "Flute",
+    group: "WOODWIND" as const,
+    position: 1,
+    defaultTransposition: { pitch: "C" as const, octave: 0 },
+  },
 ];

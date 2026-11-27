@@ -16,7 +16,8 @@ const messages = {
     cookieBanner: {
       ...baseTranslations.en.cookieBanner,
       noticeTitle: "Cookies on this site",
-      noticeDescription: "This site uses only strictly necessary cookies. They keep you signed in and remember your language and display preferences. No cookies are used for analytics, tracking or advertising. Anonymous visitor statistics are collected without cookies.",
+      noticeDescription:
+        "This site uses only strictly necessary cookies. They keep you signed in and remember your language and display preferences. No cookies are used for analytics, tracking or advertising. Anonymous visitor statistics are collected without cookies.",
     },
   },
   sv: {
@@ -28,7 +29,8 @@ const messages = {
     cookieBanner: {
       ...baseTranslations.sv.cookieBanner,
       noticeTitle: "Cookies på den här webbplatsen",
-      noticeDescription: "Den här webbplatsen använder endast nödvändiga cookies. De håller dig inloggad och kommer ihåg ditt språk och dina visningsinställningar. Inga cookies används för analys, spårning eller annonsering. Anonym besöksstatistik samlas in utan cookies.",
+      noticeDescription:
+        "Den här webbplatsen använder endast nödvändiga cookies. De håller dig inloggad och kommer ihåg ditt språk och dina visningsinställningar. Inga cookies används för analys, spårning eller annonsering. Anonym besöksstatistik samlas in utan cookies.",
     },
   },
 };
@@ -36,15 +38,17 @@ const messages = {
 // Only strictly necessary cookies and a notice, so there is no consent to keep records of
 const mode = offline({
   acknowledgeNoRecords: true,
-  policyRules: [{
-    id: "necessary_only",
-    match: { isDefault: true, fallback: true },
-    model: "opt-out",
-    prompt: "notice",
-    categories: [],
-    scopeMode: "strict",
-    i18n: { messageProfile: "preferences" },
-  }],
+  policyRules: [
+    {
+      id: "necessary_only",
+      match: { isDefault: true, fallback: true },
+      model: "opt-out",
+      prompt: "notice",
+      categories: [],
+      scopeMode: "strict",
+      i18n: { messageProfile: "preferences" },
+    },
+  ],
 });
 
 export function ConsentManager({ children }: { children: ReactNode }) {
@@ -63,7 +67,10 @@ export function ConsentManager({ children }: { children: ReactNode }) {
         },
       }}
     >
-      <ConsentBanner hideBranding position="bottom-right" />
+      <ConsentBanner
+        hideBranding
+        position="bottom-right"
+      />
       <ConsentDialog hideBranding />
       {children}
     </ConsentProvider>

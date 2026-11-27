@@ -21,7 +21,7 @@ import { Policies } from "@/utils/policy.server";
 const UPLOAD = /^[0-9a-f-]{36}$/;
 
 function requireId(...ids: unknown[]) {
-  if (!ids.every(id => typeof id === "string" && ID.test(id))) {
+  if (!ids.every((id) => typeof id === "string" && ID.test(id))) {
     throw new Error("Invalid id");
   }
 }
@@ -41,20 +41,24 @@ function changed() {
   revalidatePath("/", "layout");
 }
 
-const editor = <T, >(work: () => Promise<T>) =>
-  withPolicyAction(Policies.editor.requireEditor, () => toActionResult(async () => {
-    const result = await work();
+const editor = <T>(work: () => Promise<T>) =>
+  withPolicyAction(Policies.editor.requireEditor, () =>
+    toActionResult(async () => {
+      const result = await work();
 
-    changed();
-    return result;
-  }));
-const admin = <T, >(work: () => Promise<T>) =>
-  withPolicyAction(Policies.admin.requireAdmin, () => toActionResult(async () => {
-    const result = await work();
+      changed();
+      return result;
+    })
+  );
+const admin = <T>(work: () => Promise<T>) =>
+  withPolicyAction(Policies.admin.requireAdmin, () =>
+    toActionResult(async () => {
+      const result = await work();
 
-    changed();
-    return result;
-  }));
+      changed();
+      return result;
+    })
+  );
 
 export async function searchSpexAction(q: string) {
   return withPolicyAction(Policies.editor.requireEditor, () => toActionResult(async () => searchSpex(q.slice(0, 100))));
@@ -84,7 +88,9 @@ function documentInput(input: ManuscriptInput): ManuscriptInput {
 }
 
 /** Creates a document, of a spex or FGV's own, with its first version; the data is its id and the version's. */
-export async function createManuscriptAction(input: ManuscriptInput): Promise<ActionResult<{ id: string; versionId?: string }>> {
+export async function createManuscriptAction(
+  input: ManuscriptInput
+): Promise<ActionResult<{ id: string; versionId?: string }>> {
   const checked = documentInput(input);
 
   return editor(async () => {
@@ -109,7 +115,9 @@ export async function updateManuscriptAction(id: string, input: ManuscriptInput)
   });
 }
 
-export async function createArrangementAction(numberId: string): Promise<ActionResult<{ id: string; versionId?: string }>> {
+export async function createArrangementAction(
+  numberId: string
+): Promise<ActionResult<{ id: string; versionId?: string }>> {
   requireId(numberId);
   return editor(async () => {
     const created = await editing.arrangementCreate({ numberId });
@@ -124,16 +132,19 @@ export async function createArrangementAction(numberId: string): Promise<ActionR
 /** A book's songs in the book's order: numbers from Spexipedia (of any spex) or free titles (spec 4.7). */
 export async function setBookSongsAction(id: string, songs: BookSongInput[]) {
   requireId(id);
-  songs.forEach(song => song.numberId && requireId(song.numberId));
+  songs.forEach((song) => song.numberId && requireId(song.numberId));
   if (songs.length > 1000) {
     throw new Error("Too many songs");
   }
   return editor(async () => {
-    await editing.bookSongsSet(id, songs.map(song => ({
-      numberId: song.numberId || null,
-      title: song.numberId ? null : song.title?.trim().slice(0, 255) || null,
-      textOnly: Boolean(song.textOnly),
-    })));
+    await editing.bookSongsSet(
+      id,
+      songs.map((song) => ({
+        numberId: song.numberId || null,
+        title: song.numberId ? null : song.title?.trim().slice(0, 255) || null,
+        textOnly: Boolean(song.textOnly),
+      }))
+    );
     return null;
   });
 }
@@ -176,7 +187,10 @@ export async function deleteParentAction(kind: Parent, id: string) {
 
 // --- Versions -----------------------------------------------------------------------------------------------------
 
-export async function createVersionAction(parentId: string, input: VersionInput): Promise<ActionResult<string | undefined>> {
+export async function createVersionAction(
+  parentId: string,
+  input: VersionInput
+): Promise<ActionResult<string | undefined>> {
   requireId(parentId);
   return editor(async () => (await editing.versionCreate(parentId, input))?.id);
 }
@@ -241,25 +255,35 @@ function checkTransposition(transposition: TranspositionInput | null | undefined
 export async function fileGuessAction(versionId: string, name: string) {
   requireId(versionId);
   return withPolicyAction(Policies.editor.requireEditor, () =>
-    toActionResult(async () => editing.fileGuess(versionId, name.slice(0, 255))));
+    toActionResult(async () => editing.fileGuess(versionId, name.slice(0, 255)))
+  );
 }
 
-export async function addFileAction(versionId: string, uploadId: string, input: Omit<FileInput, "title"> & { title?: string | null }) {
+export async function addFileAction(
+  versionId: string,
+  uploadId: string,
+  input: Omit<FileInput, "title"> & { title?: string | null }
+) {
   requireId(versionId, input.roleId, ...(input.instrumentIds ?? []));
   checkTransposition(input.transposition);
   if (!UPLOAD.test(uploadId)) {
     throw new Error("Invalid upload");
   }
-  return editor(async () => (await editing.fileAdd({
-    versionId,
-    uploadId,
-    title: input.title?.trim() || null,
-    comment: input.comment?.trim() || null,
-    roleId: input.roleId,
-    instrumentIds: input.instrumentIds ?? [],
-    desk: input.desk?.trim() || null,
-    transposition: input.transposition ?? null,
-  }))?.id);
+  return editor(
+    async () =>
+      (
+        await editing.fileAdd({
+          versionId,
+          uploadId,
+          title: input.title?.trim() || null,
+          comment: input.comment?.trim() || null,
+          roleId: input.roleId,
+          instrumentIds: input.instrumentIds ?? [],
+          desk: input.desk?.trim() || null,
+          transposition: input.transposition ?? null,
+        })
+      )?.id
+  );
 }
 
 export async function updateFileAction(id: string, input: FileInput) {
@@ -309,7 +333,9 @@ export async function deleteFileAction(id: string) {
 /**
  * Creates a share link; the data is its token, shown once.
  */
-export async function createShareLinkAction(input: ShareLinkInput): Promise<ActionResult<{ token: string; id: string }>> {
+export async function createShareLinkAction(
+  input: ShareLinkInput
+): Promise<ActionResult<{ token: string; id: string }>> {
   requireId(...(input.versionIds ?? []), ...(input.fileIds ?? []), ...(input.instrumentIds ?? []));
   if (input.spexId) {
     requireId(input.spexId);

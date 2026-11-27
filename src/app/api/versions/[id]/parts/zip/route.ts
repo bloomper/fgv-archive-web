@@ -9,6 +9,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params;
 
   return ID.test(id)
-    ? streamFromApi(request, withQuery(`/api/versions/${id}/parts/zip`, apiQueryFromParams(request.nextUrl.searchParams)))
+    ? streamFromApi(
+        request,
+        withQuery(`/api/versions/${id}/parts/zip`, apiQueryFromParams(request.nextUrl.searchParams))
+      )
     : invalid();
 }

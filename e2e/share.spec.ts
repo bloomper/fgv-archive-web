@@ -13,13 +13,15 @@ test.describe("Share links, without logging in", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Ali Baba 2028, band" })).toBeVisible();
     await expect(page.getByText("Delat av Erik Redaktör")).toBeVisible();
     await expect(page.getByTestId("shared-version")).toHaveCount(3);
-    await expect(page.locator("[data-slot=\"sidebar\"]")).toHaveCount(0);
+    await expect(page.locator('[data-slot="sidebar"]')).toHaveCount(0);
     await expect(page.getByText("Du behöver vara inloggad")).toHaveCount(0);
     await expect(page.locator("script[src='/stats/script.js']")).toHaveCount(0);
     // Even restricted files open through the link
     const duett = page.getByTestId("shared-version").filter({ hasText: "Kärleksduetten" });
-    await expect(duett.getByRole("link", { name: "Ladda ner Kärleksduetten trumpet" }))
-      .toHaveAttribute("href", `/api/share/${VALID}/files/${uuidOf(632)}?download=true`);
+    await expect(duett.getByRole("link", { name: "Ladda ner Kärleksduetten trumpet" })).toHaveAttribute(
+      "href",
+      `/api/share/${VALID}/files/${uuidOf(632)}?download=true`
+    );
     await expect(duett.getByText("Låst")).toHaveCount(0);
     // Not made for instruments: no zip across a spex
     await expect(page.getByTestId("made-for")).toHaveCount(0);
@@ -28,8 +30,10 @@ test.describe("Share links, without logging in", () => {
     // Parts narrowed to an instrument, as a zip through the link
     await page.getByTestId("part-filter").getByRole("button", { name: "Trumpet" }).click();
     const ouvertyr = page.getByTestId("shared-version").filter({ hasText: "Ouvertyr" });
-    await expect(ouvertyr.getByRole("link", { name: "Valda stämmor (2)" }))
-      .toHaveAttribute("href", `/api/share/${VALID}/versions/${uuidOf(511)}/parts/zip?instrumentIds=${uuidOf(205)}`);
+    await expect(ouvertyr.getByRole("link", { name: "Valda stämmor (2)" })).toHaveAttribute(
+      "href",
+      `/api/share/${VALID}/versions/${uuidOf(511)}/parts/zip?instrumentIds=${uuidOf(205)}`
+    );
 
     const download = await page.request.get(`/api/share/${VALID}/files/${uuidOf(632)}?download=true`);
     expect(download.status()).toBe(200);
@@ -40,12 +44,18 @@ test.describe("Share links, without logging in", () => {
   test("a link made for instruments says so and offers its parts in show order", async ({ page }) => {
     await page.goto(`/share/${INSTRUMENTS}`);
 
-    await expect(page.getByTestId("made-for")).toHaveText("Stämmor för Trumpet i Ali Baba 1985, i föreställningens ordning");
-    await expect(page.getByRole("link", { name: "Alla stämmor i föreställningsordning" }))
-      .toHaveAttribute("href", `/api/share/${INSTRUMENTS}/parts/zip`);
+    await expect(page.getByTestId("made-for")).toHaveText(
+      "Stämmor för Trumpet i Ali Baba 1985, i föreställningens ordning"
+    );
+    await expect(page.getByRole("link", { name: "Alla stämmor i föreställningsordning" })).toHaveAttribute(
+      "href",
+      `/api/share/${INSTRUMENTS}/parts/zip`
+    );
     await page.getByTestId("part-filter").getByRole("button", { name: "Stämd i C", exact: true }).click();
-    await expect(page.getByRole("link", { name: "Valda stämmor i föreställningsordning" }))
-      .toHaveAttribute("href", `/api/share/${INSTRUMENTS}/parts/zip?transpositions=C`);
+    await expect(page.getByRole("link", { name: "Valda stämmor i föreställningsordning" })).toHaveAttribute(
+      "href",
+      `/api/share/${INSTRUMENTS}/parts/zip?transpositions=C`
+    );
     await expect(page.getByTestId("shared-version").getByTestId("file-row")).toHaveCount(1);
   });
 
@@ -69,7 +79,9 @@ test.describe("Share links, without logging in", () => {
 
     const response = await page.request.get(`/api/share/${EXPIRED}/files/${uuidOf(601)}`);
     expect(response.status()).toBe(410);
-    expect(await response.json()).toEqual(expect.objectContaining({ code: "SHARE_LINK_EXPIRED", createdByName: "Erik Redaktör" }));
+    expect(await response.json()).toEqual(
+      expect.objectContaining({ code: "SHARE_LINK_EXPIRED", createdByName: "Erik Redaktör" })
+    );
   });
 
   test("a revoked link says so", async ({ page }) => {
@@ -87,6 +99,6 @@ test.describe("Share links, without logging in", () => {
     await page.goto(`/share/${VALID}`);
 
     await expect(page.getByRole("heading", { level: 1, name: "Ali Baba 2028, band" })).toBeVisible();
-    await expect(page.locator("[data-slot=\"sidebar\"]")).toHaveCount(0);
+    await expect(page.locator('[data-slot="sidebar"]')).toHaveCount(0);
   });
 });

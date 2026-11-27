@@ -16,9 +16,14 @@ describe("Gravatar", () => {
   });
 
   it("uses the image only when Gravatar has one, and gives up quietly", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(new Response(null, { status: 200 }))
-      .mockResolvedValueOnce(new Response(null, { status: 404 }))
-      .mockRejectedValueOnce(new Error("timeout")));
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(new Response(null, { status: 200 }))
+        .mockResolvedValueOnce(new Response(null, { status: 404 }))
+        .mockRejectedValueOnce(new Error("timeout"))
+    );
 
     expect(await resolveGravatarImage("anna@example.org")).toBe(gravatarImageUrl("anna@example.org"));
     expect(await resolveGravatarImage("anna@example.org")).toBeUndefined();

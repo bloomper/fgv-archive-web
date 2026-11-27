@@ -19,17 +19,26 @@ export function CreateArrangementButton({ numberId, title }: { numberId: string;
   const [pending, startTransition] = useTransition();
 
   return (
-    <Button size="xs" variant="outline" disabled={pending} aria-label={t("createArrangementOf", { title })}
-            onClick={() => startTransition(async () => {
-              const result = await createArrangementAction(numberId);
+    <Button
+      size="xs"
+      variant="outline"
+      disabled={pending}
+      aria-label={t("createArrangementOf", { title })}
+      onClick={() =>
+        startTransition(async () => {
+          const result = await createArrangementAction(numberId);
 
-              if (!result.ok) {
-                toast.error(result.message);
-              } else {
-                track("arrangement-create");
-                router.push(result.data.versionId ? versionEditHref(result.data.versionId) : `/arrangements/${result.data.id}`);
-              }
-            })}>
+          if (!result.ok) {
+            toast.error(result.message);
+          } else {
+            track("arrangement-create");
+            router.push(
+              result.data.versionId ? versionEditHref(result.data.versionId) : `/arrangements/${result.data.id}`
+            );
+          }
+        })
+      }
+    >
       <Plus /> {t("createArrangement")}
     </Button>
   );

@@ -11,7 +11,7 @@ let loading: Promise<PdfJs> | null = null;
  * public/pdfjs by scripts/copy-pdfjs.mjs).
  */
 export function loadPdfJs(): Promise<PdfJs> {
-  loading ??= import("pdfjs-dist").then(pdfjs => {
+  loading ??= import("pdfjs-dist").then((pdfjs) => {
     pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs";
     return pdfjs;
   });
@@ -58,8 +58,12 @@ export type RenderedPage = { cancel: () => void; done: Promise<void> };
  * Draws a page on a canvas at a CSS scale, sharp on high-density screens, and lays its text over it when a text layer
  * is given (selectable, searchable, read by screen readers).
  */
-export function renderPage(page: PDFPageProxy, canvas: HTMLCanvasElement, scale: number,
-                           textLayer?: HTMLDivElement | null): RenderedPage {
+export function renderPage(
+  page: PDFPageProxy,
+  canvas: HTMLCanvasElement,
+  scale: number,
+  textLayer?: HTMLDivElement | null
+): RenderedPage {
   const viewport = page.getViewport({ scale });
   const ratio = Math.min(window.devicePixelRatio || 1, 3);
   let cancelled = false;
@@ -83,27 +87,33 @@ export function renderPage(page: PDFPageProxy, canvas: HTMLCanvasElement, scale:
     return { cancel: () => undefined, done: Promise.reject(error) };
   }
 
-  const done = task.promise.then(async () => {
-    if (cancelled || !textLayer) {
-      return;
-    }
+  const done = task.promise
+    .then(async () => {
+      if (cancelled || !textLayer) {
+        return;
+      }
 
-    const pdfjs = await loadPdfJs();
+      const pdfjs = await loadPdfJs();
 
-    textLayer.replaceChildren();
-    textLayer.style.setProperty("--total-scale-factor", String(scale));
-    textLayer.style.setProperty("--scale-round-x", "1px");
-    textLayer.style.setProperty("--scale-round-y", "1px");
+      textLayer.replaceChildren();
+      textLayer.style.setProperty("--total-scale-factor", String(scale));
+      textLayer.style.setProperty("--scale-round-x", "1px");
+      textLayer.style.setProperty("--scale-round-y", "1px");
 
-    const layer = new pdfjs.TextLayer({ textContentSource: page.streamTextContent(), container: textLayer, viewport });
+      const layer = new pdfjs.TextLayer({
+        textContentSource: page.streamTextContent(),
+        container: textLayer,
+        viewport,
+      });
 
-    textTask = layer;
-    await layer.render();
-  }).catch(error => {
-    if ((error as Error)?.name !== "RenderingCancelledException" && !cancelled) {
-      throw error;
-    }
-  });
+      textTask = layer;
+      await layer.render();
+    })
+    .catch((error) => {
+      if ((error as Error)?.name !== "RenderingCancelledException" && !cancelled) {
+        throw error;
+      }
+    });
 
   return {
     cancel: () => {

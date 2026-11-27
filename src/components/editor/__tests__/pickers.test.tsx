@@ -11,7 +11,11 @@ function Keys({ initial }: { initial: Key | null }) {
 
   return (
     <>
-      <KeyPicker value={state.key} modulations={state.modulations} onChange={(key, modulations) => setState({ key, modulations })} />
+      <KeyPicker
+        value={state.key}
+        modulations={state.modulations}
+        onChange={(key, modulations) => setState({ key, modulations })}
+      />
       <output>{JSON.stringify(state)}</output>
     </>
   );
@@ -31,7 +35,10 @@ describe("KeyPicker", () => {
     await userEvent.click(screen.getByRole("button", { name: "addModulation" }));
     const second = screen.getByRole("group", { name: `modulation:${JSON.stringify({ number: 2 })}` });
     await userEvent.selectOptions(second.querySelector("select")!, "G");
-    expect(state().modulations).toEqual([{ tonic: "F", mode: "MINOR" }, { tonic: "G", mode: "MINOR" }]);
+    expect(state().modulations).toEqual([
+      { tonic: "F", mode: "MINOR" },
+      { tonic: "G", mode: "MINOR" },
+    ]);
 
     await userEvent.click(screen.getByRole("button", { name: `moveUp:${JSON.stringify({ number: 2 })}` }));
     expect(state().modulations[0].tonic).toBe("G");
@@ -40,7 +47,10 @@ describe("KeyPicker", () => {
     await userEvent.click(screen.getByRole("button", { name: `remove:${JSON.stringify({ number: 1 })}` }));
     expect(state().modulations).toHaveLength(1);
     // A modulation with no key is removed
-    await userEvent.selectOptions(screen.getByRole("group", { name: `modulation:${JSON.stringify({ number: 1 })}` }).querySelector("select")!, "C");
+    await userEvent.selectOptions(
+      screen.getByRole("group", { name: `modulation:${JSON.stringify({ number: 1 })}` }).querySelector("select")!,
+      "C"
+    );
     expect(state().modulations[0].tonic).toBe("C");
 
     await userEvent.selectOptions(screen.getAllByRole("combobox", { name: "tonic" })[0], "");
@@ -51,7 +61,17 @@ describe("KeyPicker", () => {
 function Instruments() {
   const [value, setValue] = useState<string[]>([]);
 
-  return <><InstrumentsPicker id="i" instruments={instruments} value={value} onChange={setValue} /><output>{JSON.stringify(value)}</output></>;
+  return (
+    <>
+      <InstrumentsPicker
+        id="i"
+        instruments={instruments}
+        value={value}
+        onChange={setValue}
+      />
+      <output>{JSON.stringify(value)}</output>
+    </>
+  );
 }
 
 describe("InstrumentsPicker", () => {
@@ -70,7 +90,16 @@ describe("InstrumentsPicker", () => {
 function Transpositions() {
   const [value, setValue] = useState<Transposition | null>(null);
 
-  return <><TranspositionPicker id="t" value={value} onChange={setValue} /><output>{JSON.stringify(value)}</output></>;
+  return (
+    <>
+      <TranspositionPicker
+        id="t"
+        value={value}
+        onChange={setValue}
+      />
+      <output>{JSON.stringify(value)}</output>
+    </>
+  );
 }
 
 describe("TranspositionPicker", () => {

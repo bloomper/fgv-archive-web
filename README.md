@@ -34,6 +34,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
 ### Development
 
 1. **Install dependencies:**
+
    ```bash
    npm ci
    ```
@@ -41,6 +42,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
 2. **Configure environment:**
    Start fgv-infra-deploy's local stack, Spexregister's and [Spexarkiv Server][1]'s (its getting started guide
    describes all three), then create `.env.local` (`.env` already holds the rest):
+
    ```
    BETTER_AUTH_URL=http://localhost:3005
    AUTH_SECRET=<random string of at least 32 characters>
@@ -55,6 +57,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    SPEXGRAM_WEB_URL=http://localhost:3004
    SPEXIPEDIA_WEB_URL=http://localhost:3006
    ```
+
    The client secret is in `realm/fgv.json` in [fgv-keycloak][7]; search for `fgv-archive`.
    For visitor statistics, run fgv-infra-deploy's `local/bin/configure-umami.sh` and put the ID it prints for
    Spexarkiv in `.env.local` as `UMAMI_WEBSITE_ID`, with `UMAMI_URL=https://analytics.fgv.local.nu:8443`.
@@ -62,18 +65,19 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    (`local/.docker/caddy/data/caddy/pki/authorities/local/root.crt`), read from `../../fgv-infra-deploy`, or from
    `INFRA_DEPLOY` if it is checked out elsewhere.
 
-   | Variable                         | Purpose                                                                   |
-   |----------------------------------|---------------------------------------------------------------------------|
-   | `API_GRAPHQL_ENDPOINT`           | Spexarkiv Server's GraphQL endpoint; its file, zip, share and upload endpoints share the origin |
-   | `SPEXREGISTER_WEB_URL`           | Spexregister, for the application switcher in the header                  |
-   | `REVIVAL_WEB_URL`            | Nyupps√§ttning, for the application switcher                               |
-   | `SPEXIFY_WEB_URL`                | Spexify, for the application switcher                                     |
-   | `SPEXFLIX_WEB_URL`               | Spexflix, for the application switcher                                    |
-   | `SPEXGRAM_WEB_URL`               | Spexgram, for the application switcher                                    |
-   | `SPEXIPEDIA_WEB_URL`             | Spexipedia, for the application switcher                                    |
+   | Variable               | Purpose                                                                                         |
+   | ---------------------- | ----------------------------------------------------------------------------------------------- |
+   | `API_GRAPHQL_ENDPOINT` | Spexarkiv Server's GraphQL endpoint; its file, zip, share and upload endpoints share the origin |
+   | `SPEXREGISTER_WEB_URL` | Spexregister, for the application switcher in the header                                        |
+   | `REVIVAL_WEB_URL`      | Nyupps√§ttning, for the application switcher                                                     |
+   | `SPEXIFY_WEB_URL`      | Spexify, for the application switcher                                                           |
+   | `SPEXFLIX_WEB_URL`     | Spexflix, for the application switcher                                                          |
+   | `SPEXGRAM_WEB_URL`     | Spexgram, for the application switcher                                                          |
+   | `SPEXIPEDIA_WEB_URL`   | Spexipedia, for the application switcher                                                        |
 
 3. **Generate GraphQL types:**
    If you change GraphQL queries or the schema, regenerate types from a sibling `fgv-archive-server` checkout:
+
    ```bash
    npm run gql-codegen
    ```
@@ -88,7 +92,7 @@ The look (logo, favicon and colours) is FGV's, shared with Spexregister, Nyupps√
    (`scripts/copy-pdfjs.mjs`), which is not in git.
 
 The sample data's users (`admin@fgv.nu`, `editor@fgv.nu`, `user@fgv.nu`, `no-access@fgv.nu`) and share links are listed
-under *Test credentials* in Spexarkiv Server's getting started guide.
+under _Test credentials_ in Spexarkiv Server's getting started guide.
 
 ## Docker
 
@@ -113,7 +117,7 @@ fgv-infra-deploy's local Caddy. To log in, `ARCHIVE_URL` in fgv-infra-deploy's `
 CI publishes `bloomper/fgv-archive-web` for `linux/amd64`:
 
 | Trigger              | Tags                              |
-|----------------------|-----------------------------------|
+| -------------------- | --------------------------------- |
 | push to `develop`    | `develop`, `sha-<commit>`         |
 | push of tag `vX.Y.Z` | `X.Y.Z`, `latest`, `sha-<commit>` |
 
@@ -157,17 +161,10 @@ You can contribute to Spexarkiv Web by:
 Spexarkiv Web is open source software released under the [Apache 2.0 license][6].
 
 [1]: https://github.com/bloomper/fgv-archive-server
-
 [2]: https://github.com/bloomper/fgv-archive-spec
-
 [3]: CODE_OF_CONDUCT.md
-
 [4]: https://help.github.com/articles/using-pull-requests/
-
 [5]: CONTRIBUTING.md
-
 [6]: https://www.apache.org/licenses/LICENSE-2.0.html
-
 [7]: https://github.com/bloomper/fgv-keycloak
-
 [8]: https://github.com/bloomper/fgv-archive-deploy

@@ -11,9 +11,17 @@ export default async function InstrumentsPage() {
     const instruments = await getInstruments();
 
     return (
-      <Page variant="content" className="max-w-4xl">
-        <PageHeader title={t("title")} description={t("text")}/>
-        <InstrumentsEditor instruments={instruments.map(instrument => ({ ...instrument, useCount: instrument.useCount ?? 0 }))} />
+      <Page
+        variant="content"
+        className="max-w-4xl"
+      >
+        <PageHeader
+          title={t("title")}
+          description={t("text")}
+        />
+        <InstrumentsEditor
+          instruments={instruments.map((instrument) => ({ ...instrument, useCount: instrument.useCount ?? 0 }))}
+        />
       </Page>
     );
   });

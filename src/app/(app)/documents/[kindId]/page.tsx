@@ -23,7 +23,7 @@ export default async function DocumentsPage({ params }: { params: Promise<{ kind
     const [kinds, documents] = ID.test(kindId)
       ? await Promise.all([getDocumentKinds(true), getKindDocuments(kindId)])
       : [[], []];
-    const kind = kinds.find(candidate => candidate.id === kindId);
+    const kind = kinds.find((candidate) => candidate.id === kindId);
 
     if (!kind) {
       notFound();
@@ -40,38 +40,76 @@ export default async function DocumentsPage({ params }: { params: Promise<{ kind
           title={kind.name}
           badges={kind.retired && <Badge variant="secondary">{t("retired")}</Badge>}
           description={t("count", { count: documents.length })}
-          actions={editor && !kind.retired && (
-            <Link href={newDocumentHref({ kindId: kind.id })} className={buttonVariants({ variant: "outline", size: "sm" })}>
-              <FilePlus /> {t("new")}
-            </Link>
-          )}
+          actions={
+            editor &&
+            !kind.retired && (
+              <Link
+                href={newDocumentHref({ kindId: kind.id })}
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                <FilePlus /> {t("new")}
+              </Link>
+            )
+          }
         />
 
-        {groups.length === 0 ? <DataEmpty title={t("none")} description={null} icon={Icon} /> : groups.map(group => {
-          const heading = group.spex ? spexName(group.spex) : t("own");
-          const headingId = `group-${group.spex?.id ?? "own"}`;
+        {groups.length === 0 ? (
+          <DataEmpty
+            title={t("none")}
+            description={null}
+            icon={Icon}
+          />
+        ) : (
+          groups.map((group) => {
+            const heading = group.spex ? spexName(group.spex) : t("own");
+            const headingId = `group-${group.spex?.id ?? "own"}`;
 
-          return (
-            <section key={group.spex?.id ?? ""} aria-labelledby={headingId} className="space-y-2">
-              <h2 id={headingId} className="text-lg font-semibold">
-                {group.spex
-                  ? <Link href={spexHref(group.spex.id)} className="hover:text-link">{heading}</Link>
-                  : heading}
-              </h2>
-              <ul className="divide-y overflow-hidden rounded-lg border bg-card">
-                {group.documents.map(document => (
-                  <li key={document.id} className="link-row px-3 py-2">
-                    <Link href={manuscriptHref(document.id)} className="row-link flex items-center gap-2 font-medium">
-                      <Icon className="size-4 shrink-0 text-link" aria-hidden /> {document.title}
-                      {document.trashed && <Badge variant="destructive">{t("trashed")}</Badge>}
+            return (
+              <section
+                key={group.spex?.id ?? ""}
+                aria-labelledby={headingId}
+                className="space-y-2"
+              >
+                <h2
+                  id={headingId}
+                  className="text-lg font-semibold"
+                >
+                  {group.spex ? (
+                    <Link
+                      href={spexHref(group.spex.id)}
+                      className="hover:text-link"
+                    >
+                      {heading}
                     </Link>
-                    {document.authors && <p className="text-sm text-muted-foreground">{document.authors}</p>}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          );
-        })}
+                  ) : (
+                    heading
+                  )}
+                </h2>
+                <ul className="bg-card divide-y overflow-hidden rounded-lg border">
+                  {group.documents.map((document) => (
+                    <li
+                      key={document.id}
+                      className="link-row px-3 py-2"
+                    >
+                      <Link
+                        href={manuscriptHref(document.id)}
+                        className="row-link flex items-center gap-2 font-medium"
+                      >
+                        <Icon
+                          className="text-link size-4 shrink-0"
+                          aria-hidden
+                        />{" "}
+                        {document.title}
+                        {document.trashed && <Badge variant="destructive">{t("trashed")}</Badge>}
+                      </Link>
+                      {document.authors && <p className="text-muted-foreground text-sm">{document.authors}</p>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })
+        )}
       </Page>
     );
   });

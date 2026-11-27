@@ -10,7 +10,8 @@ const SRC = join(__dirname, "..");
 
 function keysOf(messages: Messages, prefix = ""): string[] {
   return Object.entries(messages).flatMap(([key, value]) =>
-    typeof value === "string" ? [`${prefix}${key}`] : keysOf(value, `${prefix}${key}.`));
+    typeof value === "string" ? [`${prefix}${key}`] : keysOf(value, `${prefix}${key}.`)
+  );
 }
 
 function sourceFiles(dir: string): string[] {
@@ -26,17 +27,18 @@ function sourceFiles(dir: string): string[] {
 function usedKeys() {
   return sourceFiles(SRC).flatMap((file) => {
     const source = readFileSync(file, "utf8");
-    const namespaces = [...source.matchAll(/(?:useTranslations|getTranslations)\(\s*"([^"]+)"\s*\)/g)]
-      .map((match) => match[1]);
+    const namespaces = [...source.matchAll(/(?:useTranslations|getTranslations)\(\s*"([^"]+)"\s*\)/g)].map(
+      (match) => match[1]
+    );
     const translated = [...source.matchAll(/\bt\(\s*"([A-Za-z0-9_.]+)"/g)].map((match) => ({
       file: file.slice(SRC.length + 1),
       candidates: [match[1], ...namespaces.map((namespace) => `${namespace}.${match[1]}`)],
     }));
     const validation = file.endsWith("schema.ts")
       ? [...source.matchAll(/"([A-Z][A-Za-z]*(?:\.[A-Za-z0-9_]+)+)"/g)].map((match) => ({
-        file: file.slice(SRC.length + 1),
-        candidates: [match[1]],
-      }))
+          file: file.slice(SRC.length + 1),
+          candidates: [match[1]],
+        }))
       : [];
     return [...translated, ...validation];
   });
@@ -61,7 +63,11 @@ describe("messages", () => {
 });
 
 function isNamespace(messages: Messages, key: string) {
-  const value = key.split(".").reduce<string | Messages | undefined>(
-    (node, part) => (typeof node === "object" ? node[part] : undefined), messages);
+  const value = key
+    .split(".")
+    .reduce<string | Messages | undefined>(
+      (node, part) => (typeof node === "object" ? node[part] : undefined),
+      messages
+    );
   return typeof value === "object";
 }

@@ -9,8 +9,14 @@ export default async function ShareLinksPage() {
     const t = await getTranslations("ShareLinks");
 
     return (
-      <Page variant="content" className="max-w-4xl">
-        <PageHeader title={t("title")} description={t("text")}/>
+      <Page
+        variant="content"
+        className="max-w-4xl"
+      >
+        <PageHeader
+          title={t("title")}
+          description={t("text")}
+        />
         <ShareLinkList all={false} />
       </Page>
     );

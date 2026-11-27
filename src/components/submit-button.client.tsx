@@ -13,8 +13,17 @@ export function SubmitButton({ children, ...props }: Omit<ComponentProps<typeof 
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" aria-busy={pending || undefined} {...props}>
-      {pending && <Spinner aria-hidden role={undefined} />}
+    <Button
+      type="submit"
+      aria-busy={pending || undefined}
+      {...props}
+    >
+      {pending && (
+        <Spinner
+          aria-hidden
+          role={undefined}
+        />
+      )}
       {children}
     </Button>
   );

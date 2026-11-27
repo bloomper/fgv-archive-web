@@ -31,8 +31,24 @@ export function VersionBadges({ version }: { version: VersionLike }) {
 
   return (
     <span className="inline-flex flex-wrap items-center gap-1">
-      {version.recommended && <Badge><Star className="size-3" aria-hidden /> {t("recommended")}</Badge>}
-      {version.restricted && <Badge variant="secondary"><Lock className="size-3" aria-hidden /> {t("restricted")}</Badge>}
+      {version.recommended && (
+        <Badge>
+          <Star
+            className="size-3"
+            aria-hidden
+          />{" "}
+          {t("recommended")}
+        </Badge>
+      )}
+      {version.restricted && (
+        <Badge variant="secondary">
+          <Lock
+            className="size-3"
+            aria-hidden
+          />{" "}
+          {t("restricted")}
+        </Badge>
+      )}
       {version.published === false && <Badge variant="outline">{t("unpublished")}</Badge>}
       {version.trashed && <Badge variant="destructive">{t("trashed")}</Badge>}
     </span>
@@ -52,7 +68,8 @@ export function KeyText({ keyValue, modulations = [] }: { keyValue?: Key | null;
  * "2 Trumpet, Trombon, Sång" in the admins' order.
  */
 export function instrumentationText(instrumentation: VersionLike["instrumentation"], locale: string): string {
-  return [...instrumentation ?? []].sort((a, b) => a.instrument.position - b.instrument.position)
+  return [...(instrumentation ?? [])]
+    .sort((a, b) => a.instrument.position - b.instrument.position)
     .map(({ count, instrument }) => `${count > 1 ? `${count} ` : ""}${localName(instrument, locale)}`)
     .join(", ");
 }
@@ -68,10 +85,27 @@ export function VersionFacts({ version, showSpex = true }: { version: VersionLik
   const rows: [string, React.ReactNode][] = [];
 
   if (showSpex && version.usedIn) {
-    rows.push([t("usedIn"), <Link key="spex" href={spexHref(version.usedIn.id)} className="hover:text-link">{spexName(version.usedIn)}</Link>]);
+    rows.push([
+      t("usedIn"),
+      <Link
+        key="spex"
+        href={spexHref(version.usedIn.id)}
+        className="hover:text-link"
+      >
+        {spexName(version.usedIn)}
+      </Link>,
+    ]);
   }
   if (keys) {
-    rows.push([t("key"), <span key="key" data-testid="version-key">{keys}</span>]);
+    rows.push([
+      t("key"),
+      <span
+        key="key"
+        data-testid="version-key"
+      >
+        {keys}
+      </span>,
+    ]);
   }
   if (version.arranger) {
     rows.push([t("arranger"), version.arranger]);
@@ -94,14 +128,17 @@ export function VersionFacts({ version, showSpex = true }: { version: VersionLik
       {rows.length > 0 && (
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
           {rows.map(([term, value]) => (
-            <div key={term} className="contents">
+            <div
+              key={term}
+              className="contents"
+            >
               <dt className="text-muted-foreground">{term}</dt>
               <dd className="min-w-0 break-words">{value}</dd>
             </div>
           ))}
         </dl>
       )}
-      {version.notes && <p className="whitespace-pre-line text-pretty text-muted-foreground">{version.notes}</p>}
+      {version.notes && <p className="text-muted-foreground text-pretty whitespace-pre-line">{version.notes}</p>}
     </div>
   );
 }

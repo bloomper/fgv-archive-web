@@ -5,8 +5,17 @@ import { apiFetch } from "@/lib/api.server";
 
 export const ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const PASSED_HEADERS = ["content-type", "content-length", "content-range", "accept-ranges", "content-disposition",
-  "cache-control", "etag", "last-modified", "content-security-policy"];
+const PASSED_HEADERS = [
+  "content-type",
+  "content-length",
+  "content-range",
+  "accept-ranges",
+  "content-disposition",
+  "cache-control",
+  "etag",
+  "last-modified",
+  "content-security-policy",
+];
 
 /**
  * What a file served on the web's own origin may do: nothing. Added to the API's own policy (both apply), so that an
@@ -42,8 +51,11 @@ export const crossSite = () => NextResponse.json({ code: "FORBIDDEN", message: "
  * ways so that pdf.js loads a PDF page by page. The browser never holds the token. Errors keep the server's JSON
  * (code and message), so that a share link page can say who made an expired link.
  */
-export async function streamFromApi(request: NextRequest, path: string,
-                                    { anonymous = false, extra = {} }: { anonymous?: boolean; extra?: Record<string, string> } = {}): Promise<Response> {
+export async function streamFromApi(
+  request: NextRequest,
+  path: string,
+  { anonymous = false, extra = {} }: { anonymous?: boolean; extra?: Record<string, string> } = {}
+): Promise<Response> {
   const headers = new Headers();
   const range = request.headers.get("range");
 
@@ -56,14 +68,17 @@ export async function streamFromApi(request: NextRequest, path: string,
 
   if (!upstream.ok && upstream.status !== 206) {
     const body = (upstream.headers.get("content-type") ?? "").includes("json")
-      ? await upstream.json().catch(() => null) as Record<string, unknown> | null
+      ? ((await upstream.json().catch(() => null)) as Record<string, unknown> | null)
       : (await upstream.body?.cancel(), null);
 
-    return NextResponse.json({
-      code: typeof body?.code === "string" ? body.code : "NOT_AVAILABLE",
-      message: typeof body?.message === "string" ? body.message : "Not available",
-      ...(typeof body?.createdByName === "string" ? { createdByName: body.createdByName } : {}),
-    }, { status: upstream.status });
+    return NextResponse.json(
+      {
+        code: typeof body?.code === "string" ? body.code : "NOT_AVAILABLE",
+        message: typeof body?.message === "string" ? body.message : "Not available",
+        ...(typeof body?.createdByName === "string" ? { createdByName: body.createdByName } : {}),
+      },
+      { status: upstream.status }
+    );
   }
 
   const out = new Headers(extra);

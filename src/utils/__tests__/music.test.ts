@@ -13,14 +13,46 @@ import {
 
 describe("noteName", () => {
   it("names all 17 spellings in Swedish", () => {
-    expect(TONICS.map(tonic => noteName(tonic, "sv"))).toEqual([
-      "C", "Ciss", "Dess", "D", "Diss", "Ess", "E", "F", "Fiss", "Gess", "G", "Giss", "Ass", "A", "Aiss", "B", "H",
+    expect(TONICS.map((tonic) => noteName(tonic, "sv"))).toEqual([
+      "C",
+      "Ciss",
+      "Dess",
+      "D",
+      "Diss",
+      "Ess",
+      "E",
+      "F",
+      "Fiss",
+      "Gess",
+      "G",
+      "Giss",
+      "Ass",
+      "A",
+      "Aiss",
+      "B",
+      "H",
     ]);
   });
 
   it("names all 17 spellings in English, with ♯ and ♭", () => {
-    expect(TONICS.map(tonic => noteName(tonic, "en"))).toEqual([
-      "C", "C♯", "D♭", "D", "D♯", "E♭", "E", "F", "F♯", "G♭", "G", "G♯", "A♭", "A", "A♯", "B♭", "B",
+    expect(TONICS.map((tonic) => noteName(tonic, "en"))).toEqual([
+      "C",
+      "C♯",
+      "D♭",
+      "D",
+      "D♯",
+      "E♭",
+      "E",
+      "F",
+      "F♯",
+      "G♭",
+      "G",
+      "G♯",
+      "A♭",
+      "A",
+      "A♯",
+      "B♭",
+      "B",
     ]);
   });
 
@@ -47,8 +79,16 @@ describe("formatKey", () => {
   });
 
   it("chains modulations in order", () => {
-    expect(formatKeys({ tonic: "F", mode: "MAJOR" }, [{ tonic: "G", mode: "MAJOR" }, { tonic: "A_FLAT", mode: "MAJOR" }], "sv"))
-      .toBe("F-dur → G-dur → Ass-dur");
+    expect(
+      formatKeys(
+        { tonic: "F", mode: "MAJOR" },
+        [
+          { tonic: "G", mode: "MAJOR" },
+          { tonic: "A_FLAT", mode: "MAJOR" },
+        ],
+        "sv"
+      )
+    ).toBe("F-dur → G-dur → Ass-dur");
     expect(formatKeys(null, [], "sv")).toBeNull();
   });
 });

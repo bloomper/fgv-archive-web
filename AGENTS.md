@@ -86,7 +86,7 @@ The theme, the shadcn components and the application shell come from `@bloomper/
   `/api/versions/[id]/zip`, `/api/versions/[id]/parts/zip`, `/api/spex/[id]/parts/zip` stream the server's answer with
   the user's token (`streamFromApi`, passing `Range`, `Content-Range`, `Accept-Ranges`, `Content-Disposition` and the
   server's `Content-Security-Policy`). Every such answer also gets `Content-Security-Policy: sandbox; default-src
-  'none'` and `nosniff` from the web (`FILE_CSP`): files are served on the web's origin, and the page CSP in `proxy.ts`
+'none'` and `nosniff` from the web (`FILE_CSP`): files are served on the web's origin, and the page CSP in `proxy.ts`
   does not cover `/api/*`. The server serves only PDFs and images inline.
   Addresses are built in `src/utils/links.ts`.
 - **The reader** (`src/components/reader/`) is pdf.js (`pdfjs-dist`), loaded only in the browser, with its worker, fonts,
@@ -127,7 +127,7 @@ The theme, the shadcn components and the application shell come from `@bloomper/
   `src/app/(app)/manage/audit/links.ts`.
 - **Editors** work under `/manage` and on `/versions/[id]/edit`, **admins** under `/admin`.
 - **Command palette** (`CommandPalette`, Cmd/Ctrl+K, as in Spexregister and Nyuppsättning): the sidebar's pages for the
-  user's roles, *new manuscript*, and a search of the archive for what was typed. The reader leaves Ctrl/Cmd keys alone.
+  user's roles, _new manuscript_, and a search of the archive for what was typed. The reader leaves Ctrl/Cmd keys alone.
 
 ## Look
 

@@ -15,27 +15,41 @@ export default async function StoragePage() {
     const storage = await getStorage();
     const used = (storage?.filesBytes ?? 0) + (storage?.previewsBytes ?? 0);
     const total = used + (storage?.freeBytes ?? 0);
-    const share = total > 0 ? Math.round(used / total * 1000) / 10 : 0;
+    const share = total > 0 ? Math.round((used / total) * 1000) / 10 : 0;
 
     return (
-      <Page variant="content" className="max-w-2xl">
-        <PageHeader title={t("title")}/>
+      <Page
+        variant="content"
+        className="max-w-2xl"
+      >
+        <PageHeader title={t("title")} />
         {storage && (
           <>
             <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
               <dt className="text-muted-foreground">{t("files")}</dt>
-              <dd>{formatBytes(storage.filesBytes, locale)} ({t("fileCount", { count: storage.fileCount })})</dd>
+              <dd>
+                {formatBytes(storage.filesBytes, locale)} ({t("fileCount", { count: storage.fileCount })})
+              </dd>
               <dt className="text-muted-foreground">{t("previews")}</dt>
               <dd>{formatBytes(storage.previewsBytes, locale)}</dd>
               <dt className="text-muted-foreground">{t("free")}</dt>
               <dd>{formatBytes(storage.freeBytes, locale)}</dd>
             </dl>
             <div className="space-y-1">
-              <div className="h-3 overflow-hidden rounded-full bg-muted" role="meter" aria-valuemin={0} aria-valuemax={100}
-                   aria-valuenow={share} aria-label={t("used")}>
-                <div className="h-full bg-primary" style={{ width: `${share}%` }} />
+              <div
+                className="bg-muted h-3 overflow-hidden rounded-full"
+                role="meter"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={share}
+                aria-label={t("used")}
+              >
+                <div
+                  className="bg-primary h-full"
+                  style={{ width: `${share}%` }}
+                />
               </div>
-              <p className="text-xs text-muted-foreground">{t("share", { share })}</p>
+              <p className="text-muted-foreground text-xs">{t("share", { share })}</p>
             </div>
           </>
         )}

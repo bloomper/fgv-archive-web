@@ -11,9 +11,15 @@ export default async function FileRolesPage() {
     const roles = await getFileRoles();
 
     return (
-      <Page variant="content" className="max-w-3xl">
-        <PageHeader title={t("title")} description={t("text")}/>
-        <FileRolesEditor roles={roles.map(role => ({ ...role, fileCount: role.fileCount ?? 0 }))} />
+      <Page
+        variant="content"
+        className="max-w-3xl"
+      >
+        <PageHeader
+          title={t("title")}
+          description={t("text")}
+        />
+        <FileRolesEditor roles={roles.map((role) => ({ ...role, fileCount: role.fileCount ?? 0 }))} />
       </Page>
     );
   });

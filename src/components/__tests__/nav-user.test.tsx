@@ -6,7 +6,7 @@ import { NavUser } from "@/components/nav-user.client";
 
 const auth = vi.hoisted(() => ({
   session: { user: { name: "Anna Andersson", email: "anna@example.com", image: null as string | null } } as null | {
-    user: { name: string; email: string; image: string | null }
+    user: { name: string; email: string; image: string | null };
   },
   signOut: vi.fn(),
 }));
@@ -20,7 +20,12 @@ vi.mock("sonner", () => ({ toast }));
 vi.mock("@bloomper/fgv-web-ui/ui/sidebar", () => ({
   SidebarMenu: ({ children }: { children?: ReactNode }) => <ul>{children}</ul>,
   SidebarMenuItem: ({ children }: { children?: ReactNode }) => <li>{children}</li>,
-  SidebarMenuButton: (props: object) => <button type="button" {...props} />,
+  SidebarMenuButton: (props: object) => (
+    <button
+      type="button"
+      {...props}
+    />
+  ),
   useSidebar: () => ({ isMobile: false }),
 }));
 
@@ -57,7 +62,10 @@ describe("NavUser", () => {
     render(<NavUser accountUrl="https://auth.example.com/account" />);
 
     await userEvent.click(screen.getByRole("button", { name: /Anna Andersson/ }));
-    expect(await screen.findByRole("link", { name: /Common.myFgvAccount/ })).toHaveAttribute("href", "https://auth.example.com/account");
+    expect(await screen.findByRole("link", { name: /Common.myFgvAccount/ })).toHaveAttribute(
+      "href",
+      "https://auth.example.com/account"
+    );
 
     await userEvent.click(screen.getByRole("menuitem", { name: "Common.logout" }));
 

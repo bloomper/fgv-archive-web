@@ -19,21 +19,36 @@ export function HeaderSearch() {
 
   return (
     <>
-      <Link href="/search" aria-label={t("title")} title={t("title")}
-            className={buttonVariants({ variant: "ghost", size: "icon", className: "h-8 w-8 sm:hidden" })}>
+      <Link
+        href="/search"
+        aria-label={t("title")}
+        title={t("title")}
+        className={buttonVariants({ variant: "ghost", size: "icon", className: "h-8 w-8 sm:hidden" })}
+      >
         <Search />
       </Link>
-      <form role="search" className="relative hidden sm:block" onSubmit={event => {
-        event.preventDefault();
+      <form
+        role="search"
+        className="relative hidden sm:block"
+        onSubmit={(event) => {
+          event.preventDefault();
 
-        const value = new FormData(event.currentTarget).get("q")?.toString().trim() ?? "";
+          const value = new FormData(event.currentTarget).get("q")?.toString().trim() ?? "";
 
-        router.push(value ? `/search?q=${encodeURIComponent(value)}` : "/search");
-      }}>
-        <Search className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 text-muted-foreground" />
+          router.push(value ? `/search?q=${encodeURIComponent(value)}` : "/search");
+        }}
+      >
+        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2" />
         {/* Keyed by the address' query, so that the field follows a search made on the search page itself */}
-        <Input key={q} name="q" type="search" defaultValue={q} placeholder={t("placeholder")}
-               aria-label={t("placeholder")} className="h-8 w-48 pl-8 md:w-64" />
+        <Input
+          key={q}
+          name="q"
+          type="search"
+          defaultValue={q}
+          placeholder={t("placeholder")}
+          aria-label={t("placeholder")}
+          className="h-8 w-48 pl-8 md:w-64"
+        />
       </form>
     </>
   );

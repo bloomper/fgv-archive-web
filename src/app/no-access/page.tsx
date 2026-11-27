@@ -15,6 +15,10 @@ export default async function NoAccessPage() {
   }
 
   return (
-    <FgvNoAccessPage email={session.user.email} application="archive" actions={<LogoutButton variant="default" />} />
+    <FgvNoAccessPage
+      email={session.user.email}
+      application="archive"
+      actions={<LogoutButton variant="default" />}
+    />
   );
 }

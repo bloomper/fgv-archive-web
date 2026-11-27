@@ -10,12 +10,25 @@ vi.mock("@/app/(app)/manage/actions.server", () => ({ searchSpexAction }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 
 const NOBEL = { id: "6", title: "Nobel", year: 1975, revival: false, parentId: null, categoryName: "Chalmersspexet" };
-const NOBEL_REVIVAL = { id: "7", title: "Nobel", year: 1992, revival: true, parentId: "6", categoryName: "Chalmersspexet" };
+const NOBEL_REVIVAL = {
+  id: "7",
+  title: "Nobel",
+  year: 1992,
+  revival: true,
+  parentId: "6",
+  categoryName: "Chalmersspexet",
+};
 
 function Picker({ originalsOnly = false }: { originalsOnly?: boolean }) {
   const [value, setValue] = useState<PickedSpex | null>(null);
 
-  return <SpexPicker value={value} onChange={setValue} originalsOnly={originalsOnly} />;
+  return (
+    <SpexPicker
+      value={value}
+      onChange={setValue}
+      originalsOnly={originalsOnly}
+    />
+  );
 }
 
 describe("SpexPicker", () => {
