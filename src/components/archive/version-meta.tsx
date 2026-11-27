@@ -1,7 +1,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { Lock, Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
 import type { InstrumentBriefFragment } from "@/gql/graphql";
 import { spexHref, spexName } from "@/utils/links";
 import { formatKeys, type Key, localName } from "@/utils/music";
@@ -68,7 +68,7 @@ export function VersionFacts({ version, showSpex = true }: { version: VersionLik
   const rows: [string, React.ReactNode][] = [];
 
   if (showSpex && version.usedIn) {
-    rows.push([t("usedIn"), <Link key="spex" href={spexHref(version.usedIn.id)} className="hover:text-primary">{spexName(version.usedIn)}</Link>]);
+    rows.push([t("usedIn"), <Link key="spex" href={spexHref(version.usedIn.id)} className="hover:text-link">{spexName(version.usedIn)}</Link>]);
   }
   if (keys) {
     rows.push([t("key"), <span key="key" data-testid="version-key">{keys}</span>]);

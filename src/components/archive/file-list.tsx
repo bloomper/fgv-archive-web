@@ -1,7 +1,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { BookOpen, Download, FileText, Lock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
 import type { FileFieldsFragment, InstrumentBriefFragment } from "@/gql/graphql";
 import { fileDownloadHref, fileHref, formatBytes, isPdf, type Place, previewHref } from "@/utils/links";
 import { formatTransposition, localName } from "@/utils/music";

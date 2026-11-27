@@ -5,14 +5,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ChevronDown, ChevronRight, History, Search, X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Input } from "@bloomper/fgv-web-ui/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@bloomper/fgv-web-ui/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@bloomper/fgv-web-ui/ui/table";
 import { DataFilter } from "@/components/data-filter";
 import { PeriodFilter } from "@/components/audit/period-filter.client";
-import { DataEmpty } from "@/components/data-empty";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
 import { useServerState } from "@/hooks/use-server-state.client";
 import { AUDIT_ACTIONS, auditHref, type AuditPage, type AuditRow, type AuditSearch } from "@/utils/audit";
 import { formatInstant } from "@/utils/format";
@@ -202,7 +202,7 @@ function EntryDetail({ row }: { row: AuditRow }) {
           {row.link && (
             <Link
               href={row.link}
-              className="text-primary hover:text-primary/80"
+              className="text-link hover:text-link/80"
             >
               {t("openRecord")}
             </Link>
@@ -210,7 +210,7 @@ function EntryDetail({ row }: { row: AuditRow }) {
           {row.historyHref && (
             <Link
               href={row.historyHref}
-              className="inline-flex items-center gap-1 text-primary hover:text-primary/80"
+              className="inline-flex items-center gap-1 text-link hover:text-link/80"
               aria-label={t("historyOf", { summary: row.summary })}
             >
               <History className="size-3" />
@@ -319,7 +319,7 @@ export function AuditTable({
                       {row.link ? (
                         <Link
                           href={row.link}
-                          className="hover:text-primary"
+                          className="hover:text-link"
                           onClick={e => e.stopPropagation()}
                         >
                           {row.summary}
@@ -410,7 +410,7 @@ export function ChangeLogView({
           {t("Audit.oneRecord")}{" "}
           <Link
             href={auditHref(path, search, { entity: undefined })}
-            className="text-primary hover:text-primary/80"
+            className="text-link hover:text-link/80"
           >
             {t("Audit.allRecords")}
           </Link>

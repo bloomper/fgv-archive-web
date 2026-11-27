@@ -1,8 +1,9 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@bloomper/fgv-web-ui/ui/skeleton";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 export default function Loading() {
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
+    <Page variant="content">
       <Skeleton className="h-8 w-48" />
       {Array.from({ length: 3 }).map((_, index) => (
         <div key={index} className="space-y-2">
@@ -10,6 +11,6 @@ export default function Loading() {
           <Skeleton className="h-16" />
         </div>
       ))}
-    </div>
+    </Page>
   );
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
 import { FileRow } from "@/components/archive/file-list";
 import { PartFilterControls } from "@/components/archive/part-filter.client";
 import { ShareLinkButton } from "@/components/archive/share-link-dialog.client";
@@ -13,6 +13,7 @@ import { arrangementHref, spexHref, spexName, spexPartsZipHref } from "@/utils/l
 import { localName, noteName } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -51,12 +52,12 @@ export default async function SpexPartsPage({ params, searchParams }: {
       ...filter.transpositions.map(pitch => noteName(pitch, locale))].join(", ");
 
     return (
-      <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
-        <div className="space-y-1">
-          <Link href={spexHref(spex.id)} className="text-sm text-primary hover:text-primary/80">← {spexName(spex)}</Link>
-          <h1 className="text-2xl font-bold tracking-tight">{t("title", { spex: spexName(spex) })}</h1>
-          <p className="max-w-4xl text-pretty text-sm text-muted-foreground">{t("text")}</p>
-        </div>
+      <Page variant="content">
+        <PageHeader
+          title={t("title", { spex: spexName(spex) })}
+          eyebrow={<Link href={spexHref(spex.id)} className="text-link hover:text-link/80">← {spexName(spex)}</Link>}
+          description={t("text")}
+        />
 
         <PartFilterControls instruments={instruments} />
 
@@ -85,7 +86,7 @@ export default async function SpexPartsPage({ params, searchParams }: {
             <li key={arrangement.id} className="space-y-1">
               <h2 className="text-sm font-semibold">
                 {arrangement.number.position}.{" "}
-                <Link href={arrangementHref(arrangement.id)} className="hover:text-primary">{arrangement.number.title}</Link>
+                <Link href={arrangementHref(arrangement.id)} className="hover:text-link">{arrangement.number.title}</Link>
                 {version && <span className="font-normal text-muted-foreground"> · {version.label}</span>}
               </h2>
               {version && version.files.length > 0 ? (
@@ -97,7 +98,7 @@ export default async function SpexPartsPage({ params, searchParams }: {
           ))}
           {rows.length === 0 && <li className="text-muted-foreground">{t("none")}</li>}
         </ol>
-      </div>
+      </Page>
     );
   });
 }

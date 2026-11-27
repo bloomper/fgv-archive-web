@@ -17,7 +17,7 @@ vi.mock("@/lib/auth-client", () => ({ useSession: () => ({ data: auth.session })
 vi.mock("@/utils/auth", () => ({ appendLogoutParams }));
 vi.mock("next-themes", () => ({ useTheme: () => ({ theme: "dark" }) }));
 vi.mock("sonner", () => ({ toast }));
-vi.mock("@/components/ui/sidebar", () => ({
+vi.mock("@bloomper/fgv-web-ui/ui/sidebar", () => ({
   SidebarMenu: ({ children }: { children?: ReactNode }) => <ul>{children}</ul>,
   SidebarMenuItem: ({ children }: { children?: ReactNode }) => <li>{children}</li>,
   SidebarMenuButton: (props: object) => <button type="button" {...props} />,

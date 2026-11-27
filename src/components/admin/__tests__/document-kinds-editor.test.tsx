@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock("next/navigation", () => ({ useRouter: () => mocks.router }));
 vi.mock("sonner", () => ({ toast: mocks.toast }));
 vi.mock("@/app/(app)/admin/actions.server", () => mocks.actions);
-vi.mock("@/components/dialogs.client", () => ({ useDialogs: () => mocks.dialogs }));
+vi.mock("@bloomper/fgv-web-ui/shell/dialogs", () => ({ useDialogs: () => mocks.dialogs }));
 
 const kinds = [
   { id: "k1", nameSv: "Manus", nameEn: "Manuscript", aliases: ["manuskript"], position: 1, retired: false, documentCount: 3, book: false },

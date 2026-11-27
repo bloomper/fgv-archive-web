@@ -3,9 +3,9 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Lock, Search as SearchIcon } from "lucide-react";
 import { SubmitButton } from "@/components/submit-button.client";
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@bloomper/fgv-web-ui/ui/empty";
+import { Input } from "@bloomper/fgv-web-ui/ui/input";
+import { Label } from "@bloomper/fgv-web-ui/ui/label";
 import { PartFilterControls } from "@/components/archive/part-filter.client";
 import { getInstruments, search } from "@/lib/archive/archive.server";
 import { isEmptyFilter, partFilterFromParams, toGraphqlFilter } from "@/utils/filters";
@@ -13,7 +13,8 @@ import { arrangementHref, fileHref, manuscriptHref, spexHref, spexName } from "@
 import { formatKey, formatKeys, formatTransposition, localName, parseKey, parseKeyParam } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
-import { DataEmpty } from "@/components/data-empty";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -50,8 +51,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     const row = "link-row px-3 py-2";
 
     return (
-      <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+      <Page variant="content">
+        <PageHeader title={t("title")}/>
         <Form action="/search" role="search" className="grid gap-3 sm:grid-cols-[2fr_1fr_auto]">
           {filter.instrumentIds.length > 0 && <input type="hidden" name="instruments" value={filter.instrumentIds.join(",")} />}
           {filter.transpositions.length > 0 && <input type="hidden" name="pitches" value={filter.transpositions.join(",")} />}
@@ -83,7 +84,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <EmptyDescription>{isEmptyFilter(filter) ? t("hint") : t("filterOnly")}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Link href="/spex" className="text-sm text-primary hover:text-primary/80">{t("browse")}</Link>
+              <Link href="/spex" className="text-sm text-link hover:text-link/80">{t("browse")}</Link>
             </EmptyContent>
           </Empty>
         ) : !found || total === 0 ? (
@@ -184,7 +185,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                           {hit.file.canOpen
                             ? <Link href={fileHref(hit.file.id, {}, hit.page)} className="row-link font-medium">{hit.file.title}</Link>
                             : <span className="inline-flex items-center gap-1 font-medium"><Lock className="size-3.5" aria-hidden />{hit.file.title}</span>}
-                          {hit.page && <span className="text-sm text-primary">{t("page", { page: hit.page })}</span>}
+                          {hit.page && <span className="text-sm text-link">{t("page", { page: hit.page })}</span>}
                           <span className="text-sm text-muted-foreground">
                             {[parent, hit.version.label, spexName(spex), localName(hit.file.role, locale),
                               hit.file.instruments.map(instrument => localName(instrument, locale)).join(" / "), transposition]
@@ -200,7 +201,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             )}
           </div>
         )}
-      </div>
+      </Page>
     );
   });
 }

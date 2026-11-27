@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
 import { FileList, PartsByInstrument } from "@/components/archive/file-list";
 import { VersionFacts } from "@/components/archive/version-meta";
 import { PartFilterControls } from "@/components/archive/part-filter.client";
@@ -10,6 +10,7 @@ import { isEmptyFilter, partFilterFromParams, partFilterToApiQuery, toGraphqlFil
 import { sharePartsZipHref, spexName, versionPartsZipHref, versionZipHref } from "@/utils/links";
 import { localName, noteName, PITCHES } from "@/utils/music";
 import { SharedGone } from "./gone";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -49,7 +50,7 @@ export default async function SharePage({ params, searchParams }: {
     (a.kind === b.kind ? 0 : a.kind === "MANUSCRIPT" ? -1 : 1) || (a.numberPosition ?? 0) - (b.numberPosition ?? 0));
 
   return (
-    <div className="mx-auto max-w-5xl flex flex-1 flex-col gap-6 p-4 md:p-8">
+    <Page variant="content" className="mx-auto max-w-5xl">
       <header className="space-y-1">
         <p className="text-sm text-muted-foreground">{spexNames.join(", ")}</p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{view.name}</h1>
@@ -119,6 +120,6 @@ export default async function SharePage({ params, searchParams }: {
           </section>
         );
       })}
-    </div>
+    </Page>
   );
 }

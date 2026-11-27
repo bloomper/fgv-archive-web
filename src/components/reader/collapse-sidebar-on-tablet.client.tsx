@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSidebar } from "@/components/ui/sidebar";
+import { useSidebar } from "@bloomper/fgv-web-ui/ui/sidebar";
 
 /** From the phone layout (below 768 px, where the sidebar is a sheet) up to where the reader has room beside it. */
 export const TABLET = "(min-width: 768px) and (max-width: 1023.98px)";

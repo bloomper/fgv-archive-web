@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Mail } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
+import { Checkbox } from "@bloomper/fgv-web-ui/ui/checkbox";
 import { ShareLinkButton } from "@/components/archive/share-link-dialog.client";
 import { handleAccessRequestAction } from "@/app/(app)/manage/actions.server";
 

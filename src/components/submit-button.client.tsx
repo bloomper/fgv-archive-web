@@ -2,8 +2,8 @@
 
 import type { ComponentProps } from "react";
 import { useFormStatus } from "react-dom";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Spinner } from "@bloomper/fgv-web-ui/ui/spinner";
 
 /**
  * A form's submit button that shows a spinner while the form is pending, e.g. while a `next/form` GET loads the next

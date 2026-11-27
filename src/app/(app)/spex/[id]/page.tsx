@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Download, ExternalLink, FilePlus, ScrollText } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
 import { VersionBadges } from "@/components/archive/version-meta";
 import { CreateArrangementButton } from "@/components/archive/create-buttons.client";
 import { getMe, getSpexPage } from "@/lib/archive/archive.server";
@@ -14,6 +14,7 @@ import { arrangementHref, manuscriptHref, newDocumentHref, spexHref, spexName, s
 import { formatKey } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * A spex with its revivals, its documents by kind and their versions, and its numbers in the order of the show with their
@@ -50,7 +51,7 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
     const maxMonths = editor ? (await getMe())?.settings.maxShareLinkMonths ?? 24 : 24;
 
     return (
-      <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
+      <Page variant="content">
         <header className="space-y-2">
           <p className="text-sm text-muted-foreground">
             {[spex.categoryName, spex.revival ? t("revival") : null].filter(Boolean).join(" · ")}
@@ -60,7 +61,7 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
           </h1>
           {spex.original && (
             <p className="text-sm">
-              {t("revivalOf")} <Link href={spexHref(spex.original.id)} className="text-primary hover:text-primary/80">{spexName(spex.original)}</Link>
+              {t("revivalOf")} <Link href={spexHref(spex.original.id)} className="text-link hover:text-link/80">{spexName(spex.original)}</Link>
             </p>
           )}
           {spex.revivals.length > 0 && (
@@ -104,13 +105,13 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
               {documents.map(manuscript => (
                 <li key={manuscript.id} className="link-row rounded-lg border bg-card p-3">
                   <Link href={manuscriptHref(manuscript.id)} className="row-link flex items-center gap-2 font-medium">
-                    <ScrollText className="size-4 text-primary" aria-hidden /> {manuscript.title}
+                    <ScrollText className="size-4 text-link" aria-hidden /> {manuscript.title}
                   </Link>
                   {manuscript.authors && <p className="text-sm text-muted-foreground">{manuscript.authors}</p>}
                   <ul className="mt-2 space-y-1 text-sm">
                     {manuscript.versions.map(version => (
                       <li key={version.id} className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <Link href={`${manuscriptHref(manuscript.id)}#${versionAnchor(version.id)}`} className="hover:text-primary">
+                        <Link href={`${manuscriptHref(manuscript.id)}#${versionAnchor(version.id)}`} className="hover:text-link">
                           {version.label}
                         </Link>
                         {version.usedIn && <span className="text-muted-foreground">{spexName(version.usedIn)}</span>}
@@ -182,7 +183,7 @@ export default async function SpexPage({ params }: { params: Promise<{ id: strin
             </ol>
           )}
         </section>
-      </div>
+      </Page>
     );
   });
 }

@@ -28,7 +28,7 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
 ## Conventions
 
 - `"use client"` ⇔ `*.client.ts(x)`; `import "server-only"` and `"use server"` ⇔ `*.server.ts`. Exceptions:
-  `src/auth.ts`, Next.js reserved file names, and shadcn's `src/components/ui/**` and `src/hooks/use-mobile.ts`.
+  `src/auth.ts` and Next.js reserved file names.
 - Cache Components is on. A page that fetches at the top needs a `loading.tsx`, and `(app)/layout.tsx` keeps
   `export const instant = false`. The root layout's metadata stays static.
 - Cache Components keeps visited pages alive, so a client component that copies a server prop into state uses
@@ -44,6 +44,34 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
 - Mutations are server actions in `src/app/(app)/manage/actions.server.ts` (editors) and
   `src/app/(app)/admin/actions.server.ts` (admins); they check ids, return `ActionResult` and revalidate the whole app
   (`revalidatePath("/", "layout")`), since material shows on many pages.
+
+## Shared FGV UI
+
+The theme, the shadcn components and the application shell come from `@bloomper/fgv-web-ui` (repo
+`bloomper/fgv-web-ui`, published to GitHub Packages), shared by all eight FGV web applications:
+
+- `@bloomper/fgv-web-ui/ui/<name>` for every shadcn component (`button`, `sidebar`, `dialog`, …). Don't add a local
+  copy with `shadcn add`: the shell and the application must share one `SidebarProvider`, and a change that belongs in
+  every application goes into the package.
+- `shell/*`: `SiteHeader` (wrapped in `src/components/site-header.client.tsx` with Spexarkiv's own controls),
+  `AppSwitcher`, `resolveApplications`, `SidebarBrand`, `NavMain`, `NavSecondary`, the toggles, `DataEmpty`, the
+  status pages and the logos.
+- **Pages** are a `Page` (`variant="content"` for articles and records, the default for lists and forms) with a
+  `PageHeader` first (`title`, `description`, `actions`, `eyebrow`, `badges`), both from `shell/page-header`; a page's
+  `loading.tsx` uses the same `Page`.
+- **Confirmations** always ask in an alert dialog: `ConfirmButton` (`shell/confirm-button`), or
+  `useDialogs().confirm` / `prompt` / `choose` (`shell/dialogs`, `DialogsProvider` in the `(app)` layout) inside a
+  handler. Never `window.confirm` or `window.prompt`.
+- `src/app/globals.css` imports `tailwindcss` and the package's `styles.css`, then only what is Spexarkiv's own. The brand
+  colour on the page background (links, labels, active icons) is `text-link`; `primary` is for fills.
+- The favicons in `src/app/` (`icon.svg`, `favicon.ico`, `apple-icon.png`) are Spexarkiv's switcher icon on the brand
+  blue, generated in the package (`scripts/app-icons.mjs`).
+- The shell's texts live in the package under `FgvUi`; `withFgvMessages` adds them wherever messages are loaded
+  (`src/i18n/request.ts`, `src/app/layout.tsx`, `changeLocale` in `src/app/provider.client.tsx`), and
+  `FgvShellProvider` there hands the shell `changeLocale` and Umami's `track`.
+- Installing needs a token, even locally: `.npmrc` reads `NODE_AUTH_TOKEN` (a token with `read:packages`). CI uses
+  `GITHUB_TOKEN`, and the image build gets it as the `npm_token` build secret.
+- Vitest inlines the package (`server.deps.inline`) so the mocks in the setup file reach it.
 
 ## How Spexarkiv works in the web
 
@@ -104,10 +132,10 @@ shadcn, dialogs, change log, CI) comes from `fgv-spexify-web`; keep them alike.
 ## Look
 
 The look is FGV's, the same as Spexregister's, Nyuppsättning's, Spexify's and Spexflix's: `Logo`, `LogoText` and
-`LogoHome` in `src/components/`, `src/app/favicon.ico`, and the colours in `src/app/globals.css`. Don't give the
+`LogoHome` from `@bloomper/fgv-web-ui/shell/`, and the colours in `@bloomper/fgv-web-ui/styles.css`. Don't give the
 application a logo or colours of its own; its name, Spexarkiv, appears as text (the header's title, the share
-pages). `src/app/icon.svg` (the FGV logo) is only for the installable app's manifest. `globals.css` also holds pdf.js's
-text layer rules.
+pages). Its favicons (`src/app/icon.svg`, `favicon.ico`, `apple-icon.png`) are its switcher icon on the brand blue, from
+the package. `src/app/globals.css` adds only pdf.js's text layer rules to the package's styles.
 
 ## Consent and visitor statistics
 
@@ -121,8 +149,8 @@ download links.
 
 ## Application switcher
 
-As in the other webs (`src/utils/applications.ts`, `src/components/app-switcher.client.tsx` and their tests are
-identical copies); only the id in `applications.server.ts` (`archive`) differs.
+`AppSwitcher` and `resolveApplications` from `@bloomper/fgv-web-ui`, as in every FGV application; only the id in
+`applications.server.ts` (`archive`) is Spexarkiv's own.
 
 ## Testing
 

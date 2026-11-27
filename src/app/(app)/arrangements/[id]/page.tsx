@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Download, Pencil } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
 import { FileList, PartsByInstrument } from "@/components/archive/file-list";
 import { instrumentationText, VersionBadges, VersionFacts } from "@/components/archive/version-meta";
 import { AccessRequest } from "@/components/archive/access-request.client";
@@ -23,7 +23,8 @@ import {
 import { formatKeys, type Pitch, PITCHES } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
-import { DataEmpty } from "@/components/data-empty";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -62,10 +63,10 @@ export default async function ArrangementPage({ params, searchParams }: {
     const query = partFilterToApiQuery(filter);
 
     return (
-      <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
+      <Page variant="content">
         <header className="space-y-2">
           <p className="text-sm">
-            <Link href={spexHref(number.spex.id)} className="text-primary hover:text-primary/80">{spexName(number.spex)}</Link>
+            <Link href={spexHref(number.spex.id)} className="text-link hover:text-link/80">{spexName(number.spex)}</Link>
             <span className="text-muted-foreground"> · {t("number", { position: number.position })}</span>
           </p>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -165,7 +166,7 @@ export default async function ArrangementPage({ params, searchParams }: {
             </section>
           );
         })}
-      </div>
+      </Page>
     );
   });
 }

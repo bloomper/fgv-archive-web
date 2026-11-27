@@ -20,8 +20,8 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { Button, buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
+import { Spinner } from "@bloomper/fgv-web-ui/ui/spinner";
 import { cn } from "@/utils/utils";
 import { getPdfPage, openPdf, type RenderedPage, renderPage } from "./pdf.client";
 

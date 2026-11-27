@@ -107,7 +107,8 @@ export async function hydrated(page: Page, selector: string) {
  * Answers the application's own confirm or prompt dialog: fills the text, if any, and clicks the button.
  */
 export async function answerDialog(page: Page, button: string, text?: string) {
-  const dialog = page.getByRole("dialog");
+  // A confirmation is an alert dialog, a prompt or a choice a plain one
+  const dialog = page.getByRole("alertdialog").or(page.getByRole("dialog"));
 
   if (text !== undefined) {
     await dialog.getByRole("textbox").fill(text);

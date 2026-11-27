@@ -6,7 +6,8 @@ import { arrangementHref, manuscriptHref, spexName, versionEditHref } from "@/ut
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 import { EmptyTrashButton, TrashActions } from "./trash.client";
-import { DataEmpty } from "@/components/data-empty";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * What is in the trash: manuscripts and arrangements (with their versions) and versions trashed on their own. Files stay
@@ -22,11 +23,8 @@ export default async function TrashPage() {
     const row = "link-row flex flex-wrap items-center justify-between gap-2 px-3 py-2";
 
     return (
-      <div className="max-w-4xl flex flex-1 flex-col gap-6 p-4 md:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-          {admin && !empty && <EmptyTrashButton />}
-        </div>
+      <Page variant="content" className="max-w-4xl">
+        <PageHeader title={t("title")} actions={<>{admin && !empty && <EmptyTrashButton />}</>}/>
         <p className="text-sm text-muted-foreground">{admin ? t("textAdmin") : t("text")}</p>
         {empty ? <DataEmpty title={t("none")} description={null} /> : (
           <>
@@ -85,7 +83,7 @@ export default async function TrashPage() {
             )}
           </>
         )}
-      </div>
+      </Page>
     );
   });
 }

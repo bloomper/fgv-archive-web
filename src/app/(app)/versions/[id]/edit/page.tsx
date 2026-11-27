@@ -14,6 +14,7 @@ import { arrangementHref, manuscriptHref, spexName, versionHref } from "@/utils/
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
 import { auditLink } from "@/app/(app)/manage/audit/links";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * An editor's page for a version: its fields, its state, its files (upload, edit, reorder, replace, delete), share
@@ -46,23 +47,22 @@ export default async function VersionEditPage({ params }: { params: Promise<{ id
     const maxShareLinkMonths = me?.settings.maxShareLinkMonths ?? 24;
 
     return (
-      <div className="max-w-5xl flex flex-1 flex-col gap-8 p-4 md:p-8">
-        <header className="space-y-2">
-          <p className="text-sm">
-            <Link href={parentHref} className="text-primary hover:text-primary/80">← {title}</Link>
-            <span className="text-muted-foreground"> · {spexName(spex)}</span>
-          </p>
-          <h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold tracking-tight">
-            {t("title", { label: version.label })} <VersionBadges version={version} />
-          </h1>
-          <div className="flex flex-wrap items-center gap-2">
-            <VersionState id={version.id} published={version.published} recommended={version.recommended}
-                          trashed={version.trashed} admin={isAdmin(authz.roles)} parentHref={parentHref} />
-            <ShareLinkButton input={{ versionIds: [version.id] }} defaultName={`${title}, ${version.label}`}
-                             maxMonths={maxShareLinkMonths} label={t("shareVersion")} />
-            <Link href={versionHref(version)} className="px-2 text-sm text-primary hover:text-primary/80">{t("view")}</Link>
-          </div>
-        </header>
+      <Page variant="content" className="max-w-5xl">
+        <PageHeader
+          title={t("title", { label: version.label })}
+          eyebrow={<>
+            <Link href={parentHref} className="text-link hover:text-link/80">← {title}</Link>
+            <span> · {spexName(spex)}</span>
+          </>}
+          badges={<VersionBadges version={version} />}
+        />
+        <div className="flex flex-wrap items-center gap-2">
+          <VersionState id={version.id} published={version.published} recommended={version.recommended}
+                        trashed={version.trashed} admin={isAdmin(authz.roles)} parentHref={parentHref} />
+          <ShareLinkButton input={{ versionIds: [version.id] }} defaultName={`${title}, ${version.label}`}
+                           maxMonths={maxShareLinkMonths} label={t("shareVersion")} />
+          <Link href={versionHref(version)} className="px-2 text-sm text-link hover:text-link/80">{t("view")}</Link>
+        </div>
 
         <section aria-labelledby="files" className="space-y-3">
           <h2 id="files" className="text-lg font-semibold">{t("files")}</h2>
@@ -78,7 +78,7 @@ export default async function VersionEditPage({ params }: { params: Promise<{ id
         </section>
 
         <RecordHistory entityId={version.id} path="/manage/audit" linkOf={auditLink} />
-      </div>
+      </Page>
     );
   });
 }

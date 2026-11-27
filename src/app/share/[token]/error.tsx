@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
 
 /**
  * A share link page that failed, e.g. while the server is away, inside the share layout. Without the app's "Log in": a

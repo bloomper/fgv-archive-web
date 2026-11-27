@@ -80,7 +80,7 @@ export async function RecordHistory({
         {log.totalCount > log.entries.length && (
           <Link
             href={auditHref(path, {}, { entity: entityId })}
-            className="text-sm text-primary hover:text-primary/80"
+            className="text-sm text-link hover:text-link/80"
           >
             {t("allChanges", { count: log.totalCount })}
           </Link>

@@ -10,7 +10,8 @@ import { arrangementHref, manuscriptHref, spexName, versionAnchor } from "@/util
 import { formatKeys } from "@/utils/music";
 import { Policies } from "@/utils/policy.server";
 import { withPolicyPage } from "@/utils/route.server";
-import { DataEmpty } from "@/components/data-empty";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The start page: a greeting with the admins' text, browsing by category and year (folded into decades), and the
@@ -25,7 +26,7 @@ export default async function HomePage() {
     const chip = "rounded-full border px-3 py-1 text-sm hover:bg-accent";
 
     return (
-      <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
+      <Page variant="content">
         <section className="space-y-2">
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t("greeting", { name: me?.me.displayName ?? me?.me.username ?? "" })}
@@ -61,8 +62,8 @@ export default async function HomePage() {
                   <li key={version.id} className="min-w-0">
                     <Link href={href} className="flex h-full gap-3 rounded-lg border bg-card p-3 hover:bg-accent">
                       {manuscript
-                        ? <ScrollText className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
-                        : <FileMusic className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />}
+                        ? <ScrollText className="mt-0.5 size-5 shrink-0 text-link" aria-hidden />
+                        : <FileMusic className="mt-0.5 size-5 shrink-0 text-link" aria-hidden />}
                       <span className="block min-w-0 flex-1 space-y-0.5">
                         <span className="block truncate font-medium">{manuscript?.title ?? number?.title}</span>
                         <span className="block truncate text-sm text-muted-foreground">
@@ -81,7 +82,7 @@ export default async function HomePage() {
             </ul>
           ) : <DataEmpty title={t("empty")} description={null} />}
         </HomeSection>
-      </div>
+      </Page>
     );
   });
 }
